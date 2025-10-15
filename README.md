@@ -16,8 +16,7 @@ Backend API for Identity Provider Password Management
 ## Setup
 
 1. Clone this repo
-2. Copy ```local.env.dist``` to ```local.env``` and ```email.local.env.dist```
-   to ```email.local.env``` and update values in each as appropriate.
+2. Copy ```local.env.dist``` to ```local.env``` and update values as appropriate.
 3. Setup environment variable for ```DOCKER_UIDGID``` in the format of ```"uid:gid"```.
    This will run some of the containers as you so that they can write to your host filesystem
    and the file permissions will be owned by you. On Mac (and possibly other *nix-based
