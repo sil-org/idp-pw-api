@@ -205,7 +205,7 @@ services:
       PMA_PASSWORD: broker
 
   broker:
-    image: silintl/idp-id-broker:6
+    image: silintl/idp-id-broker:8
     platform: linux/amd64
     ports:
       - "51154:80"
