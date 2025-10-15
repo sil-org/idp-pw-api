@@ -7,7 +7,6 @@ nbproject/
 
 # local config files
 *.env
-!email.common.env
 !common.env
 !test.env
 local.php

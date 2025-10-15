@@ -47,8 +47,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      email:
-        condition: service_started
     env_file:
       - ./common.env
       - path: ./local.env
@@ -134,53 +132,6 @@ services:
       - path: ./local.env
         required: false
     command: ["true"]
-
-  email:
-    image: silintl/email-service:1
-    platform: linux/amd64
-    depends_on:
-      emaildb:
-        condition: service_healthy
-      emailcron:
-        condition: service_started
-    environment:
-      MYSQL_HOST: emaildb
-    env_file:
-      - ./email.common.env
-      - path: ./email.local.env
-        required: false
-    ports:
-      - "51153:80"
-
-  emailcron:
-    image: silintl/email-service:1
-    depends_on:
-      emaildb:
-        condition: service_healthy
-    environment:
-      MYSQL_HOST: emaildb
-    env_file:
-      - ./email.common.env
-      - path: ./email.local.env
-        required: false
-    command: /data/run-cron.sh
-
-  emaildb:
-    image: mariadb:10
-    env_file:
-      - ./email.common.env
-    environment:
-      MYSQL_ROOT_PASSWORD: not-a-secret
-    <<: *db_healthcheck
-
-  emailpma:
-    image: phpmyadmin:5
-    ports:
-      - "51152:80"
-    environment:
-      PMA_HOST: emaildb
-      PMA_USER: email
-      PMA_PASSWORD: email
 
   zxcvbn:
     image: wcjr/zxcvbn-api:1.1.0
