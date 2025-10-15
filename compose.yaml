@@ -218,10 +218,6 @@ services:
       - ./dockerbuild/broker/User.php:/data/console/migrations/User.php
       - ./dockerbuild/broker/Method.php:/data/console/migrations/Method.php
     environment:
-      EMAIL_SERVICE_accessToken: fake
-      EMAIL_SERVICE_assertValidIp: "false"
-      EMAIL_SERVICE_baseUrl: fake
-      EMAIL_SERVICE_validIpRanges: 10.0.0.0/128
       EMAILER_CLASS: \Sil\SilIdBroker\Behat\Context\fakes\FakeEmailer
       IDP_NAME: idp1
       MYSQL_HOST: brokerDb
