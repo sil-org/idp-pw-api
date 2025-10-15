@@ -47,8 +47,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      email:
-        condition: service_started
     env_file:
       - ./common.env
       - path: ./local.env
@@ -135,53 +133,6 @@ services:
         required: false
     command: ["true"]
 
-  email:
-    image: silintl/email-service:1
-    platform: linux/amd64
-    depends_on:
-      emaildb:
-        condition: service_healthy
-      emailcron:
-        condition: service_started
-    environment:
-      MYSQL_HOST: emaildb
-    env_file:
-      - ./email.common.env
-      - path: ./email.local.env
-        required: false
-    ports:
-      - "51153:80"
-
-  emailcron:
-    image: silintl/email-service:1
-    depends_on:
-      emaildb:
-        condition: service_healthy
-    environment:
-      MYSQL_HOST: emaildb
-    env_file:
-      - ./email.common.env
-      - path: ./email.local.env
-        required: false
-    command: /data/run-cron.sh
-
-  emaildb:
-    image: mariadb:10
-    env_file:
-      - ./email.common.env
-    environment:
-      MYSQL_ROOT_PASSWORD: not-a-secret
-    <<: *db_healthcheck
-
-  emailpma:
-    image: phpmyadmin:5
-    ports:
-      - "51152:80"
-    environment:
-      PMA_HOST: emaildb
-      PMA_USER: email
-      PMA_PASSWORD: email
-
   zxcvbn:
     image: wcjr/zxcvbn-api:1.1.0
     platform: linux/amd64
@@ -205,7 +156,7 @@ services:
       PMA_PASSWORD: broker
 
   broker:
-    image: silintl/idp-id-broker:6
+    image: silintl/idp-id-broker:8
     platform: linux/amd64
     ports:
       - "51154:80"
@@ -218,10 +169,6 @@ services:
       - ./dockerbuild/broker/User.php:/data/console/migrations/User.php
       - ./dockerbuild/broker/Method.php:/data/console/migrations/Method.php
     environment:
-      EMAIL_SERVICE_accessToken: fake
-      EMAIL_SERVICE_assertValidIp: "false"
-      EMAIL_SERVICE_baseUrl: fake
-      EMAIL_SERVICE_validIpRanges: 10.0.0.0/128
       EMAILER_CLASS: \Sil\SilIdBroker\Behat\Context\fakes\FakeEmailer
       IDP_NAME: idp1
       MYSQL_HOST: brokerDb

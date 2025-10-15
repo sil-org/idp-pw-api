@@ -38,8 +38,6 @@ $supportFeedback = Env::get('SUPPORT_FEEDBACK');
 $accessTokenHashKey = Env::get('ACCESS_TOKEN_HASH_KEY');
 
 $emailerClass = Env::get('EMAILER_CLASS', Emailer::class);
-$emailServiceConfig = Env::getArrayFromPrefix('EMAIL_SERVICE_');
-$emailServiceConfig['validIpRanges'] = Env::getArray('EMAIL_SERVICE_validIpRanges');
 
 $authClass = Env::get('AUTH_CLASS', 'common\components\auth\Saml');
 $authConfig = Env::getArrayFromPrefix('AUTH_SAML_');
@@ -53,6 +51,7 @@ $passwordStoreClass = Env::get('PASSWORDSTORE_CLASS', 'common\components\passwor
 
 $idBrokerConfig = Env::getArrayFromPrefix('ID_BROKER_');
 $idBrokerConfig['validIpRanges'] = Env::getArray('ID_BROKER_validIpRanges');
+$idBrokerConfig['assertValidIp'] = $idBrokerConfig['assertValidBrokerIp'];
 
 $zxcvbnApiBaseUrl = Env::get('ZXCVBN_API_BASEURL');
 
@@ -154,10 +153,10 @@ return [
                         'to' => $alertsEmail ?? '(disabled)',
                         'subject' => 'ALERT - ' . $idpName . ' PW [env=' . YII_ENV . ']',
                     ],
-                    'baseUrl' => $emailServiceConfig['baseUrl'],
-                    'accessToken' => $emailServiceConfig['accessToken'],
-                    'assertValidIp' => $emailServiceConfig['assertValidIp'],
-                    'validIpRanges' => $emailServiceConfig['validIpRanges'],
+                    'baseUrl' => $idBrokerConfig['baseUrl'],
+                    'accessToken' => $idBrokerConfig['accessToken'],
+                    'assertValidIp' => $idBrokerConfig['assertValidIp'],
+                    'validIpRanges' => $idBrokerConfig['validIpRanges'],
                     'enabled' => $alertsEmailEnabled,
                     'prefix' => function ($message) {
                         $prefixData = [
@@ -220,7 +219,7 @@ return [
         ],
         'emailer' => [
             'class' => $emailerClass,
-            'emailServiceConfig' => $emailServiceConfig,
+            'emailServiceConfig' => $idBrokerConfig,
         ],
         'personnel' => ['class' => $personnelClass],
         'auth' => ArrayHelper::merge(
