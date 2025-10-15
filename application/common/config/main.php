@@ -51,6 +51,7 @@ $passwordStoreClass = Env::get('PASSWORDSTORE_CLASS', 'common\components\passwor
 
 $idBrokerConfig = Env::getArrayFromPrefix('ID_BROKER_');
 $idBrokerConfig['validIpRanges'] = Env::getArray('ID_BROKER_validIpRanges');
+$idBrokerConfig['assertValidIp'] = $idBrokerConfig['assertValidBrokerIp'];
 
 $zxcvbnApiBaseUrl = Env::get('ZXCVBN_API_BASEURL');
 
