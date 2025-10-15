@@ -6,8 +6,8 @@ Backend API for Identity Provider Password Management
 
 ### Linux
 
-1. Docker >= 1.9.1
-2. Docker Compose >= 1.5
+1. Docker
+2. Docker Compose
 
 ### Mac
 
@@ -36,14 +36,10 @@ Backend API for Identity Provider Password Management
 ## Configuration
 
 By default, configuration is read from environment variables. These are documented
-in the `local.env.dist` file. Optionally, you can define configuration in AWS Systems Manager.
-To do this, set the following environment variables to point to the configuration in
-AWS:
+in the `local.env.dist` file. Optionally, you can define configuration in AWS Parameter Store.
+To do this, set the following environment variables to point to the configuration in AWS:
 
 * `AWS_REGION` - the AWS region in use
-* `APP_ID` - AppConfig application ID or name
-* `CONFIG_ID` - AppConfig configuration profile ID or name
-* `ENV_ID` - AppConfig environment ID or name
 * `PARAMETER_STORE_PATH` - Parameter Store base path for this app, e.g. "/idp-pw-api/idp-name/prod"
 
 In addition, the AWS API requires authentication. It is best to use an access role
@@ -53,11 +49,6 @@ If that is not an option, you can specify an access token using the `AWS_ACCESS_
 
 If `PARAMETER_STORE_PATH` is given, AWS Parameter Store will be used. Each parameter in AWS Parameter
 Store is set as an environment variable in the execution environment.
-
-If `PARAMETER_STORE_PATH` is not given but the AppConfig variables are, AWS AppConfig will be used.
-The content of the AppConfig configuration profile takes the form of a typical .env file, using `#`
-for comments and `=` for variable assignment. Any variables read from AppConfig will overwrite variables
-set in the execution environment.
 
 ### Additional setup
 
@@ -195,7 +186,7 @@ Returns configuration parameters supplied by environment variables.
 
 #### `GET /site/system-status`
 
-This endpoint verifies connectivity to the database and to the email service.
+This endpoint verifies connectivity to the database.
 
 #### `POST /reset` and `PUT /reset/{uid}/validate`
 
