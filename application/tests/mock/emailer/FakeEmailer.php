@@ -3,7 +3,6 @@
 namespace tests\mock\emailer;
 
 use common\components\Emailer;
-use tests\mock\emailer\FakeEmailServiceClient;
 
 class FakeEmailer extends Emailer
 {
@@ -18,7 +17,7 @@ class FakeEmailer extends Emailer
                 $this->emailServiceConfig['baseUrl'],
                 $this->emailServiceConfig['accessToken'],
                 [
-                    FakeEmailServiceClient::ASSERT_VALID_IP_CONFIG => $this->emailServiceConfig['assertValidIp'],
+                    FakeEmailServiceClient::ASSERT_VALID_BROKER_IP_CONFIG => $this->emailServiceConfig['assertValidIp'],
                     FakeEmailServiceClient::TRUSTED_IPS_CONFIG => $this->emailServiceConfig['validIpRanges'],
                 ]
             );
