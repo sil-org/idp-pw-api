@@ -2,7 +2,7 @@
 
 namespace common\components;
 
-use Sil\EmailService\Client\EmailServiceClient;
+use Sil\Idp\IdBroker\Client\IdBrokerClient;
 use yii\base\Component;
 
 class Emailer extends Component
@@ -14,7 +14,7 @@ class Emailer extends Component
      */
     public $emailServiceConfig = [];
 
-    /** @var EmailServiceClient */
+    /** @var IdBrokerClient */
     protected $emailServiceClient = null;
 
     /**
@@ -43,7 +43,7 @@ class Emailer extends Component
         ];
 
         foreach ($requiredParams as $param) {
-            if (! isset($this->emailServiceConfig[$param])) {
+            if (!isset($this->emailServiceConfig[$param])) {
                 throw new \InvalidArgumentException(
                     'Missing email service configuration for ' . $param,
                     1502311757

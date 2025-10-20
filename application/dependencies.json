@@ -432,32 +432,24 @@
     "version": "3.22.1"
   },
   {
-    "name": "silinternational/email-service-php-client",
-    "version": "2.5.0"
+    "name": "sil-org/idp-id-broker-php-client",
+    "version": "4.9.0"
   },
   {
-    "name": "silinternational/idp-id-broker-php-client",
-    "version": "4.6.0"
+    "name": "sil-org/php-env",
+    "version": "3.4.0"
   },
   {
-    "name": "silinternational/php-env",
-    "version": "3.3.0"
+    "name": "sil-org/yii2-json-log-targets",
+    "version": "2.3.0"
   },
   {
-    "name": "silinternational/yii2-email-log-target",
-    "version": "1.0.1"
+    "name": "sil-org/yii2-sentry",
+    "version": "2.1.2"
   },
   {
-    "name": "silinternational/yii2-json-log-targets",
-    "version": "2.2.0"
-  },
-  {
-    "name": "silinternational/yii2-sentry",
-    "version": "2.1.1"
-  },
-  {
-    "name": "silinternational/zxcvbn-api-client-php",
-    "version": "2.0.3"
+    "name": "sil-org/zxcvbn-api-client-php",
+    "version": "2.0.4"
   },
   {
     "name": "simplesamlphp/saml2",
