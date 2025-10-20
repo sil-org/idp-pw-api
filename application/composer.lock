@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "93d259ab8a2808129facfbd979166ba2",
+    "content-hash": "a0fab471e6709cacc2b03f346f40d036",
     "packages": [
         {
             "name": "behat/gherkin",
@@ -7817,72 +7817,17 @@
             "time": "2023-11-13T11:47:28+00:00"
         },
         {
-            "name": "silinternational/email-service-php-client",
-            "version": "2.5.0",
+            "name": "sil-org/idp-id-broker-php-client",
+            "version": "4.9.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/silinternational/email-service-php-client.git",
-                "reference": "8ab16240894ced43c48890182967af120b2178cb"
+                "url": "https://github.com/sil-org/idp-id-broker-php-client.git",
+                "reference": "8f395f3ee7ac6eec439796abf399ede1802c0501"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/silinternational/email-service-php-client/zipball/8ab16240894ced43c48890182967af120b2178cb",
-                "reference": "8ab16240894ced43c48890182967af120b2178cb",
-                "shasum": ""
-            },
-            "require": {
-                "guzzlehttp/guzzle-services": "^1.1",
-                "mlocati/ip-lib": "^1.14",
-                "php": ">=7.0",
-                "roave/security-advisories": "dev-master"
-            },
-            "require-dev": {
-                "behat/behat": "^3.3",
-                "ext-json": "*",
-                "webmozart/assert": "^1.10"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Sil\\EmailService\\Client\\": "src/",
-                    "Sil\\EmailService\\Client\\tests\\": "tests/",
-                    "Sil\\EmailService\\Client\\features\\": "features/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "SIL GTIS",
-                    "email": "gtis_itse_support+idp@sil.org"
-                }
-            ],
-            "description": "PHP client to interact with our Email Service API: https://github.com/silinternational/email-service",
-            "keywords": [
-                "api",
-                "email",
-                "php client"
-            ],
-            "support": {
-                "issues": "https://github.com/silinternational/email-service-php-client/issues",
-                "source": "https://github.com/silinternational/email-service-php-client/tree/2.5.0"
-            },
-            "time": "2025-03-11T14:16:24+00:00"
-        },
-        {
-            "name": "silinternational/idp-id-broker-php-client",
-            "version": "4.6.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/silinternational/idp-id-broker-php-client.git",
-                "reference": "102de203b9e5447b3c25305007dce949d01d1989"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/silinternational/idp-id-broker-php-client/zipball/102de203b9e5447b3c25305007dce949d01d1989",
-                "reference": "102de203b9e5447b3c25305007dce949d01d1989",
+                "url": "https://api.github.com/repos/sil-org/idp-id-broker-php-client/zipball/8f395f3ee7ac6eec439796abf399ede1802c0501",
+                "reference": "8f395f3ee7ac6eec439796abf399ede1802c0501",
                 "shasum": ""
             },
             "require": {
@@ -7913,7 +7858,7 @@
                     "email": "gtis_itse_support+idp@sil.org"
                 }
             ],
-            "description": "PHP client to interact with our IdP ID Broker's API: https://github.com/silinternational/idp-id-broker",
+            "description": "PHP client to interact with our IdP ID Broker's API: https://github.com/sil-org/idp-id-broker",
             "keywords": [
                 "api",
                 "id broker",
@@ -7921,23 +7866,23 @@
                 "php client"
             ],
             "support": {
-                "issues": "https://github.com/silinternational/idp-id-broker-php-client/issues",
-                "source": "https://github.com/silinternational/idp-id-broker-php-client/tree/4.6.0"
+                "issues": "https://github.com/sil-org/idp-id-broker-php-client/issues",
+                "source": "https://github.com/sil-org/idp-id-broker-php-client/tree/4.9.0"
             },
-            "time": "2025-04-07T02:24:07+00:00"
+            "time": "2025-10-15T04:27:43+00:00"
         },
         {
-            "name": "silinternational/php-env",
-            "version": "3.3.0",
+            "name": "sil-org/php-env",
+            "version": "3.4.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/silinternational/php-env.git",
-                "reference": "c0b90e6f2124caaf214fb948838c7e59891451d7"
+                "url": "https://github.com/sil-org/php-env.git",
+                "reference": "371666a386824901f3a897ba0f2aaab30539fd33"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/silinternational/php-env/zipball/c0b90e6f2124caaf214fb948838c7e59891451d7",
-                "reference": "c0b90e6f2124caaf214fb948838c7e59891451d7",
+                "url": "https://api.github.com/repos/sil-org/php-env/zipball/371666a386824901f3a897ba0f2aaab30539fd33",
+                "reference": "371666a386824901f3a897ba0f2aaab30539fd33",
                 "shasum": ""
             },
             "require": {
@@ -7958,81 +7903,39 @@
             ],
             "description": "Simple PHP library for getting (or requiring) environment variables, designed to handle true, false, and null more intelligently. If desired, an environment variable's value can be split into an array automatically.",
             "support": {
-                "issues": "https://github.com/silinternational/php-env/issues",
-                "source": "https://github.com/silinternational/php-env/tree/3.3.0"
+                "issues": "https://github.com/sil-org/php-env/issues",
+                "source": "https://github.com/sil-org/php-env/tree/3.4.0"
             },
-            "time": "2025-01-03T21:04:23+00:00"
+            "time": "2025-07-09T16:03:42+00:00"
         },
         {
-            "name": "silinternational/yii2-email-log-target",
-            "version": "1.0.1",
+            "name": "sil-org/yii2-json-log-targets",
+            "version": "2.3.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/silinternational/yii2-email-log-target.git",
-                "reference": "7fcae88c3e99b93240e714401a9df54828cf7a40"
+                "url": "https://github.com/sil-org/yii2-json-log-targets.git",
+                "reference": "7b9a427bac21193596ad203a4987f87b9d98d615"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/silinternational/yii2-email-log-target/zipball/7fcae88c3e99b93240e714401a9df54828cf7a40",
-                "reference": "7fcae88c3e99b93240e714401a9df54828cf7a40",
+                "url": "https://api.github.com/repos/sil-org/yii2-json-log-targets/zipball/7b9a427bac21193596ad203a4987f87b9d98d615",
+                "reference": "7b9a427bac21193596ad203a4987f87b9d98d615",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4.0",
-                "yiisoft/yii2": "2.*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Sil\\Log\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Yii2 log target for sending data to email without trace information",
-            "keywords": [
-                "email",
-                "json",
-                "log",
-                "yii2"
-            ],
-            "support": {
-                "issues": "https://github.com/silinternational/yii2-email-log-target/issues",
-                "source": "https://github.com/silinternational/yii2-email-log-target/tree/1.0.1"
-            },
-            "time": "2017-04-13T14:30:44+00:00"
-        },
-        {
-            "name": "silinternational/yii2-json-log-targets",
-            "version": "2.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/silinternational/yii2-json-log-targets.git",
-                "reference": "41ab7b47ef6cf506954fd6c715c958c64093d3be"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/silinternational/yii2-json-log-targets/zipball/41ab7b47ef6cf506954fd6c715c958c64093d3be",
-                "reference": "41ab7b47ef6cf506954fd6c715c958c64093d3be",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.6",
+                "php": ">=7.0",
                 "yiisoft/yii2": "^2.0"
             },
             "require-dev": {
                 "behat/behat": "^3.3",
                 "codemix/yii2-streamlog": "^1.3",
-                "fillup/fake-bower-assets": "^2.0",
                 "phpunit/phpunit": "^8.0",
                 "roave/security-advisories": "dev-master",
-                "silinternational/email-service-php-client": "^2.0.0"
+                "sil-org/idp-id-broker-php-client": "^4.9.0"
             },
             "suggest": {
                 "codemix/yii2-streamlog": "To send log to a stream such as stdout using JsonStreamTarget",
-                "silinternational/email-service-php-client": "To send log via email using EmailServiceTarget"
+                "sil-org/idp-id-broker-php-client": "To send log via email using EmailServiceTarget"
             },
             "type": "library",
             "autoload": {
@@ -8054,23 +7957,23 @@
                 "yii2"
             ],
             "support": {
-                "issues": "https://github.com/silinternational/yii2-json-log-targets/issues",
-                "source": "https://github.com/silinternational/yii2-json-log-targets/tree/2.2.0"
+                "issues": "https://github.com/sil-org/yii2-json-log-targets/issues",
+                "source": "https://github.com/sil-org/yii2-json-log-targets/tree/2.3.0"
             },
-            "time": "2025-03-13T00:47:49+00:00"
+            "time": "2025-10-17T00:51:00+00:00"
         },
         {
-            "name": "silinternational/yii2-sentry",
-            "version": "2.1.1",
+            "name": "sil-org/yii2-sentry",
+            "version": "2.1.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/silinternational/yii2-sentry.git",
-                "reference": "de4b321edfb3bbfdd1850d90b73c88b52f58da92"
+                "url": "https://github.com/sil-org/yii2-sentry.git",
+                "reference": "25a9ad533492a53a22464f8e32940a32ef71ca9a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/silinternational/yii2-sentry/zipball/de4b321edfb3bbfdd1850d90b73c88b52f58da92",
-                "reference": "de4b321edfb3bbfdd1850d90b73c88b52f58da92",
+                "url": "https://api.github.com/repos/sil-org/yii2-sentry/zipball/25a9ad533492a53a22464f8e32940a32ef71ca9a",
+                "reference": "25a9ad533492a53a22464f8e32940a32ef71ca9a",
                 "shasum": ""
             },
             "require": {
@@ -8106,22 +8009,22 @@
                 "yii2"
             ],
             "support": {
-                "source": "https://github.com/silinternational/yii2-sentry/tree/2.1.1"
+                "source": "https://github.com/sil-org/yii2-sentry/tree/2.1.2"
             },
-            "time": "2025-04-08T21:46:26+00:00"
+            "time": "2025-09-15T23:49:59+00:00"
         },
         {
-            "name": "silinternational/zxcvbn-api-client-php",
-            "version": "2.0.3",
+            "name": "sil-org/zxcvbn-api-client-php",
+            "version": "2.0.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/silinternational/zxcvbn-api-client-php.git",
-                "reference": "f4c19968d1dfc7be62cbf9bb5af27c40bc355ad8"
+                "url": "https://github.com/sil-org/zxcvbn-api-client-php.git",
+                "reference": "f1fc093f7e90838346695475049cafa09286aa2e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/silinternational/zxcvbn-api-client-php/zipball/f4c19968d1dfc7be62cbf9bb5af27c40bc355ad8",
-                "reference": "f4c19968d1dfc7be62cbf9bb5af27c40bc355ad8",
+                "url": "https://api.github.com/repos/sil-org/zxcvbn-api-client-php/zipball/f1fc093f7e90838346695475049cafa09286aa2e",
+                "reference": "f1fc093f7e90838346695475049cafa09286aa2e",
                 "shasum": ""
             },
             "require": {
@@ -8153,10 +8056,10 @@
                 "zxcvbn"
             ],
             "support": {
-                "issues": "https://github.com/silinternational/zxcvbn-api-client-php/issues",
-                "source": "https://github.com/silinternational/zxcvbn-api-client-php/tree/2.0.3"
+                "issues": "https://github.com/sil-org/zxcvbn-api-client-php/issues",
+                "source": "https://github.com/sil-org/zxcvbn-api-client-php/tree/2.0.4"
             },
-            "time": "2024-10-30T15:36:42+00:00"
+            "time": "2025-09-15T22:22:14+00:00"
         },
         {
             "name": "simplesamlphp/saml2",
@@ -11535,17 +11438,17 @@
             "time": "2024-11-28T04:54:44+00:00"
         },
         {
-            "name": "silinternational/yii2-codeception",
-            "version": "1.2.0",
+            "name": "sil-org/yii2-codeception",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/silinternational/yii2-codeception.git",
-                "reference": "2d827f863f8d666ecf17ff96c782089cd052dc70"
+                "url": "https://github.com/sil-org/yii2-codeception.git",
+                "reference": "f9a452974ca80e2404e7ee73ba9ac958e84c35e3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/silinternational/yii2-codeception/zipball/2d827f863f8d666ecf17ff96c782089cd052dc70",
-                "reference": "2d827f863f8d666ecf17ff96c782089cd052dc70",
+                "url": "https://api.github.com/repos/sil-org/yii2-codeception/zipball/f9a452974ca80e2404e7ee73ba9ac958e84c35e3",
+                "reference": "f9a452974ca80e2404e7ee73ba9ac958e84c35e3",
                 "shasum": ""
             },
             "require": {
@@ -11572,10 +11475,10 @@
             ],
             "description": "Patches to implement nice features of yii2-codeception since it was abandoned",
             "support": {
-                "issues": "https://github.com/silinternational/yii2-codeception/issues",
-                "source": "https://github.com/silinternational/yii2-codeception/tree/1.2.0"
+                "issues": "https://github.com/sil-org/yii2-codeception/issues",
+                "source": "https://github.com/sil-org/yii2-codeception/tree/1.2.1"
             },
-            "time": "2025-04-08T21:44:55+00:00"
+            "time": "2025-09-16T00:18:34+00:00"
         },
         {
             "name": "softcreatr/jsonpath",
@@ -12061,7 +11964,8 @@
     "platform": {
         "php": "^8.3",
         "ext-json": "*",
-        "ext-iconv": "*"
+        "ext-iconv": "*",
+        "ext-pdo": "*"
     },
     "platform-dev": {},
     "plugin-api-version": "2.6.0"

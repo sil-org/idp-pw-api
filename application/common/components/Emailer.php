@@ -2,7 +2,8 @@
 
 namespace common\components;
 
-use Sil\EmailService\Client\EmailServiceClient;
+use Sil\Idp\IdBroker\Client\EmailServiceClientException;
+use Sil\Idp\IdBroker\Client\IdBrokerClient;
 use yii\base\Component;
 
 class Emailer extends Component
@@ -14,7 +15,7 @@ class Emailer extends Component
      */
     public $emailServiceConfig = [];
 
-    /** @var EmailServiceClient */
+    /** @var IdBrokerClient */
     protected $emailServiceClient = null;
 
     /**
@@ -43,7 +44,7 @@ class Emailer extends Component
         ];
 
         foreach ($requiredParams as $param) {
-            if (! isset($this->emailServiceConfig[$param])) {
+            if (!isset($this->emailServiceConfig[$param])) {
                 throw new \InvalidArgumentException(
                     'Missing email service configuration for ' . $param,
                     1502311757
@@ -60,7 +61,7 @@ class Emailer extends Component
      * @param string $htmlBody The email body (as HTML).
      * @param string $textBody The email body (as plain text).
      * @param null|string $ccAddress The cc email address.
-     * @throws \Sil\EmailService\Client\EmailServiceClientException
+     * @throws EmailServiceClientException
      */
     public function email(
         string $toAddress,
@@ -79,18 +80,18 @@ class Emailer extends Component
     }
 
     /**
-     * @return EmailServiceClient
-     * @throws \Sil\EmailService\Client\EmailServiceClientException
+     * @return IdBrokerClient
+     * @throws EmailServiceClientException
      */
     protected function getEmailServiceClient()
     {
         if ($this->emailServiceClient === null) {
-            $this->emailServiceClient = new EmailServiceClient(
+            $this->emailServiceClient = new IdBrokerClient(
                 $this->emailServiceConfig['baseUrl'],
                 $this->emailServiceConfig['accessToken'],
                 [
-                    EmailServiceClient::ASSERT_VALID_IP_CONFIG => $this->emailServiceConfig['assertValidIp'],
-                    EmailServiceClient::TRUSTED_IPS_CONFIG => $this->emailServiceConfig['validIpRanges'],
+                    IdBrokerClient::ASSERT_VALID_BROKER_IP_CONFIG => $this->emailServiceConfig['assertValidIp'],
+                    IdBrokerClient::TRUSTED_IPS_CONFIG => $this->emailServiceConfig['validIpRanges'],
                 ]
             );
         }

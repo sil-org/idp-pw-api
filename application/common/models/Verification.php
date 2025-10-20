@@ -3,7 +3,6 @@
 namespace common\models;
 
 use common\components\Emailer;
-use Sil\EmailService\Client\EmailServiceClient;
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
 use yii\web\ServerErrorHttpException;
