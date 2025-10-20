@@ -2,9 +2,9 @@
 
 namespace tests\mock\emailer;
 
-use Sil\EmailService\Client\EmailServiceClient;
+use Sil\Idp\IdBroker\Client\IdBrokerClient;
 
-class FakeEmailServiceClient extends EmailServiceClient
+class FakeEmailServiceClient extends IdBrokerClient
 {
     public $emailsSent = [];
 
@@ -19,7 +19,7 @@ class FakeEmailServiceClient extends EmailServiceClient
      *
      * @return string "OK".
      */
-    public function getSiteStatus()
+    public function getSiteStatus(): string
     {
         return 'OK';
     }
