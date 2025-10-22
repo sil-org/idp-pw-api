@@ -33,6 +33,7 @@ services:
     image: phpmyadmin:5
     ports:
       - "51151:80"
+      - "51151:443"
     environment:
       PMA_HOST: db
       PMA_USER: idpmgmt
