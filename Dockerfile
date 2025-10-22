@@ -4,7 +4,7 @@ ARG GITHUB_REF_NAME
 ENV GITHUB_REF_NAME=$GITHUB_REF_NAME
 
 RUN apt-get update && \
-    apt-get install -y ssl-cert && \
+    apt-get --no-install-recommends install -y ssl-cert && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     make-ssl-cert generate-default-snakeoil && \
