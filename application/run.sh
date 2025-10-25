@@ -35,7 +35,7 @@ if [[ $APP_ENV == "dev" ]]; then
 fi
 
 if [[ $PARAMETER_STORE_PATH ]]; then
-  config-shim --path $PARAMETER_STORE_PATH apache2ctl -k start -D FOREGROUND
+  config-shim -v --path $PARAMETER_STORE_PATH apache2ctl -k start -D FOREGROUND
 else
   apache2ctl -k start -D FOREGROUND
 fi
