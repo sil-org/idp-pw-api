@@ -20,6 +20,8 @@ fi
 # Run database migrations
 /data/yii migrate --interactive=0
 
+make-ssl-cert generate-default-snakeoil
+
 # Start apache
 apache2ctl start
 
