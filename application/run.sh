@@ -34,6 +34,8 @@ if [[ $APP_ENV == "dev" ]]; then
     apt-get update && apt-get install -y php-xdebug
 fi
 
+make-ssl-cert generate-default-snakeoil
+
 if [[ $PARAMETER_STORE_PATH ]]; then
   config-shim -v --path $PARAMETER_STORE_PATH apache2ctl -k start -D FOREGROUND
 else
