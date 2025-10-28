@@ -7,7 +7,6 @@ RUN apt-get update && \
     apt-get --no-install-recommends install -y ssl-cert && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
-    make-ssl-cert generate-default-snakeoil && \
     a2enmod ssl
 
 WORKDIR /data
