@@ -1,4 +1,4 @@
-FROM silintl/php8:8.3
+FROM ghcr.io/sil-org/php8:8.3
 
 ARG GITHUB_REF_NAME
 ENV GITHUB_REF_NAME=$GITHUB_REF_NAME
