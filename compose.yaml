@@ -189,7 +189,6 @@ services:
       MFA_WEBAUTHN_apiBaseUrl: not_needed_here
       MFA_WEBAUTHN_apiKey: not_needed_here
       MFA_WEBAUTHN_apiSecret: not_needed_here
-    command: ./run-broker.sh
     healthcheck:
       test: nc -vz localhost 80
       start_period: 1s
