@@ -51,7 +51,7 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
 
-      - name: Build and push Docker image to Docker Hub
+      - name: Build and push Docker image to Docker Hub and GitHub Container Registry
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -60,15 +60,3 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             GITHUB_REF_NAME=${{ github.ref_name }}
-
-      - name: Build and push Docker image to GitHub Container Registry
-        uses: docker/build-push-action@v5
-        if: startsWith(github.ref, 'refs/tags')
-        with:
-          context: .
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository }}:${{ github.ref_name }}
-          labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            GITHUB_REF_NAME=${{ github.ref_name }} 
