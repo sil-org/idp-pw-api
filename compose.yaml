@@ -165,10 +165,9 @@ services:
       brokerDb:
         condition: service_healthy
     volumes:
-      - ./dockerbuild/broker/run-broker.sh:/data/run-broker.sh
-      - ./dockerbuild/broker/m381901_235959_insert_test_data.php:/data/console/migrations/m381901_235959_insert_test_data.php
-      - ./dockerbuild/broker/User.php:/data/console/migrations/User.php
-      - ./dockerbuild/broker/Method.php:/data/console/migrations/Method.php
+      - ./dockerbuild/broker/m381901_235959_insert_test_data.php:/app/console/migrations/m381901_235959_insert_test_data.php
+      - ./dockerbuild/broker/User.php:/app/console/migrations/User.php
+      - ./dockerbuild/broker/Method.php:/app/console/migrations/Method.php
     environment:
       EMAILER_CLASS: \Sil\SilIdBroker\Behat\Context\fakes\FakeEmailer
       IDP_NAME: idp1
