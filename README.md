@@ -102,15 +102,18 @@ auth component could be written to implement OAuth or use Google, etc.
 
 ### Password Store Component
 
-You can store your passwords wherever you like, whether it is LDAP, Active Directory, a database, or even Redis.
+Passwords are stored in the _Password Store Component_, which is defined by the `PasswordStoreInterface`. Two
+implementations are included in this repository: ID Broker and Google. (The LDAP store is deprecated and
+will be removed in the next major version.) To synchronize multiple Password Store Components, you can also use the
+Multiple adapter that allows you to configure more than one destination.
 
 * Component ID: ```passwordstore```
 * Implement interface: ```common\components\passwordStore\PasswordStoreInterface```
-* [Example implementation](application/common/components/passwordStore/Ldap.php)
+* [Example implementation](application/common/components/passwordStore/IdBroker.php)
 
 ### Personnel Component
 
-The personnel component is used to look up informaton about users from your company's personnel system. This includes
+The personnel component is used to look up information about users from your company's personnel system. This includes
 verifying that they are an active employee, getting information about them like name, email, employee id, whether they
 have a supervisor and what their supervisors email address is.
 
