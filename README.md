@@ -103,9 +103,8 @@ auth component could be written to implement OAuth or use Google, etc.
 ### Password Store Component
 
 Passwords are stored in the _Password Store Component_, which is defined by the `PasswordStoreInterface`. Two
-implementations are included in this repository: ID Broker and Google. (The LDAP store is deprecated and
-will be removed in the next major version.) To synchronize multiple Password Store Components, you can also use the
-Multiple adapter that allows you to configure more than one destination.
+implementations are included in this repository: ID Broker and Google. To synchronize multiple Password Store
+Components, you can also use the Multiple adapter that allows you to configure more than one destination.
 
 * Component ID: ```passwordstore```
 * Implement interface: ```common\components\passwordStore\PasswordStoreInterface```
@@ -217,7 +216,7 @@ The chart below summarizes the test configuration.
 |         |               | env.        | common.env, test.env                                    |
 |         |               | bootstrap   | tests/_bootstrap.php                                    | 
 |         |               | config      | tests/unit.suite.yml, tests/codeception/config/unit.php |
-|         |               | coverage    | IdBroker, IdBrokerPw, Ldap                              |
+|         |               | coverage    | IdBroker, IdBrokerPw                                    |
 | ------- | ------------- | ----------- | ----------------------                                  |
 | Unit    | Behat         | container   | unittest                                                |
 |         |               | script      | run-tests.sh                                            | 

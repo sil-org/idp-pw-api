@@ -22,7 +22,6 @@
     "simplesamlphp/saml2": "^4",
     "google/apiclient": "^2.0",
     "google/recaptcha": "^1.1.2",
-    "directorytree/ldaprecord": "^3.7",
     "icawebdesign/hibp-php": "~5.1.1",
     "codemix/yii2-streamlog": "^1.3",
     "codeception/module-phpbrowser": "^1.0||^2.0||^3.0",

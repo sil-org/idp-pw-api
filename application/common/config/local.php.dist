@@ -3,7 +3,6 @@
 use Sil\PhpEnv\Env;
 use common\components\passwordStore\IdBroker;
 use common\components\passwordStore\Google;
-use common\components\passwordStore\Ldap;
 use common\components\passwordStore\Multiple;
 
 $zxcvbnApiBaseUrl = Env::get('ZXCVBN_API_BASEURL', 'http://zxcvbn:3000');
@@ -35,30 +34,6 @@ return [
                 [
                     'class' => IdBroker::class,
                     'displayName' => 'Acme Identity',
-                ],
-                [
-                    'class' => Ldap::class,
-                    'displayName' => 'Acme Active Directory',
-                    'host' => 'example.org',
-                    'port' => 636,
-                    'baseDn' => 'dc=example,dc=org',
-                    'adminUsername' => 'cn=ADMIN,ou=users,dc=example,dc=org',
-                    'adminPassword' => 'admin password',
-                    'useTls' => false,
-                    'useSsl' => true,
-                    'userPasswordAttribute' => 'userPassword',
-                    'employeeIdAttribute' => 'employeeId',
-                    'passwordLastChangeDateAttribute' => 'pwdchangedtime',
-                    'passwordExpireDateAttribute' => 'modifytimestamp',
-                    'updateAttributesOnSetPassword' => [
-                        'eventPwdChange' => 'Yes',
-                    ],
-                    'removeAttributesOnSetPassword' => [
-                        'pwdpolicysubentry',
-                        'pwdaccountlockedtime',
-                    ],
-                    'userAccountDisabledAttribute' => 'pwdaccountlockedtime',
-                    'userAccountDisabledValue' => '000001010000Z',
                 ],
                 [
                     'class' => Google::class,

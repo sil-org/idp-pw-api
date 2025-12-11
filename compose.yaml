@@ -79,7 +79,6 @@ services:
     build: ./
     volumes:
       - ./application:/data
-      - ./dockerbuild/dev-ldap.conf:/etc/ldap/ldap.conf
     depends_on:
       db:
         condition: service_healthy
@@ -99,7 +98,6 @@ services:
     build: ./
     volumes:
       - ./application:/data
-      - ./dockerbuild/dev-ldap.conf:/etc/ldap/ldap.conf
     depends_on:
       testdb:
         condition: service_healthy
@@ -194,23 +192,6 @@ services:
       interval: 1s
       timeout: 5s
       retries: 20
-
-  ldap:
-    build: ./dockerbuild/ldap
-    healthcheck:
-      test: nc -vz localhost 389
-      start_period: 1s
-      interval: 1s
-      timeout: 5s
-      retries: 90
-
-  ldapload:
-    build: ./dockerbuild/ldap
-    depends_on:
-      ldap:
-        condition: service_healthy
-    working_dir: /data
-    command: ./load_ldap.sh
 
   raml2html:
     image: mattjtodd/raml2html
