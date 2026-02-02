@@ -313,7 +313,7 @@
   },
   {
     "name": "psy/psysh",
-    "version": "v0.12.8"
+    "version": "v0.12.19"
   },
   {
     "name": "ralouphie/getallheaders",
@@ -461,7 +461,7 @@
   },
   {
     "name": "symfony/console",
-    "version": "v7.2.6"
+    "version": "v7.4.4"
   },
   {
     "name": "symfony/css-selector",
@@ -481,7 +481,7 @@
   },
   {
     "name": "symfony/event-dispatcher-contracts",
-    "version": "v3.5.1"
+    "version": "v3.6.0"
   },
   {
     "name": "symfony/filesystem",
@@ -497,7 +497,7 @@
   },
   {
     "name": "symfony/http-client-contracts",
-    "version": "v3.5.2"
+    "version": "v3.6.0"
   },
   {
     "name": "symfony/options-resolver",
@@ -513,7 +513,7 @@
   },
   {
     "name": "symfony/polyfill-intl-grapheme",
-    "version": "v1.32.0"
+    "version": "v1.33.0"
   },
   {
     "name": "symfony/polyfill-intl-idn",
@@ -521,15 +521,15 @@
   },
   {
     "name": "symfony/polyfill-intl-normalizer",
-    "version": "v1.32.0"
+    "version": "v1.33.0"
   },
   {
     "name": "symfony/polyfill-mbstring",
-    "version": "v1.32.0"
+    "version": "v1.33.0"
   },
   {
     "name": "symfony/polyfill-php80",
-    "version": "v1.32.0"
+    "version": "v1.33.0"
   },
   {
     "name": "symfony/polyfill-php81",
@@ -541,7 +541,7 @@
   },
   {
     "name": "symfony/service-contracts",
-    "version": "v3.5.1"
+    "version": "v3.6.1"
   },
   {
     "name": "symfony/stopwatch",
@@ -549,7 +549,7 @@
   },
   {
     "name": "symfony/string",
-    "version": "v7.2.6"
+    "version": "v7.4.4"
   },
   {
     "name": "symfony/translation",
@@ -557,11 +557,11 @@
   },
   {
     "name": "symfony/translation-contracts",
-    "version": "v3.5.1"
+    "version": "v3.6.1"
   },
   {
     "name": "symfony/var-dumper",
-    "version": "v7.2.6"
+    "version": "v7.4.4"
   },
   {
     "name": "symfony/yaml",
