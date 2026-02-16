@@ -1,7 +1,7 @@
 [
   {
     "name": "behat/gherkin",
-    "version": "v4.13.0"
+    "version": "v4.16.1"
   },
   {
     "name": "bower-asset/inputmask",
@@ -13,11 +13,11 @@
   },
   {
     "name": "bower-asset/punycode",
-    "version": "v1.4.1"
+    "version": "v2.3.1"
   },
   {
     "name": "bower-asset/yii2-pjax",
-    "version": "2.0.8"
+    "version": "2.0.9"
   },
   {
     "name": "carbonphp/carbon-doctrine-types",
@@ -37,7 +37,7 @@
   },
   {
     "name": "codeception/codeception",
-    "version": "5.3.1"
+    "version": "5.3.4"
   },
   {
     "name": "codeception/lib-asserts",
@@ -53,11 +53,11 @@
   },
   {
     "name": "codeception/module-phpbrowser",
-    "version": "3.0.1"
+    "version": "3.0.2"
   },
   {
     "name": "codeception/stub",
-    "version": "4.1.4"
+    "version": "4.3.0"
   },
   {
     "name": "codemix/yii2-streamlog",
@@ -69,7 +69,7 @@
   },
   {
     "name": "composer/semver",
-    "version": "3.4.3"
+    "version": "3.4.4"
   },
   {
     "name": "composer/xdebug-handler",
@@ -77,7 +77,7 @@
   },
   {
     "name": "doctrine/deprecations",
-    "version": "1.1.5"
+    "version": "1.1.6"
   },
   {
     "name": "doctrine/instantiator",
@@ -97,35 +97,35 @@
   },
   {
     "name": "ezyang/htmlpurifier",
-    "version": "v4.18.0"
+    "version": "v4.19.0"
   },
   {
     "name": "fidry/cpu-core-counter",
-    "version": "1.2.0"
+    "version": "1.3.0"
   },
   {
     "name": "firebase/php-jwt",
-    "version": "v6.11.1"
+    "version": "v7.0.2"
   },
   {
     "name": "friendsofphp/php-cs-fixer",
-    "version": "v3.75.0"
+    "version": "v3.94.0"
   },
   {
     "name": "google/apiclient",
-    "version": "v2.18.3"
+    "version": "v2.19.0"
   },
   {
     "name": "google/apiclient-services",
-    "version": "v0.396.0"
+    "version": "v0.432.0"
   },
   {
     "name": "google/auth",
-    "version": "v1.47.0"
+    "version": "v1.50.0"
   },
   {
     "name": "google/recaptcha",
-    "version": "1.3.0"
+    "version": "1.3.1"
   },
   {
     "name": "guzzlehttp/command",
@@ -133,7 +133,7 @@
   },
   {
     "name": "guzzlehttp/guzzle",
-    "version": "7.9.3"
+    "version": "7.10.0"
   },
   {
     "name": "guzzlehttp/guzzle-services",
@@ -141,19 +141,19 @@
   },
   {
     "name": "guzzlehttp/promises",
-    "version": "2.2.0"
+    "version": "2.3.0"
   },
   {
     "name": "guzzlehttp/psr7",
-    "version": "2.7.1"
+    "version": "2.8.0"
   },
   {
     "name": "guzzlehttp/uri-template",
-    "version": "v1.0.4"
+    "version": "v1.0.5"
   },
   {
     "name": "http-interop/http-factory-guzzle",
-    "version": "1.2.0"
+    "version": "1.2.1"
   },
   {
     "name": "icawebdesign/hibp-php",
@@ -181,15 +181,15 @@
   },
   {
     "name": "masterminds/html5",
-    "version": "2.9.0"
+    "version": "2.10.0"
   },
   {
     "name": "mlocati/ip-lib",
-    "version": "1.20.0"
+    "version": "1.22.0"
   },
   {
     "name": "monolog/monolog",
-    "version": "3.9.0"
+    "version": "3.10.0"
   },
   {
     "name": "myclabs/deep-copy",
@@ -205,7 +205,7 @@
   },
   {
     "name": "paragonie/constant_time_encoding",
-    "version": "v3.0.0"
+    "version": "v3.1.3"
   },
   {
     "name": "paragonie/random_compat",
@@ -221,7 +221,7 @@
   },
   {
     "name": "php-http/client-common",
-    "version": "2.7.2"
+    "version": "2.7.3"
   },
   {
     "name": "php-http/discovery",
@@ -245,7 +245,7 @@
   },
   {
     "name": "phpseclib/phpseclib",
-    "version": "3.0.43"
+    "version": "3.0.49"
   },
   {
     "name": "phpspec/php-diff",
@@ -313,7 +313,7 @@
   },
   {
     "name": "psy/psysh",
-    "version": "v0.12.19"
+    "version": "v0.12.20"
   },
   {
     "name": "ralouphie/getallheaders",
@@ -325,23 +325,23 @@
   },
   {
     "name": "react/child-process",
-    "version": "v0.6.6"
+    "version": "v0.6.7"
   },
   {
     "name": "react/dns",
-    "version": "v1.13.0"
+    "version": "v1.14.0"
   },
   {
     "name": "react/event-loop",
-    "version": "v1.5.0"
+    "version": "v1.6.0"
   },
   {
     "name": "react/promise",
-    "version": "v3.2.0"
+    "version": "v3.3.0"
   },
   {
     "name": "react/socket",
-    "version": "v1.16.0"
+    "version": "v1.17.0"
   },
   {
     "name": "react/stream",
@@ -349,7 +349,7 @@
   },
   {
     "name": "roave/security-advisories",
-    "version": "dev-master 5326c90"
+    "version": "dev-master 0c751a6"
   },
   {
     "name": "robrichards/xmlseclibs",
@@ -437,7 +437,7 @@
   },
   {
     "name": "sil-org/yii2-json-log-targets",
-    "version": "2.3.0"
+    "version": "2.3.1"
   },
   {
     "name": "sil-org/yii2-sentry",
@@ -449,7 +449,7 @@
   },
   {
     "name": "simplesamlphp/saml2",
-    "version": "v4.18.1"
+    "version": "v4.19.1"
   },
   {
     "name": "swiftmailer/swiftmailer",
@@ -457,7 +457,7 @@
   },
   {
     "name": "symfony/browser-kit",
-    "version": "v6.4.19"
+    "version": "v6.4.32"
   },
   {
     "name": "symfony/console",
@@ -465,7 +465,7 @@
   },
   {
     "name": "symfony/css-selector",
-    "version": "v7.2.0"
+    "version": "v7.4.0"
   },
   {
     "name": "symfony/deprecation-contracts",
@@ -473,11 +473,11 @@
   },
   {
     "name": "symfony/dom-crawler",
-    "version": "v6.4.19"
+    "version": "v6.4.32"
   },
   {
     "name": "symfony/event-dispatcher",
-    "version": "v7.2.0"
+    "version": "v7.4.4"
   },
   {
     "name": "symfony/event-dispatcher-contracts",
@@ -485,15 +485,15 @@
   },
   {
     "name": "symfony/filesystem",
-    "version": "v7.2.0"
+    "version": "v7.4.0"
   },
   {
     "name": "symfony/finder",
-    "version": "v7.2.2"
+    "version": "v7.4.5"
   },
   {
     "name": "symfony/http-client",
-    "version": "v7.2.4"
+    "version": "v7.4.5"
   },
   {
     "name": "symfony/http-client-contracts",
@@ -501,7 +501,7 @@
   },
   {
     "name": "symfony/options-resolver",
-    "version": "v7.2.0"
+    "version": "v7.4.0"
   },
   {
     "name": "symfony/polyfill-ctype",
@@ -509,7 +509,7 @@
   },
   {
     "name": "symfony/polyfill-iconv",
-    "version": "v1.32.0"
+    "version": "v1.33.0"
   },
   {
     "name": "symfony/polyfill-intl-grapheme",
@@ -517,7 +517,7 @@
   },
   {
     "name": "symfony/polyfill-intl-idn",
-    "version": "v1.32.0"
+    "version": "v1.33.0"
   },
   {
     "name": "symfony/polyfill-intl-normalizer",
@@ -533,11 +533,19 @@
   },
   {
     "name": "symfony/polyfill-php81",
-    "version": "v1.32.0"
+    "version": "v1.33.0"
+  },
+  {
+    "name": "symfony/polyfill-php83",
+    "version": "v1.33.0"
+  },
+  {
+    "name": "symfony/polyfill-php84",
+    "version": "v1.33.0"
   },
   {
     "name": "symfony/process",
-    "version": "v7.2.5"
+    "version": "v7.4.5"
   },
   {
     "name": "symfony/service-contracts",
@@ -545,7 +553,7 @@
   },
   {
     "name": "symfony/stopwatch",
-    "version": "v7.2.4"
+    "version": "v7.4.0"
   },
   {
     "name": "symfony/string",
@@ -553,7 +561,7 @@
   },
   {
     "name": "symfony/translation",
-    "version": "v6.4.21"
+    "version": "v6.4.32"
   },
   {
     "name": "symfony/translation-contracts",
@@ -565,7 +573,7 @@
   },
   {
     "name": "symfony/yaml",
-    "version": "v6.4.21"
+    "version": "v6.4.30"
   },
   {
     "name": "theseer/tokenizer",
@@ -577,7 +585,7 @@
   },
   {
     "name": "yiisoft/yii2",
-    "version": "2.0.52"
+    "version": "2.0.54"
   },
   {
     "name": "yiisoft/yii2-composer",
