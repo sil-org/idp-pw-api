@@ -10,7 +10,7 @@ jobs:
     timeout-minutes: ${{ fromJSON(vars.DEFAULT_JOB_TIMEOUT_MINUTES) }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Check PSR2
         run: docker compose run --rm api ./check-psr2.sh
       - name: Run tests
@@ -23,10 +23,10 @@ jobs:
     timeout-minutes: ${{ fromJSON(vars.DEFAULT_JOB_TIMEOUT_MINUTES) }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Log in to GHCR.io
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -34,7 +34,7 @@ jobs:
 
       - name: Extract metadata (tags, labels) for Docker Images
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: |
             ghcr.io/${{ github.repository }}
@@ -45,7 +45,7 @@ jobs:
             type=semver,pattern={{major}}
 
       - name: Build and push Docker image to GitHub Container Registry
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           context: .
           push: true
