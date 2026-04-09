@@ -187,7 +187,7 @@ services:
       MFA_WEBAUTHN_apiKey: not_needed_here
       MFA_WEBAUTHN_apiSecret: not_needed_here
     healthcheck:
-      test: nc -vz localhost 80
+      test: curl --connect-timeout 5 http://localhost:80/site/status
       start_period: 1s
       interval: 1s
       timeout: 5s
