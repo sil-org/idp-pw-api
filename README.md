@@ -88,7 +88,7 @@ from [\yii\base\Component](http://www.yiiframework.com/doc-2.0/guide-structure-a
 can be configured in the ```components``` section of the application configuration. This also allows them to be accessed
 via ```\Yii::$app->componentId```. While each component has a defined interface for methods to implement, what
 properties it needs for configuration are up to each implementation as appropriate.
-See [our common/config/local.php.dist](https://github.com/sil-org/idp-pw-api/blob/develop/application/common/config/local.php.dist)
+See [our common/config/local.php.dist](https://github.com/sil-org/idp-pw-api/blob/main/application/common/config/local.php.dist)
 for examples of configurations.
 
 ### Authentication Component
