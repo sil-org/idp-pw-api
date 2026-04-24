@@ -4,7 +4,6 @@ namespace frontend\controllers;
 
 use common\components\personnel\NotFoundException;
 use common\helpers\Utils;
-use common\models\EventLog;
 use common\models\Reset;
 use common\models\User;
 use frontend\components\BaseRestController;
@@ -256,6 +255,7 @@ class ResetController extends BaseRestController
         $log = [
             'action' => 'Validate reset',
             'reset_id' => $reset->id,
+            'type' => $reset->type,
             'user' => $reset->user->email,
         ];
 
@@ -267,19 +267,10 @@ class ResetController extends BaseRestController
 
             $ipAddress = Utils::getClientIp(\Yii::$app->request);
 
-            /*
-             * Log event with reset type/method details
-             */
-            EventLog::log(
-                'ResetVerificationSuccessful',
-                [
-                    'Reset Type' => $reset->type,
-                    'Attempts' => $reset->attempts,
-                    'IP Address' => $ipAddress,
-                    'Method value' => $reset->getMaskedValue(),
-                ],
-                $reset->user_id
-            );
+            $log['attempts'] = $reset->attempts;
+            $log['ip_address'] = $ipAddress;
+            $log['method_value'] = $reset->getMaskedValue();
+            $log['status'] = 'success';
 
             /*
              * Reset verified successfully, create access token for user
@@ -287,8 +278,7 @@ class ResetController extends BaseRestController
             try {
                 $reset->user->createAccessToken(User::AUTH_TYPE_RESET);
 
-                $log['status'] = 'success';
-                \Yii::warning($log);
+                \Yii::info($log);
 
                 /*
                  * Delete reset record, log errors, but let user proceed
@@ -311,16 +301,7 @@ class ResetController extends BaseRestController
             }
         }
 
-        EventLog::log(
-            'ResetVerificationFailed',
-            [
-                'reset_id' => $reset->id,
-                'type' => $reset->type,
-                'attempts' => $reset->attempts,
-            ],
-            $reset->user_id
-        );
-
+        $log['attempts'] = $reset->attempts;
         $log['status'] = 'error';
         $log['error'] = 'Reset code verification failed';
         \Yii::warning($log);

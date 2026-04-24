@@ -562,17 +562,13 @@ class User extends UserBase implements IdentityInterface
             $ipAddress = 'Not web request';
         }
 
-        /*
-         * Log event
-         */
-        EventLog::log(
-            'PasswordChanged',
-            [
-                'Authentication method' => $this->auth_type,
-                'IP Address' => $ipAddress,
-            ],
-            $this->id
-        );
+        \Yii::info([
+            'action' => 'password changed',
+            'auth_method' => $this->auth_type,
+            'employee_id' => $this->employee_id,
+            'ip_address' => $ipAddress,
+            'status' => 'success',
+        ]);
 
         if ($this->auth_type == self::AUTH_TYPE_RESET) {
             $this->destroyAccessToken();
