@@ -125,14 +125,8 @@ class Reset extends ResetBase
              */
             $reset->saveOrError('create new reset', \Yii::t('app', 'Reset.CreateFailure'));
 
-            EventLog::log(
-                'ResetCreated',
-                [
-                    'reset_id' => $reset->id,
-                    'type' => $reset->type
-                ],
-                $user->id
-            );
+            $log['reset_id'] = $reset->id;
+            $log['type'] = $reset->type;
         } else {
             $log['existing reset'] = 'yes';
             /*
@@ -422,22 +416,13 @@ class Reset extends ResetBase
             'reset_id' => $this->id,
             'attempts' => $this->attempts,
             'user' => $this->user->email,
+            'type' => $this->type,
+            'disable_until' => $this->disable_until,
+            'status' => 'success',
         ];
         $this->disable_until = Utils::getDatetime(time() + \Yii::$app->params['reset']['disableDuration']);
         $this->saveOrError($log['action'], \Yii::t('app', 'Reset.SetDisableTimeError'));
 
-        EventLog::log(
-            'ResetDisabled',
-            [
-                'reset_id' => $this->id,
-                'type' => $this->type,
-                'attempts' => $this->attempts,
-                'disable_until' => $this->disable_until,
-            ],
-            $this->user_id
-        );
-
-        $log['status'] = 'success';
         \Yii::warning($log);
     }
 
@@ -452,19 +437,11 @@ class Reset extends ResetBase
         $this->attempts = 0;
         $this->saveOrError('enable reset', \Yii::t('app', 'Reset.CannotEnable'));
 
-        EventLog::log(
-            'ResetEnabled',
-            [
-                'reset_id' => $this->id,
-                'type' => $this->type,
-            ],
-            $this->user_id
-        );
-
         \Yii::warning([
             'action' => 'enable reset',
             'reset_id' => $this->id,
             'status' => 'success',
+            'type' => $this->type,
             'user' => $this->user->email,
         ]);
     }
@@ -544,16 +521,15 @@ class Reset extends ResetBase
          */
         $this->saveOrError('Set type of reset', \Yii::t('app', 'Reset.UpdateTypeError'));
 
-        EventLog::log(
-            'ResetChangeType',
-            [
-                'reset_id' => $this->id,
-                'previous_type' => $previousType,
-                'new_type' => $this->type,
-                'attempts' => $this->attempts,
-            ],
-            $this->user_id
-        );
+        \Yii::info([
+            'action' => 'change reset',
+            'attempts' => $this->attempts,
+            'previous_type' => $previousType,
+            'reset_id' => $this->id,
+            'status' => 'success',
+            'type' => $this->type,
+            'user' => $this->user->email,
+        ]);
     }
 
     /**

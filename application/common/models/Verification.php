@@ -3,6 +3,7 @@
 namespace common\models;
 
 use common\components\Emailer;
+use Yii;
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
 use yii\web\ServerErrorHttpException;
@@ -66,7 +67,13 @@ class Verification extends Model
         $emailer->email($toAddress, $subject, $body, strip_tags($body), $ccAddress);
 
         if ($eventLogTopic !== null && $eventLogDetails !== null && $eventLogUserId !== null) {
-            EventLog::log($eventLogTopic, $eventLogDetails, $eventLogUserId);
+            Yii::info([
+                'action' => 'sending email',
+                'topic' => $eventLogTopic,
+                'details' => $eventLogDetails,
+                'userId' => $eventLogUserId,
+                'status' => 'success',
+            ]);
         }
     }
 
