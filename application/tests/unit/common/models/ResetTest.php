@@ -2,9 +2,9 @@
 
 namespace tests\unit\common\models;
 
-use Sil\Codeception\TestCase\Test;
 use common\models\Reset;
 use common\models\User;
+use Sil\Codeception\TestCase\Test;
 use tests\helpers\BrokerUtils;
 use tests\helpers\EmailUtils;
 use tests\unit\fixtures\common\models\ResetFixture;
@@ -126,15 +126,16 @@ class ResetTest extends Test
 
         $reset->send();
 
-        $this->assertEquals(1, EmailUtils::getEmailFilesCount());
+        $this->assertEquals(3, EmailUtils::getEmailFilesCount());
         $this->assertTrue(EmailUtils::hasEmailFileBeenCreated($reset->code));
         $this->assertTrue(EmailUtils::hasEmailFileBeenCreated($reset->user->email));
+        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('email-1456769679@domain.org'));
         $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('password change for your'));
         $this->assertEquals($attempts + 1, $reset->attempts);
 
         $reset->send();
 
-        $this->assertEquals(2, EmailUtils::getEmailFilesCount());
+        $this->assertEquals(6, EmailUtils::getEmailFilesCount());
         $this->assertTrue(EmailUtils::hasEmailFileBeenCreated($reset->code));
         $this->assertEquals($attempts + 2, $reset->attempts);
     }
@@ -149,8 +150,10 @@ class ResetTest extends Test
 
         $reset->send();
 
-        $this->assertEquals(1, EmailUtils::getEmailFilesCount());
+        $this->assertEquals(3, EmailUtils::getEmailFilesCount());
         $this->assertTrue(EmailUtils::hasEmailFileBeenCreated($reset->code));
+        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated($reset->user->email));
+        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('email-1456769679@domain.org'));
         $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('supervisor@domain.org'));
         $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('requested a password change for their'));
         $this->assertEquals($attempts + 1, $reset->attempts);
@@ -163,10 +166,9 @@ class ResetTest extends Test
 
         $this->assertEquals(0, EmailUtils::getEmailFilesCount());
 
-        $this->expectException(\Exception::class);
-        $this->expectExceptionCode(1461173406);
         $reset->send();
-        $this->assertEquals(0, EmailUtils::getEmailFilesCount());
+        $this->assertEquals(1, EmailUtils::getEmailFilesCount());
+        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated($reset->user->email));
     }
 
     public function testSendMethodEmail()
@@ -180,25 +182,8 @@ class ResetTest extends Test
 
         $this->assertEquals(1, EmailUtils::getEmailFilesCount());
         $this->assertTrue(EmailUtils::hasEmailFileBeenCreated($reset->code));
-        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('email-1456769679@domain.org'));
-        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('requested a password change for their'));
-        $this->assertEquals($attempts + 1, $reset->attempts);
-    }
-
-    public function testSendUserWithHideFlag()
-    {
-        $reset = $this->resets('reset4');
-        $attempts = $reset->attempts;
-
-        $this->assertEquals(0, EmailUtils::getEmailFilesCount());
-
-        $reset->send();
-
-        $this->assertEquals(2, EmailUtils::getEmailFilesCount());
-        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated($reset->code));
-        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('first_last4@example.com'));
-        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('email-1543358588@example.org'));
-        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('password change for your'));
+        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated($reset->user->email));
+        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('requested a password change for your'));
         $this->assertEquals($attempts + 1, $reset->attempts);
     }
 

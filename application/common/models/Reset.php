@@ -186,8 +186,6 @@ class Reset extends ResetBase
         if ($this->user->hasSupervisor()) {
             $supervisor = $this->user->getSupervisorEmail();
             $this->sendOnBehalf($supervisor);
-        } else {
-            throw new \Exception('User does not have supervisor on record', 1461173406);
         }
     }
 
@@ -240,6 +238,8 @@ class Reset extends ResetBase
         foreach ($methods as $method) {
             $this->sendMethod($method['value']);
         }
+
+        $this->sendSupervisor();
     }
 
     /**
