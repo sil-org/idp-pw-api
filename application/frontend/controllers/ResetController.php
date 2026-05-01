@@ -95,8 +95,9 @@ class ResetController extends BaseRestController
         }
 
         /*
-         * Find or create user, if user not found return empty object
+         * Find or create user
          */
+        $user = null;
         try {
             if ($usernameIsEmail) {
                 $user = User::findOrCreate(null, $username);
@@ -104,16 +105,7 @@ class ResetController extends BaseRestController
                 $user = User::findOrCreate($username);
             }
         } catch (NotFoundException $e) {
-            \Yii::warning([
-                'action' => 'create reset',
-                'username' => $username,
-                'status' => 'error',
-                'error' => 'user not found',
-            ]);
-            throw new NotFoundHttpException(
-                \Yii::t('app', 'Reset.UserNotFound'),
-                1543338164
-            );
+            // ignore this to mitigate user enumeration attack
         } catch (\Exception $e) {
             \Yii::error([
                 'action' => 'create reset',
@@ -127,46 +119,21 @@ class ResetController extends BaseRestController
             );
         }
 
-        if ($user->isLocked()) {
-            \Yii::warning([
-                'action' => 'create reset',
-                'username' => $username,
-                'status' => 'error',
-                'error' => 'personnel account is locked',
-            ]);
-
-            if ($user->hide === 'yes') {
-                throw new NotFoundHttpException(
-                    \Yii::t('app', 'Reset.UserNotFound'),
-                    1560272556
-                );
-            }
-
-            throw new NotFoundHttpException(
-                \Yii::t('app', 'Reset.AccountLocked'),
-                1560272557
-            );
-        }
-
         /*
          * Find or create a reset
          */
-        $reset = Reset::findOrCreate($user);
+        if ($user !== null && !$user->isLocked()) {
+            $reset = Reset::findOrCreate($user);
 
-        if ($reset->isExpired()) {
-            $reset->restart();
-        } else {
-            $reset->send();
+            if ($reset->isExpired()) {
+                $reset->restart();
+            } else {
+                $reset->send();
+            }
         }
 
-        if ($user->hide === 'yes') {
-            throw new NotFoundHttpException(
-                \Yii::t('app', 'Reset.UserNotFound'),
-                1543338164
-            );
-        }
-
-        return $reset;
+        \Yii::$app->response->statusCode = 204;
+        return null;
     }
 
     /**

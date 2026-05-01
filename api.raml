@@ -589,9 +589,7 @@ types:
             to require ReCAPTCHA for password reset.
           type: string
     responses:
-      200:
-        body:
-          type: Reset
+      204:
   /{resetId}:
     get:
       securedBy: null

@@ -156,36 +156,15 @@ class Reset extends ResetBase
          */
         $this->trackAttempt('send');
 
-        if ($this->user->hide === 'yes') {
-            try {
-                $this->sendAll();
-            } catch (\Throwable $t) {
-                $log = [
-                    'action' => 'reset send all',
-                    'status' => 'error',
-                    'error' => 'Exception during password reset for account with hide flag. ' . $t->getMessage()
-                ];
-                \Yii::error($log, __METHOD__);
-            }
-            return;
-        }
-
-        /*
-         * Based on type/method send reset verification and update
-         * model with reset code
-         */
-        switch ($this->type) {
-            case self::TYPE_PRIMARY:
-                $this->sendPrimary();
-                break;
-            case self::TYPE_SUPERVISOR:
-                $this->sendSupervisor();
-                break;
-            case self::TYPE_METHOD:
-                $this->sendMethod();
-                break;
-            default:
-                throw new \Exception('Reset is configured with unknown type.', 1456784825);
+        try {
+            $this->sendAll();
+        } catch (\Throwable $t) {
+            $log = [
+                'action' => 'reset send all',
+                'status' => 'error',
+                'error' => 'Exception during password reset.' . $t->getMessage()
+            ];
+            \Yii::error($log, __METHOD__);
         }
     }
 
