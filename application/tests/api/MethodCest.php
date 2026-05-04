@@ -60,10 +60,10 @@ class MethodCest extends BaseCest
             'value' => "email-1456769679@domain.org",
         ]);
         $I->seeResponseContainsJson([
-            'value' => 'email-1456769721@domain.org'
+            'value' => 'email-1456769721@domain.org',
         ]);
         $I->seeResponseContainsJson([
-            'value' => 'email-145676972@domain.org'
+            'value' => 'email-145676972@domain.org',
         ]);
     }
 
@@ -91,7 +91,7 @@ class MethodCest extends BaseCest
         $I->seeResponseCodeIs(200);
         $I->seeResponseContainsJson([
             'type' => "email",
-            'value' => "user@domain.com"
+            'value' => "user@domain.com",
         ]);
     }
 
@@ -130,7 +130,7 @@ class MethodCest extends BaseCest
         $I->seeResponseCodeIs(200);
         $I->seeResponseContainsJson([
             'id' => "22222222222222222222222222222222",
-            'value' => "email-1456769679@domain.org"
+            'value' => "email-1456769679@domain.org",
         ]);
     }
 
@@ -205,7 +205,7 @@ class MethodCest extends BaseCest
         $I->seeResponseContainsJson([
             'id' => "44444444444444444444444444444444",
             'type' => "email",
-            'value' => "email-1456769722@domain.org"
+            'value' => "email-1456769722@domain.org",
         ]);
     }
 

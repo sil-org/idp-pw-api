@@ -107,8 +107,8 @@ class PasswordTest extends Test
              */
             $this->assertTrue(
                 substr_count($validationErrorsString, 'Password.DisallowedContent') > 0,
-                'Failed validating test case: ' . $testPassword .
-                    '. No error for matching a user attribute.'
+                'Failed validating test case: ' . $testPassword
+                    . '. No error for matching a user attribute.'
             );
         }
     }

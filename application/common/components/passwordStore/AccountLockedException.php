@@ -2,6 +2,4 @@
 
 namespace common\components\passwordStore;
 
-class AccountLockedException extends \Exception
-{
-}
+class AccountLockedException extends \Exception {}

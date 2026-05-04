@@ -25,14 +25,13 @@ use Yii;
  */
 class UserBase extends \yii\db\ActiveRecord
 {
-
     /**
      * ENUM field values
      */
-    const AUTH_TYPE_LOGIN = 'login';
-    const AUTH_TYPE_RESET = 'reset';
-    const HIDE_NO = 'no';
-    const HIDE_YES = 'yes';
+    public const AUTH_TYPE_LOGIN = 'login';
+    public const AUTH_TYPE_RESET = 'reset';
+    public const HIDE_NO = 'no';
+    public const HIDE_YES = 'yes';
 
     /**
      * {@inheritdoc}

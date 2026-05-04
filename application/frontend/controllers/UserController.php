@@ -25,14 +25,14 @@ class UserController extends BaseRestController
                         'matchCallback' => function () {
                             $user = \Yii::$app->user->identity;
                             return $user->isAuthScopeFull();
-                        }
+                        },
                     ],
                     [
                         'allow' => true,
                         'actions' => ['me'],
                         'roles' => ['@'],
                     ],
-                ]
+                ],
             ],
         ]);
     }

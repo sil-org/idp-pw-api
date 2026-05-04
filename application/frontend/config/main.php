@@ -84,7 +84,7 @@ return [
             'enableCsrfValidation' => false,
             'parsers' => [
                 'application/json' => 'yii\web\JsonParser',
-            ]
+            ],
         ],
         'urlManager' => [
             'cache' => null,
@@ -175,8 +175,8 @@ return [
                  * Catch all to throw 401 or 405
                  */
                 '/<url:.*>' => 'site/index',
-            ]
-        ]
+            ],
+        ],
     ],
     'params' => [
 

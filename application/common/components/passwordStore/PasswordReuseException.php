@@ -2,6 +2,4 @@
 
 namespace common\components\passwordStore;
 
-class PasswordReuseException extends \Exception
-{
-}
+class PasswordReuseException extends \Exception {}

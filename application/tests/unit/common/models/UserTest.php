@@ -63,7 +63,7 @@ class UserTest extends Test
                 'expires' => '2016-06-15T19:00:32+00:00',
             ],
             'auth_type' => 'login',
-            'hide' => 'no'
+            'hide' => 'no',
         ];
 
         $user = $this->users('user1');

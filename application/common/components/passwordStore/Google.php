@@ -302,9 +302,9 @@ class Google extends Component implements PasswordStoreInterface
     {
         $usersResource = $this->getUsersResource();
         $response = $usersResource->listUsers([
-                'domain' => $this->searchDomain,
-                'maxResults' => 2,
-                'query' => 'externalId=' . $employeeId,
+            'domain' => $this->searchDomain,
+            'maxResults' => 2,
+            'query' => 'externalId=' . $employeeId,
         ]);
 
         if ($response === null || count($response['users']) === 0) {
