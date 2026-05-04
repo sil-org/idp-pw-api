@@ -245,7 +245,7 @@
   },
   {
     "name": "phpseclib/phpseclib",
-    "version": "3.0.49"
+    "version": "3.0.51"
   },
   {
     "name": "phpspec/php-diff",
@@ -353,7 +353,7 @@
   },
   {
     "name": "robrichards/xmlseclibs",
-    "version": "3.1.4"
+    "version": "3.1.5"
   },
   {
     "name": "sebastian/cli-parser",
