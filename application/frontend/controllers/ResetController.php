@@ -56,12 +56,12 @@ class ResetController extends BaseRestController
 
     /**
      * Create new reset process
-     * @return Reset|\stdClass
+     * @return void
      * @throws BadRequestHttpException
      * @throws NotFoundHttpException
      * @throws ServerErrorHttpException
      */
-    public function actionCreate()
+    public function actionCreate(): void
     {
         $username = trim(\Yii::$app->request->getBodyParam('username', ''));
         $verificationToken = trim(\Yii::$app->request->getBodyParam('verification_token', ''));
@@ -133,7 +133,6 @@ class ResetController extends BaseRestController
         }
 
         \Yii::$app->response->statusCode = 204;
-        return null;
     }
 
     /**
