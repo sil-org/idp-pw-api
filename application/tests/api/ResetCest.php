@@ -174,20 +174,20 @@ class ResetCest extends BaseCest
     {
         $I->wantTo('check response when making a POST request to create a reset');
         $I->sendPOST('/reset', ['username' => 'first_last']);
-        $I->seeResponseCodeIs(200);
+        $I->seeResponseCodeIs(204);
     }
 
     public function test92(ApiTester $I)
     {
         $I->wantTo('check response when making a POST request to create a reset for an invalid user');
         $I->sendPOST('/reset', ['username' => 'xxxxx']);
-        $I->seeResponseCodeIs(404);
+        $I->seeResponseCodeIs(204);
     }
 
     public function test93(ApiTester $I)
     {
         $I->wantTo('check response when making a POST request to create a reset for a user with hide flag');
         $I->sendPOST('/reset', ['username' => 'user_two']);
-        $I->seeResponseCodeIs(404);
+        $I->seeResponseCodeIs(204);
     }
 }
