@@ -35,8 +35,8 @@ class IdBrokerTest extends TestCase
         $employeeId = '11111';
         $this->expectExceptionCode(1496260921);
         $this->expectExceptionMessage(
-            'Personnel attributes missing attribute: email for employeeId=' .
-            $employeeId
+            'Personnel attributes missing attribute: email for employeeId='
+            . $employeeId
         );
         $brokerMock->findByEmployeeId($employeeId);
     }

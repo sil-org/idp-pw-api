@@ -27,7 +27,7 @@ class Utils
      */
     protected static function convertToTimestamp($time)
     {
-        $time = $time ?? time();
+        $time ??= time();
         $time = is_int($time) ? $time : strtotime($time);
         if ($time === false) {
             throw new \Exception('Unable to parse date to timestamp', 1468865840);
@@ -96,7 +96,7 @@ class Utils
             throw new BadRequestHttpException(\Yii::t('app', 'Utils.InvalidEmail'), 1461459797);
         }
 
-        list($part1, $domain) = explode('@', $email);
+        [$part1, $domain] = explode('@', $email);
         $newEmail = '';
         $useRealChar = true;
 
@@ -296,7 +296,7 @@ class Utils
             $zxcvbn = new \Zxcvbn\Score([
                 'description_override' => [
                     'baseUrl' => \Yii::$app->params['zxcvbnApiBaseUrl'],
-                ]
+                ],
             ]);
             return $zxcvbn->getFull(['password' => $password])->toArray();
         } catch (\Exception $e) {

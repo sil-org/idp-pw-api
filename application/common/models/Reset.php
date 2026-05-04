@@ -52,14 +52,14 @@ class Reset extends ResetBase
 
                 [
                     ['type'], 'in', 'range' => [
-                        self::TYPE_PRIMARY, self::TYPE_METHOD, self::TYPE_SUPERVISOR
+                        self::TYPE_PRIMARY, self::TYPE_METHOD, self::TYPE_SUPERVISOR,
                     ],
-                    'message' => 'Reset type must be either ' . self::TYPE_PRIMARY . ' or ' . self::TYPE_METHOD .
-                        ' or ' . self::TYPE_SUPERVISOR . ' .',
+                    'message' => 'Reset type must be either ' . self::TYPE_PRIMARY . ' or ' . self::TYPE_METHOD
+                        . ' or ' . self::TYPE_SUPERVISOR . ' .',
                 ],
 
                 [
-                    ['email'], 'email'
+                    ['email'], 'email',
                 ],
             ],
             parent::rules()
@@ -167,7 +167,7 @@ class Reset extends ResetBase
             $log = [
                 'action' => 'reset send all',
                 'status' => 'error',
-                'error' => 'Exception during password reset.' . $t->getMessage()
+                'error' => 'Exception during password reset.' . $t->getMessage(),
             ];
             \Yii::error($log, __METHOD__);
         }
@@ -278,8 +278,8 @@ class Reset extends ResetBase
             $ccAddress,
             $this->user->id,
             self::TOPIC_RESET_EMAIL_SENT,
-            'Password reset email for ' . $this->user->getDisplayName() .
-            ' sent to ' . $toAddress,
+            'Password reset email for ' . $this->user->getDisplayName()
+            . ' sent to ' . $toAddress,
             [
                 'resetUrl' => $resetUrl,
                 'displayName' => $this->user->getDisplayName(),
@@ -349,8 +349,8 @@ class Reset extends ResetBase
     public static function calculateExpireTime(): string
     {
         $params = \Yii::$app->params;
-        if (! isset($params['reset']) || ! isset($params['reset']['lifetimeSeconds']) ||
-            ! is_integer($params['reset']['lifetimeSeconds'])) {
+        if (! isset($params['reset']) || ! isset($params['reset']['lifetimeSeconds'])
+            || ! is_integer($params['reset']['lifetimeSeconds'])) {
             throw new ServerErrorHttpException('Application configuration for reset lifetime is not set', 1458676224);
         }
 

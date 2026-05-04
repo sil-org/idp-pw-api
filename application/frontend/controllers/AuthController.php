@@ -36,11 +36,11 @@ class AuthController extends BaseRestController
                         'actions' => ['login', 'logout'],
                         'roles' => ['?'],
                     ],
-                ]
+                ],
             ],
             'authenticator' => [
-                'except' => ['login', 'logout'] // bypass authentication for /auth/login
-            ]
+                'except' => ['login', 'logout'], // bypass authentication for /auth/login
+            ],
         ]);
     }
 

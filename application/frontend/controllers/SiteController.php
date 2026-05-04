@@ -40,11 +40,11 @@ class SiteController extends BaseRestController
                         'actions' => ['system-status'],
                         'roles' => ['?'],
                     ],
-                ]
+                ],
             ],
             'authenticator' => [
-                'except' => ['system-status'] // bypass authentication for /site/system-status
-            ]
+                'except' => ['system-status'], // bypass authentication for /site/system-status
+            ],
         ]);
     }
 

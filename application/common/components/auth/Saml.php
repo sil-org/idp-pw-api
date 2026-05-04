@@ -90,7 +90,7 @@ class Saml extends Component implements AuthnInterface
          * Ensure all required properties are set
          */
         $required = [
-            'ssoUrl', 'sloUrl', 'attributeMap'
+            'ssoUrl', 'sloUrl', 'attributeMap',
         ];
         foreach ($required as $field) {
             if (is_null($this->$field)) {
@@ -328,9 +328,9 @@ class Saml extends Component implements AuthnInterface
             $suffix = $type == self::TYPE_PUBLIC ? '-----END CERTIFICATE-----' : '-----END PRIVATE KEY-----';
 
             $data = preg_replace('/\s+/', '', $data);
-            $data = $prefix . PHP_EOL .
-                chunk_split($data, 64) .
-                $suffix . PHP_EOL;
+            $data = $prefix . PHP_EOL
+                . chunk_split($data, 64)
+                . $suffix . PHP_EOL;
         }
 
         return $data;

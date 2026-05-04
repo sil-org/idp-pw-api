@@ -146,10 +146,10 @@ class Multiple extends Component implements PasswordStoreInterface
                 'app',
                 count($successes) > 0 ? 'Multiple.SetPartialSuccess' : 'Multiple.SetFailed',
                 [
-                        'successes' => implode($conjunction, $successes),
-                        'errors' => implode($conjunction, $errors),
-                        'supportName' => \Yii::$app->params['support']['name'],
-                        'supportEmail' => \Yii::$app->params['support']['email'],
+                    'successes' => implode($conjunction, $successes),
+                    'errors' => implode($conjunction, $errors),
+                    'supportName' => \Yii::$app->params['support']['name'],
+                    'supportEmail' => \Yii::$app->params['support']['email'],
                 ]
             );
             throw new PasswordStoreException($errorMessage, 1498162884);

@@ -22,14 +22,13 @@ use Yii;
  */
 class ResetBase extends \yii\db\ActiveRecord
 {
-
     /**
      * ENUM field values
      */
-    const TYPE_PRIMARY = 'primary';
-    const TYPE_METHOD = 'method';
-    const TYPE_SUPERVISOR = 'supervisor';
-    const TYPE_SPOUSE = 'spouse';
+    public const TYPE_PRIMARY = 'primary';
+    public const TYPE_METHOD = 'method';
+    public const TYPE_SUPERVISOR = 'supervisor';
+    public const TYPE_SPOUSE = 'spouse';
 
     /**
      * {@inheritdoc}

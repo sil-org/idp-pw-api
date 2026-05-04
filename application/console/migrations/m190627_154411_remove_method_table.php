@@ -33,7 +33,7 @@ class m190627_154411_remove_method_table extends Migration
                 'verification_attempts' => 'smallint null',
                 'verification_expires' => 'datetime null',
                 'created' => 'datetime not null',
-                'deleted_at' => 'datetime null'
+                'deleted_at' => 'datetime null',
             ],
             "ENGINE=InnoDB DEFAULT CHARSET=utf8"
         );

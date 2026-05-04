@@ -27,8 +27,8 @@ class PasswordController extends BaseRestController
                         'allow' => true,
                         'roles' => ['@'],
                     ],
-                ]
-            ]
+                ],
+            ],
         ]);
     }
 

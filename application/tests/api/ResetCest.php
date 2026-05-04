@@ -52,7 +52,7 @@ class ResetCest extends BaseCest
             'methods' => [
                 'type' => "primary",
                 'value' => "f****_l**t@o***********.o**",
-            ]
+            ],
         ]);
     }
 
@@ -66,7 +66,7 @@ class ResetCest extends BaseCest
             'methods' => [
                 'type' => "primary",
                 'value' => "f****_l**t@o***********.o**",
-            ]
+            ],
         ]);
     }
 
@@ -76,7 +76,7 @@ class ResetCest extends BaseCest
         $I->sendPUT('/reset/11111111111111111111111111111111', [
             'uid' => '22222222222222222222222222222222',
             'type' => 'phone',
-            'value' => '###-###-4567'
+            'value' => '###-###-4567',
         ]);
         $I->seeResponseCodeIs(400); // phone reset is not supported
     }
@@ -85,7 +85,7 @@ class ResetCest extends BaseCest
     {
         $I->wantTo('check response when making PUT request for updating a reset object method supervisor');
         $I->sendPUT('/reset/11111111111111111111111111111111', [
-            'type' => 'supervisor'
+            'type' => 'supervisor',
         ]);
         $I->seeResponseCodeIs(200);
     }

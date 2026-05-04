@@ -61,7 +61,7 @@ class PasswordCest extends BaseCest
         $I->seeResponseCodeIs(200);
         $I->seeResponseMatchesJsonType([
             'last_changed' => 'string:date',
-            'expires' => 'string:date'
+            'expires' => 'string:date',
         ]);
     }
 

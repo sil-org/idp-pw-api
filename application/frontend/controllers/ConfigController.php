@@ -28,11 +28,11 @@ class ConfigController extends BaseRestController
                         'actions' => ['index'],
                         'roles' => ['?'],
                     ],
-                ]
+                ],
             ],
             'authenticator' => [
-                'except' => ['index'] // bypass authentication for /config
-            ]
+                'except' => ['index'], // bypass authentication for /config
+            ],
         ]);
     }
 

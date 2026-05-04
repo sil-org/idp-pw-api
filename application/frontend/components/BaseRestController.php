@@ -31,7 +31,7 @@ class BaseRestController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['options']
+                        'actions' => ['options'],
                     ],
                 ],
                 'denyCallback' => function ($rule, $action) {
@@ -41,7 +41,7 @@ class BaseRestController extends Controller
                         throw new ForbiddenHttpException();
                     }
                 },
-            ]
+            ],
         ]);
     }
 

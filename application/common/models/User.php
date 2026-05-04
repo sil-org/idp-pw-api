@@ -50,7 +50,7 @@ class User extends UserBase implements IdentityInterface
                 ],
 
                 [
-                    ['email'], 'email'
+                    ['email'], 'email',
                 ],
             ],
             parent::rules()
@@ -148,8 +148,8 @@ class User extends UserBase implements IdentityInterface
                 'code' => $e->getCode(),
             ]);
             throw new ServerErrorHttpException(
-                'There was a problem retrieving your information from the personnel system. Please wait a few ' .
-                'minutes and try again.',
+                'There was a problem retrieving your information from the personnel system. Please wait a few '
+                . 'minutes and try again.',
                 1470164077
             );
         }
@@ -159,7 +159,7 @@ class User extends UserBase implements IdentityInterface
         if (! $user) {
             $user = new User();
             $user->uuid = $personnelUser->uuid;
-            $user->employee_id = (string)$personnelUser->employeeId;
+            $user->employee_id = (string) $personnelUser->employeeId;
             $user->first_name = $personnelUser->firstName;
             $user->last_name = $personnelUser->lastName;
             $user->display_name = $personnelUser->displayName;
@@ -263,11 +263,11 @@ class User extends UserBase implements IdentityInterface
             \Yii::error([
                 'action' => 'updateProfileForExistingUserWithEmailFromPersonnel',
                 'message' => sprintf(
-                    'When updating profile for existing user with email address % they could not be ' .
-                    'found in personnel so their email was updated to %s',
+                    'When updating profile for existing user with email address % they could not be '
+                    . 'found in personnel so their email was updated to %s',
                     $user->email,
                     $personnelUser->email
-                )
+                ),
             ]);
         }
 
@@ -598,12 +598,12 @@ class User extends UserBase implements IdentityInterface
 
         $secure = !in_array(YII_ENV, ['dev', 'test']);
         \Yii::$app->response->cookies->add(new \yii\web\Cookie([
-          'name' => 'access_token',
-          'value' => $accessToken,
-          'expire' => $this->access_token_expiration,
-          'httpOnly' => true, // Ensures the cookie is not accessible via JavaScript
-          'secure' => $secure,   // Ensures the cookie is sent only over HTTPS
-          'sameSite' => 'Lax', // Adjust as needed
+            'name' => 'access_token',
+            'value' => $accessToken,
+            'expire' => $this->access_token_expiration,
+            'httpOnly' => true, // Ensures the cookie is not accessible via JavaScript
+            'secure' => $secure,   // Ensures the cookie is sent only over HTTPS
+            'sameSite' => 'Lax', // Adjust as needed
         ]));
         return $accessToken;
     }

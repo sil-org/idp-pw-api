@@ -59,12 +59,12 @@ class MethodController extends BaseRestController
                         'matchCallback' => function () {
                             $user = \Yii::$app->user->identity;
                             return ($user->isAuthScopeFull());
-                        }
+                        },
                     ],
-                ]
+                ],
             ],
             'authenticator' => [
-                'except' => ['verify', 'move'] // bypass authentication for /method/{id}/verify and /method/move
+                'except' => ['verify', 'move'], // bypass authentication for /method/{id}/verify and /method/move
             ],
         ]);
     }
