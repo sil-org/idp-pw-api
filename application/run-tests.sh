@@ -29,7 +29,7 @@ fi
 apt-get update && apt-get install -y php-xdebug
 
 # Run codeception tests
-./vendor/bin/codecept run unit
+./vendor/bin/codecept run --fail-fast 1 unit
 
 # Run local behat tests
 ./vendor/bin/behat --config=tests/features/behat.yml --strict --profile=local
