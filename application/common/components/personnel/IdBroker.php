@@ -46,7 +46,7 @@ class IdBroker extends Component implements PersonnelInterface
      */
     private function assertRequiredAttributesPresent($userData)
     {
-        $required = ['uuid', 'first_name', 'last_name', 'email', 'employee_id', 'username', 'hide'];
+        $required = ['uuid', 'first_name', 'last_name', 'email', 'employee_id', 'username'];
 
         foreach ($required as $requiredAttr) {
             if (! array_key_exists($requiredAttr, $userData)) {
@@ -130,7 +130,6 @@ class IdBroker extends Component implements PersonnelInterface
             $pUser->employeeId = $response['employee_id'];
             $pUser->username = $response['username'];
             $pUser->supervisorEmail = $response['manager_email'] ?? null;
-            $pUser->hide = $response['hide'];
             $pUser->lastLogin = $response['last_login_utc'];
 
             return $pUser;

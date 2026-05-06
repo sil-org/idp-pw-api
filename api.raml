@@ -195,8 +195,6 @@ types:
       email: string
       auth_type:
         enum: [ login, reset ]
-      hide:
-        enum: [ yes, no ]
       last_login: string
       password_meta?: PasswordMeta
       manager_email?: string
@@ -208,7 +206,6 @@ types:
         "idp_username": "john_doe",
         "email": "john_doe@example.com",
         "auth_type": "login",
-        "hide": "no",
         "last_login": "2018-09-13T19:21:57Z",
         "password_meta": {
           "last_changed": "2018-09-13T19:21:57Z",
@@ -669,18 +666,5 @@ types:
       description: Request basic information for the user.
       responses:
         200:
-          body:
-            type: User
-    put:
-      description: >
-        Limited options for updating the user record. If no
-        properties are provided, no changes will be made.
-      body:
-        properties:
-          hide?:
-            enum: [ yes, no ]
-      responses:
-        200:
-          description: User information after changes have been made.
           body:
             type: User

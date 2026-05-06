@@ -2,9 +2,9 @@
 
 namespace tests\mock\personnel;
 
+use common\components\personnel\NotFoundException;
 use common\components\personnel\PersonnelInterface;
 use common\components\personnel\PersonnelUser;
-use common\components\personnel\NotFoundException;
 use yii\base\Component as YiiComponent;
 
 class Component extends YiiComponent implements PersonnelInterface
@@ -72,7 +72,6 @@ class Component extends YiiComponent implements PersonnelInterface
         $user->employeeId = $data['employeeId'];
         $user->username = $data['username'];
         $user->supervisorEmail = $data['supervisorEmail'];
-        $user->hide = empty($data['hide']) ? 'no' : $data['hide'];
 
         return $user;
     }

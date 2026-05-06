@@ -17,7 +17,6 @@ use Yii;
  * @property string|null $access_token
  * @property string|null $access_token_expiration
  * @property string|null $auth_type
- * @property string $hide
  * @property string|null $uuid
  * @property string|null $display_name
  *
@@ -30,8 +29,6 @@ class UserBase extends \yii\db\ActiveRecord
      */
     public const AUTH_TYPE_LOGIN = 'login';
     public const AUTH_TYPE_RESET = 'reset';
-    public const HIDE_NO = 'no';
-    public const HIDE_YES = 'yes';
 
     /**
      * {@inheritdoc}
@@ -48,13 +45,12 @@ class UserBase extends \yii\db\ActiveRecord
     {
         return [
             [['access_token', 'access_token_expiration', 'auth_type', 'uuid', 'display_name'], 'default', 'value' => null],
-            [['employee_id', 'first_name', 'last_name', 'idp_username', 'email', 'created', 'hide'], 'required'],
+            [['employee_id', 'first_name', 'last_name', 'idp_username', 'email', 'created'], 'required'],
             [['created', 'access_token_expiration'], 'safe'],
-            [['auth_type', 'hide'], 'string'],
+            [['auth_type'], 'string'],
             [['employee_id', 'first_name', 'last_name', 'idp_username', 'email', 'display_name'], 'string', 'max' => 255],
             [['access_token', 'uuid'], 'string', 'max' => 64],
             ['auth_type', 'in', 'range' => array_keys(self::optsAuthType())],
-            ['hide', 'in', 'range' => array_keys(self::optsHide())],
             [['employee_id'], 'unique'],
             [['email'], 'unique'],
             [['access_token'], 'unique'],
@@ -77,7 +73,6 @@ class UserBase extends \yii\db\ActiveRecord
             'access_token' => Yii::t('model', 'Access Token'),
             'access_token_expiration' => Yii::t('model', 'Access Token Expiration'),
             'auth_type' => Yii::t('model', 'Auth Type'),
-            'hide' => Yii::t('model', 'Hide'),
             'uuid' => Yii::t('model', 'Uuid'),
             'display_name' => Yii::t('model', 'Display Name'),
         ];
@@ -103,18 +98,6 @@ class UserBase extends \yii\db\ActiveRecord
         return [
             self::AUTH_TYPE_LOGIN => Yii::t('model', 'login'),
             self::AUTH_TYPE_RESET => Yii::t('model', 'reset'),
-        ];
-    }
-
-    /**
-     * column hide ENUM value labels
-     * @return string[]
-     */
-    public static function optsHide()
-    {
-        return [
-            self::HIDE_NO => Yii::t('model', 'no'),
-            self::HIDE_YES => Yii::t('model', 'yes'),
         ];
     }
 
@@ -150,39 +133,5 @@ class UserBase extends \yii\db\ActiveRecord
     public function setAuthTypeToReset()
     {
         $this->auth_type = self::AUTH_TYPE_RESET;
-    }
-
-    /**
-     * @return string
-     */
-    public function displayHide()
-    {
-        return self::optsHide()[$this->hide];
-    }
-
-    /**
-     * @return bool
-     */
-    public function isHideNo()
-    {
-        return $this->hide === self::HIDE_NO;
-    }
-
-    public function setHideToNo()
-    {
-        $this->hide = self::HIDE_NO;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isHideYes()
-    {
-        return $this->hide === self::HIDE_YES;
-    }
-
-    public function setHideToYes()
-    {
-        $this->hide = self::HIDE_YES;
     }
 }

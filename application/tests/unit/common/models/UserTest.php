@@ -2,10 +2,10 @@
 
 namespace tests\unit\common\models;
 
-use Sil\Codeception\TestCase\Test;
 use common\components\personnel\PersonnelUser;
 use common\models\Reset;
 use common\models\User;
+use Sil\Codeception\TestCase\Test;
 use tests\helpers\BrokerUtils;
 use tests\unit\fixtures\common\models\ResetFixture;
 use tests\unit\fixtures\common\models\UserFixture;
@@ -42,7 +42,6 @@ class UserTest extends Test
         $user->last_name = 'One';
         $user->idp_username = 'user_1456771651';
         $user->email = 'user-1456771651@domain.org';
-        $user->hide = 'no';
         if (! $user->save()) {
             $this->fail('Failed to create User: ' . print_r($user->getFirstErrors(), true));
         }
@@ -63,7 +62,6 @@ class UserTest extends Test
                 'expires' => '2016-06-15T19:00:32+00:00',
             ],
             'auth_type' => 'login',
-            'hide' => 'no',
         ];
 
         $user = $this->users('user1');
@@ -73,7 +71,6 @@ class UserTest extends Test
         $this->assertEquals($expected['idp_username'], $fields['idp_username']);
         $this->assertEquals($expected['email'], $fields['email']);
         $this->assertEquals($expected['auth_type'], $fields['auth_type']);
-        $this->assertEquals($expected['hide'], $fields['hide']);
     }
 
     public function testFindOrCreateException()
@@ -122,7 +119,6 @@ class UserTest extends Test
         $personnelData->displayName = $user->display_name;
         $personnelData->username = $user->idp_username;
         $personnelData->email = $user->email;
-        $personnelData->hide = $user->hide;
 
         /*
          * Make no changes and ensure it is not updated
@@ -154,10 +150,6 @@ class UserTest extends Test
         $this->assertTrue($changed);
 
         $personnelData->email = 'a' . $personnelData->email;
-        $changed = $user->updateProfileIfNeeded($personnelData);
-        $this->assertTrue($changed);
-
-        $personnelData->hide = ($personnelData->hide === 'no') ? 'yes' : 'no';
         $changed = $user->updateProfileIfNeeded($personnelData);
         $this->assertTrue($changed);
     }
