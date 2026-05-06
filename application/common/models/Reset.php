@@ -147,9 +147,8 @@ class Reset extends ResetBase
     /**
      * Make sure reset is not disabled, track attempt, and then send.
      * Send reset notification to appropriate method
-     * @throws \Exception
      */
-    public function send()
+    public function send(): void
     {
         /*
          * Track attempt and throw error if disabled or limit is reached
@@ -161,16 +160,14 @@ class Reset extends ResetBase
             return;
         }
 
-        try {
-            $this->sendAll();
-        } catch (\Throwable $t) {
-            $log = [
-                'action' => 'reset send all',
-                'status' => 'error',
-                'error' => 'Exception during password reset.' . $t->getMessage(),
-            ];
-            \Yii::error($log, __METHOD__);
+        $methods = Method::getVerifiedMethods($this->user->employee_id);
+        if ($methods !== null && $this->user->hasSupervisor()) {
+            $this->sendPrimary();
+            $this->sendSupervisor();
+            return;
         }
+
+        $this->sendAll();
     }
 
     private function sendPrimary()

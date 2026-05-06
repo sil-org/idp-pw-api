@@ -244,8 +244,8 @@ The chart below summarizes the test configuration.
 
 To run all tests, use `make test`.
 
-To run a single unit test:
+To run a single unit test with verbose output:
 
 ```
-docker compose run --rm unittest vendor/bin/codecept run tests/unit/common/models/PasswordTest.php:testBadBytes
+docker compose run --rm unittest vendor/bin/codecept -vv run tests/unit/common/models/PasswordTest.php:testBadBytes
 ```
