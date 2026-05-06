@@ -58,4 +58,15 @@ return [
         'verification_expires' => null,
         'created' => '2000-01-01 00:00:00',
     ],
+    'method7' => [
+        'id' => 7,
+        'uid' => '77777777777777777777777777777777',
+        'user_id' => 3,
+        'value' => 'email-777@example.org',
+        'verified' => 1,
+        'verification_code' => null,
+        'verification_attempts' => null,
+        'verification_expires' => null,
+        'created' => '2000-01-01 00:00:00',
+    ],
 ];
