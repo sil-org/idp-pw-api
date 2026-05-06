@@ -22,6 +22,9 @@ services:
 
   testdb:
     image: mariadb:10
+    volumes:
+      - ./db/certs:/certs:ro
+      - ./db/testdb.cnf:/etc/mysql/conf.d/my.cnf:ro
     environment:
       MYSQL_ROOT_PASSWORD: r00tp@ss!
       MYSQL_DATABASE: test
@@ -68,6 +71,7 @@ services:
     env_file:
       - ./common.env
       - ./test.env
+      - ./db/certs/test.env
     environment:
       MYSQL_HOST: testdb
       MYSQL_DATABASE: test
@@ -87,6 +91,7 @@ services:
     env_file:
       - ./common.env
       - ./test.env
+      - ./db/certs/test.env
     environment:
       MYSQL_HOST: testdb
       MYSQL_DATABASE: test
@@ -108,6 +113,7 @@ services:
       - ./test.env
       - path: ./local.env
         required: false
+      - ./db/certs/test.env
     environment:
       MYSQL_HOST: testdb
       MYSQL_DATABASE: test
@@ -130,6 +136,7 @@ services:
       - ./common.env
       - path: ./local.env
         required: false
+      - ./db/certs/test.env
     command: ["true"]
 
   zxcvbn:
