@@ -47,6 +47,17 @@ return [
         'verification_expires' => MySqlDateTime::relativeTime('+50 hours'),
         'created' => '2000-01-01 00:00:00',
     ],
+    'method6' => [
+        'id' => 6,
+        'uid' => '66666666666666666666666666666666',
+        'user_id' => 4,
+        'value' => 'email-1543358588@example.org',
+        'verified' => 1,
+        'verification_code' => null,
+        'verification_attempts' => null,
+        'verification_expires' => null,
+        'created' => '2000-01-01 00:00:00',
+    ],
     'method7' => [
         'id' => 6,
         'uid' => '77777777777777777777777777777777',
