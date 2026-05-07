@@ -1,4 +1,5 @@
 <?php
+
 use yii\helpers\Html as yHtml;
 
 /**
@@ -11,6 +12,7 @@ use yii\helpers\Html as yHtml;
  * @var string $displayName
  * @var string $supportName
  * @var string $supportEmail
+ * @var string $uiUrl
  */
 ?>
 <p>
@@ -18,16 +20,20 @@ use yii\helpers\Html as yHtml;
 </p>
 <p>
     <?= yHtml::encode($displayName) ?> recently requested a password change for their
-    <?= yHtml::encode($idpDisplayName) ?> Identity account. 
+    <?= yHtml::encode($idpDisplayName) ?> Identity account.
 </p>
 <p>
-    If this was you, please use the link below to reset your password. 
+    If this was you, please use the link below to reset your password.
 </p>
 <p>
-    If it's not you but you do know them, you may have been sent this link because they requested 
-    it sent to you - their recovery contact. You may provide the link for them to use, but <i>please 
-    contact them directly</i> to ensure that you are only providing the link to them and not to 
-    someone else. 
+    If it's not you but you do know them, you may have been sent this link because they requested
+    it sent to you - their recovery contact. You may provide the link for them to use, but <i>please
+    contact them directly</i> to ensure that you are only providing the link to them and not to
+    someone else.
+</p>
+<p>
+    If you are this person's supervisor or sponsor, please have them update their recovery contact
+    address in the <?= yHtml::a('profile manager', \Yii::$app->params['uiUrl']) ?>.
 </p>
 <p>
     <?= yHtml::a(yHtml::encode($resetUrl), $resetUrl) ?>
