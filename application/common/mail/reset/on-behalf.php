@@ -32,7 +32,7 @@ use yii\helpers\Html as yHtml;
     someone else.
 </p>
 <p>
-    If you are this person's supervisor or sponsor, please have them update their recovery contact
+    If you are this person's supervisor or sponsor, please have them update their password recovery
     address in the <?= yHtml::a('profile manager', \Yii::$app->params['uiUrl']) ?>.
 </p>
 <p>
