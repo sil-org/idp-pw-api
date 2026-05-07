@@ -2,7 +2,6 @@
 
 namespace frontend\controllers;
 
-use common\models\User;
 use frontend\components\BaseRestController;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
@@ -43,25 +42,5 @@ class UserController extends BaseRestController
     public function actionMe()
     {
         return \Yii::$app->user->identity;
-    }
-
-    /**
-     * @return null|\yii\web\IdentityInterface
-     */
-    public function actionUpdate()
-    {
-        /**
-         * @var User $user
-         */
-        $user = \Yii::$app->user->identity;
-
-        $hide = \Yii::$app->request->getBodyParam('hide');
-
-        if ($hide !== null) {
-            $user->hide = $hide;
-            $user->save();
-        }
-
-        return $user;
     }
 }

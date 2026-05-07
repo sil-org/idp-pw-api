@@ -71,7 +71,6 @@ class User extends UserBase implements IdentityInterface
             'idp_username',
             'email',
             'auth_type',
-            'hide',
             'last_login' => function () {
                 try {
                     $lastLogin = $this->getPersonnelUser()->lastLogin;
@@ -165,7 +164,6 @@ class User extends UserBase implements IdentityInterface
             $user->display_name = $personnelUser->displayName;
             $user->idp_username = $personnelUser->username;
             $user->email = $personnelUser->email;
-            $user->hide = $personnelUser->hide;
             $user->saveOrError('Unable to create new user', 1456760294);
         } else {
             $user->updateProfileIfNeeded($personnelUser);
@@ -190,7 +188,6 @@ class User extends UserBase implements IdentityInterface
             'display_name' => $personnelUser->displayName,
             'idp_username' => $personnelUser->username,
             'email' => $personnelUser->email,
-            'hide' => $personnelUser->hide,
         ];
 
         foreach ($properties as $property => $value) {
@@ -258,7 +255,6 @@ class User extends UserBase implements IdentityInterface
             $personnelUser->displayName = $user->display_name;
             $personnelUser->username = $user->idp_username;
             $personnelUser->email = sprintf('notfound-%s-%s', $user->email, time());
-            $personnelUser->hide = $user->hide;
 
             \Yii::error([
                 'action' => 'updateProfileForExistingUserWithEmailFromPersonnel',
@@ -641,22 +637,6 @@ class User extends UserBase implements IdentityInterface
     {
         if (! parent::beforeSave($insert)) {
             return false;
-        }
-
-        if ($this->getOldAttribute('hide') != $this->getAttribute('hide')) {
-            try {
-                $personnel = self::getPersonnelComponent();
-                $personnel->updateUser([
-                    'employee_id' => $this->employee_id,
-                    'hide' => $this->hide,
-                ]);
-            } catch (\Exception $e) {
-                \Yii::error([
-                    'action' => 'personnel update',
-                    'status' => 'error',
-                    'message' => $e->getMessage(),
-                ], __METHOD__);
-            }
         }
 
         return true;

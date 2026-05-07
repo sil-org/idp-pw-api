@@ -31,7 +31,6 @@ return [
     'Employee ID' => 'Identifiant d\'employé',
     'Expires' => 'Expiré',
     'First Name' => 'Nom',
-    'Hide' => 'Masquer',
     'ID' => 'ID',
     'Idp Username' => 'Nom d\'utilisateur IdP',
     'Last Name' => 'Nom De Famille',

@@ -51,10 +51,5 @@ class PersonnelUser
     /**
      * @var string
      */
-    public $hide;
-
-    /**
-     * @var string
-     */
     public $lastLogin;
 }

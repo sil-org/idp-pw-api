@@ -31,7 +31,6 @@ return [
     'Employee ID' => '직원 식별',
     'Expires' => '만료',
     'First Name' => '이름',
-    'Hide' => '숨기기',
     'ID' => '아이디',
     'Idp Username' => 'IdP 사용자 이름',
     'Last Name' => '성',

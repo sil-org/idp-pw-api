@@ -211,23 +211,6 @@ class ResetTest extends Test
         $this->assertEquals($attempts + 1, $reset->attempts);
     }
 
-    public function testSendUserWithHideFlag()
-    {
-        $reset = $this->resets('reset4');
-        $attempts = $reset->attempts;
-
-        $this->assertEquals(0, EmailUtils::getEmailFilesCount());
-
-        $reset->send();
-
-        $this->assertEquals(2, EmailUtils::getEmailFilesCount());
-        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated($reset->code));
-        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('first_last4@example.com'));
-        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('supervisor4@example.com'));
-        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('password change for your'));
-        $this->assertEquals($attempts + 1, $reset->attempts);
-    }
-
     public function testDisableIsDisabled()
     {
         $reset = $this->resets('reset1');

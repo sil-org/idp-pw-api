@@ -95,7 +95,7 @@ class UserCest extends BaseCest
         $I->wantTo('check response when making PUT request to /user/me with correct token');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
         $I->sendPUT('/user/me');
-        $I->seeResponseCodeIs(200);
+        $I->seeResponseCodeIs(405);
     }
 
     public function test12(ApiTester $I)
@@ -105,6 +105,4 @@ class UserCest extends BaseCest
         $I->sendPUT('/user/me');
         $I->seeResponseCodeIs(401);
     }
-
-    // TODO: test PUT with valid and invalid request body data
 }

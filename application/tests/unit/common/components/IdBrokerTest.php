@@ -2,9 +2,9 @@
 
 namespace tests\unit\common\components;
 
-use PHPUnit\Framework\TestCase;
 use common\components\personnel\IdBroker;
 use common\components\personnel\NotFoundException;
+use PHPUnit\Framework\TestCase;
 
 class IdBrokerTest extends TestCase
 {
@@ -22,7 +22,6 @@ class IdBrokerTest extends TestCase
             'active' => 'yes',
             'locked' => 'no',
             'last_login_utc' => '2017-07-01T12:30:00Z',
-            'hide' => 'no',
         ];
     }
 
@@ -142,7 +141,6 @@ class IdBrokerTest extends TestCase
             'username' => $mockReturnValue['username'],
             'email' => $mockReturnValue['email'],
             'supervisorEmail' => $mockReturnValue['manager_email'],
-            'hide' => $mockReturnValue['hide'],
             'lastLogin' => $mockReturnValue['last_login_utc'],
         ];
 
