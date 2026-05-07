@@ -180,12 +180,10 @@ services:
       SUPPORT_EMAIL: support@example.com
       EMAIL_SIGNATURE: Dummy Signature for Tests
       APP_ENV: test
-      MFA_TOTP_apiBaseUrl: not_needed_here
-      MFA_TOTP_apiKey: not_needed_here
-      MFA_TOTP_apiSecret: not_needed_here
-      MFA_WEBAUTHN_apiBaseUrl: not_needed_here
-      MFA_WEBAUTHN_apiKey: not_needed_here
-      MFA_WEBAUTHN_apiSecret: not_needed_here
+      MFA_TOTP_apiBaseUrl: https://example.com/
+      MFA_WEBAUTHN_apiBaseUrl: https://example.com/
+      MFA_API_KEY: not_needed_here
+      MFA_API_SECRET: not_needed_here
     healthcheck:
       test: curl --connect-timeout 5 http://localhost:80/site/status
       start_period: 1s
