@@ -80,7 +80,7 @@ services:
     volumes:
       - ./application:/data
     depends_on:
-      db:
+      testdb:
         condition: service_healthy
       zxcvbn:
         condition: service_started

@@ -51,10 +51,10 @@ basemodels:
 	docker compose run --rm cli ./rebuildbasemodels.sh
 
 yiimigratetestDb:
-	docker compose run --rm cli bash -c 'MYSQL_HOST=testdb MYSQL_DATABASE=test ./yii migrate --interactive=0'
+	docker compose run --rm unittest bash -c './yii migrate --interactive=0'
 
 yiimigratetestDblocal:
-	docker compose run --rm cli bash -c 'MYSQL_HOST=testdb MYSQL_DATABASE=test ./yii migrate --migrationPath=console/migrations-test/ --interactive=0'
+	docker compose run --rm unittest bash -c './yii migrate --migrationPath=console/migrations-test/ --interactive=0'
 
 rmTestDb:
 	docker compose kill testdb
