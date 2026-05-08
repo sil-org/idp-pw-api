@@ -588,52 +588,6 @@ types:
     responses:
       204:
   /{resetId}:
-    get:
-      securedBy: null
-      description: Request the reset object by its id.
-      responses:
-        200:
-          body:
-            type: Reset
-    put:
-      securedBy: null
-      description: >
-        Update the reset to use a different email. If `type` is `email`,
-        then this request is for an alternate recovery Method, and
-        `methodId` is required.
-      body:
-        properties:
-          type:
-            enum: [ primary, supervisor, email ]
-          methodId?: string
-      responses:
-        200:
-          body:
-            type: Reset
-        400:
-          description: >
-            The reset `type` was not provided or is not valid, or the
-            `methodId` parameter was not provided when required.
-          body:
-            type: Error
-        404:
-          description: >
-            The reset could not be found or the referenced Method has
-            not been verified.
-          body:
-            type: Error
-    /resend:
-      put:
-        securedBy: null
-        description: Request to resend verification email.
-        responses:
-          200:
-            body:
-              type: Reset
-          404:
-            description: Reset could not be found.
-            body:
-              type: Error
     /validate:
       put:
         securedBy: null

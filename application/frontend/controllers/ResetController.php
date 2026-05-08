@@ -40,21 +40,6 @@ class ResetController extends BaseRestController
     }
 
     /**
-     * @param String $uid
-     * @return Reset
-     * @throws NotFoundHttpException
-     */
-    public function actionView($uid)
-    {
-        $reset = Reset::findOne(['uid' => $uid]);
-        if ($reset === null) {
-            throw new NotFoundHttpException();
-        }
-
-        return $reset;
-    }
-
-    /**
      * Create new reset process
      * @return void
      * @throws BadRequestHttpException
@@ -133,71 +118,6 @@ class ResetController extends BaseRestController
         }
 
         \Yii::$app->response->statusCode = 204;
-    }
-
-    /**
-     * Update reset type/method and send verification
-     * @param string $uid
-     * @return Reset
-     * @throws BadRequestHttpException
-     * @throws NotFoundHttpException
-     * @throws \Exception
-     * @throws \yii\web\ServerErrorHttpException
-     * @throws \yii\web\TooManyRequestsHttpException
-     */
-    public function actionUpdate($uid)
-    {
-        /** @var Reset $reset */
-        $reset = Reset::findOne(['uid' => $uid]);
-        if ($reset === null) {
-            throw new NotFoundHttpException(
-                \Yii::t('app', 'Reset.NotFound'),
-                1462989590
-            );
-        }
-
-        $type = \Yii::$app->request->getBodyParam('type', null);
-        $methodId = \Yii::$app->request->getBodyParam('id', null);
-
-        if ($type === null) {
-            throw new BadRequestHttpException(
-                \Yii::t('app', 'Reset.MissingResetType'),
-                1462989664
-            );
-        }
-
-        /*
-         * Update type
-         */
-        $reset->setType($type, $methodId);
-
-        /*
-         * Send verification
-         */
-        $reset->send();
-
-        return $reset;
-    }
-
-    /**
-     * @param string $uid
-     * @return Reset
-     * @throws NotFoundHttpException
-     */
-    public function actionResend($uid)
-    {
-        /** @var Reset $reset */
-        $reset = Reset::findOne(['uid' => $uid]);
-        if ($reset === null) {
-            throw new NotFoundHttpException();
-        }
-
-        /*
-         * Resend verification
-         */
-        $reset->send();
-
-        return $reset;
     }
 
     /**

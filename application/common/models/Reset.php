@@ -5,7 +5,6 @@ namespace common\models;
 use common\helpers\Utils;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
-use yii\web\BadRequestHttpException;
 use yii\web\ServerErrorHttpException;
 use yii\web\TooManyRequestsHttpException;
 
@@ -16,10 +15,6 @@ use yii\web\TooManyRequestsHttpException;
  */
 class Reset extends ResetBase
 {
-    public const TYPE_PRIMARY = 'primary'; // Used for primary email address
-    public const TYPE_METHOD = 'method';
-    public const TYPE_SUPERVISOR = 'supervisor';
-
     public const TOPIC_RESET_EMAIL_SENT = 'Reset Email Sent';
     public const TOPIC_RESET_PHONE_SENT = 'Reset Phone Sent';
 
@@ -48,14 +43,6 @@ class Reset extends ResetBase
 
                 [
                     ['attempts'], 'default', 'value' => 0,
-                ],
-
-                [
-                    ['type'], 'in', 'range' => [
-                        self::TYPE_PRIMARY, self::TYPE_METHOD, self::TYPE_SUPERVISOR,
-                    ],
-                    'message' => 'Reset type must be either ' . self::TYPE_PRIMARY . ' or ' . self::TYPE_METHOD
-                        . ' or ' . self::TYPE_SUPERVISOR . ' .',
                 ],
 
                 [
@@ -95,7 +82,6 @@ class Reset extends ResetBase
             'action' => 'findOrCreate reset',
             'user_id' => $user->id,
             'user' => $user->email,
-            'type' => self::TYPE_PRIMARY,
             'ip_address' => 'initiated outside web request context',
         ];
 
@@ -114,11 +100,6 @@ class Reset extends ResetBase
              */
             $reset = new Reset();
             $reset->user_id = $user->id;
-            /*
-             * Only set type/method if creating so that on subsequent restarts of process
-             * it does not reset method to primary
-             */
-            $reset->type = self::TYPE_PRIMARY;
 
             /*
              * Save new Reset
@@ -126,13 +107,8 @@ class Reset extends ResetBase
             $reset->saveOrError('create new reset', \Yii::t('app', 'Reset.CreateFailure'));
 
             $log['reset_id'] = $reset->id;
-            $log['type'] = $reset->type;
         } else {
             $log['existing reset'] = 'yes';
-            /*
-             * change method back to primary if they are requesting to start reset again
-             */
-            $reset->setType(self::TYPE_PRIMARY);
         }
 
         $log['status'] = 'success';
@@ -154,11 +130,6 @@ class Reset extends ResetBase
          * Track attempt and throw error if disabled or limit is reached
          */
         $this->trackAttempt('send');
-
-        if ($this->type === self::TYPE_SUPERVISOR) {
-            $this->sendSupervisor();
-            return;
-        }
 
         $methods = Method::getVerifiedMethods($this->user->employee_id);
         if ($methods !== null && $this->user->hasSupervisor()) {
@@ -306,12 +277,7 @@ class Reset extends ResetBase
          * Track attempt and throw error if disabled or limit is reached
          */
         $this->trackAttempt('verify');
-
-        if ($this->isTypeEmail()) {
-            return Verification::isEmailCodeValid($this->code, $userProvided);
-        } else {
-            throw new \Exception('Unable to verify code because method type is invalid', 1462543005);
-        }
+        return Verification::isEmailCodeValid($this->code, $userProvided);
     }
 
     /**
@@ -325,17 +291,6 @@ class Reset extends ResetBase
         $this->expires = self::calculateExpireTime();
         $this->saveOrError('restart reset');
         $this->send();
-    }
-
-    /**
-     * Check if reset is using an email type of verification
-     * @return bool
-     */
-    public function isTypeEmail()
-    {
-        return ($this->type === self::TYPE_PRIMARY
-            || $this->type === self::TYPE_SUPERVISOR
-            || $this->type === self::TYPE_METHOD);
     }
 
     /**
@@ -397,7 +352,6 @@ class Reset extends ResetBase
             'reset_id' => $this->id,
             'attempts' => $this->attempts,
             'user' => $this->user->email,
-            'type' => $this->type,
             'disable_until' => $this->disable_until,
             'status' => 'success',
         ];
@@ -422,7 +376,6 @@ class Reset extends ResetBase
             'action' => 'enable reset',
             'reset_id' => $this->id,
             'status' => 'success',
-            'type' => $this->type,
             'user' => $this->user->email,
         ]);
     }
@@ -453,64 +406,6 @@ class Reset extends ResetBase
                 $this->disable();
             }
         }
-    }
-
-    public function setType($type, $methodUid = null)
-    {
-        $previousType = $this->type;
-        /*
-         * If type is not method, update or throw error
-         */
-        if (in_array($type, [self::TYPE_SUPERVISOR, self::TYPE_PRIMARY])) {
-            $this->type = $type;
-            $this->email = null;
-        } elseif ($type == self::TYPE_METHOD || $type == Method::TYPE_EMAIL) {
-            /*
-             * Method::TYPE_EMAIL is included because that type is identified by the UI
-             */
-
-            /*
-             * If type is method but methodId is missing, throw error
-             */
-            if ($methodUid === null) {
-                throw new BadRequestHttpException(
-                    \Yii::t('app', 'Reset.MissingMethodUID'),
-                    1462988984
-                );
-            }
-
-            /*
-             * Make sure user owns requested method and it is verified before update
-             */
-            $method = Method::getOneVerifiedMethod($methodUid, $this->user->employee_id);
-            $this->type = self::TYPE_METHOD;
-            $this->email = $method['value'];
-        } else {
-            throw new BadRequestHttpException(
-                \Yii::t('app', 'Reset.UnknownType'),
-                1462989489
-            );
-        }
-
-        // NOTE: We stopped changing the code here so that, if someone requests
-        // a subsequent reset while an existing one is not yet expired, the same
-        // code will be used. That way, clicking the link in the first email
-        // will still work.
-
-        /*
-         * Save changes
-         */
-        $this->saveOrError('Set type of reset', \Yii::t('app', 'Reset.UpdateTypeError'));
-
-        \Yii::info([
-            'action' => 'change reset',
-            'attempts' => $this->attempts,
-            'previous_type' => $previousType,
-            'reset_id' => $this->id,
-            'status' => 'success',
-            'type' => $this->type,
-            'user' => $this->user->email,
-        ]);
     }
 
     /**
