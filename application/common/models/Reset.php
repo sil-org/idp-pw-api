@@ -132,7 +132,7 @@ class Reset extends ResetBase
         $this->trackAttempt('send');
 
         $methods = Method::getVerifiedMethods($this->user->employee_id);
-        if ($methods !== null && $this->user->hasSupervisor()) {
+        if (empty($methods) && $this->user->hasSupervisor()) {
             $this->sendPrimary();
             $this->sendSupervisor();
             return;
