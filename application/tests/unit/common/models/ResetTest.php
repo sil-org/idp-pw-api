@@ -120,7 +120,7 @@ class ResetTest extends Test
 
     public function testSendPrimaryNoMethods()
     {
-        $reset = $this->resets('reset1');
+        $reset = $this->resets('reset2');
         $attempts = $reset->attempts;
 
         $this->assertEquals(0, EmailUtils::getEmailFilesCount());
@@ -130,7 +130,7 @@ class ResetTest extends Test
         $this->assertEquals(2, EmailUtils::getEmailFilesCount());
         $this->assertTrue(EmailUtils::hasEmailFileBeenCreated($reset->code));
         $this->assertTrue(EmailUtils::hasEmailFileBeenCreated($reset->user->email));
-        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('supervisor@domain.org'));
+        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('supervisor2@example.com'));
         $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('password change for your'));
         $this->assertEquals($attempts + 1, $reset->attempts);
 
@@ -209,7 +209,7 @@ class ResetTest extends Test
 
     public function testSendSupervisorNoSupervisor()
     {
-        $reset = $this->resets('reset2');
+        $reset = $this->resets('reset3');
         $reset->type = Reset::TYPE_SUPERVISOR;
 
         $this->assertEquals(0, EmailUtils::getEmailFilesCount());
@@ -249,7 +249,7 @@ class ResetTest extends Test
         $this->assertEquals(2, EmailUtils::getEmailFilesCount());
         $this->assertTrue(EmailUtils::hasEmailFileBeenCreated($reset->code));
         $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('first_last4@example.com'));
-        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('supervisor4@example.com'));
+        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('email-1543358588@example.org'));
         $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('password change for your'));
         $this->assertEquals($attempts + 1, $reset->attempts);
     }
