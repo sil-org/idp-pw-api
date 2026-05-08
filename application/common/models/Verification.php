@@ -53,6 +53,7 @@ class Verification extends Model
                 'supportName' => \Yii::$app->params['support']['name'],
                 'supportEmail' => \Yii::$app->params['support']['email'],
                 'emailSignature' => \Yii::$app->params['emailSignature'],
+                'uiUrl' => \Yii::$app->params['uiUrl'],
             ],
             $additionalEmailParameters
         );

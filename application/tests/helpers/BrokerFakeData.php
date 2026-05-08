@@ -17,7 +17,7 @@ return [
         'email' => 'first_last2@domain.com',
         'employee_id' => '222222',
         'username' => 'first2_last2',
-        'manager_email' => null,
+        'manager_email' => 'supervisor2@example.com',
     ],
     [
         'first_name' => 'First3',
