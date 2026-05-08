@@ -1,4 +1,5 @@
 <?php
+
 use yii\helpers\Html as yHtml;
 
 /**
@@ -10,6 +11,7 @@ use yii\helpers\Html as yHtml;
  * @var string $emailSignature
  * @var string $supportName
  * @var string $supportEmail
+ * @var string $uiUrl
  */
 ?>
 <p>

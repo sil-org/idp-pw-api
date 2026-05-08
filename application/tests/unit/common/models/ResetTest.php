@@ -2,6 +2,7 @@
 
 namespace tests\unit\common\models;
 
+use common\models\Method;
 use common\models\Reset;
 use common\models\User;
 use Sil\Codeception\TestCase\Test;
@@ -119,7 +120,7 @@ class ResetTest extends Test
 
     public function testSendPrimaryNoMethods()
     {
-        $reset = $this->resets('reset1');
+        $reset = $this->resets('reset2');
         $attempts = $reset->attempts;
 
         $this->assertEquals(0, EmailUtils::getEmailFilesCount());
@@ -129,7 +130,7 @@ class ResetTest extends Test
         $this->assertEquals(2, EmailUtils::getEmailFilesCount());
         $this->assertTrue(EmailUtils::hasEmailFileBeenCreated($reset->code));
         $this->assertTrue(EmailUtils::hasEmailFileBeenCreated($reset->user->email));
-        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('supervisor@domain.org'));
+        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('supervisor2@example.com'));
         $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('password change for your'));
         $this->assertEquals($attempts + 1, $reset->attempts);
 
@@ -163,6 +164,31 @@ class ResetTest extends Test
         $this->assertEquals($attempts + 2, $reset->attempts);
     }
 
+    public function testSendPrimaryWithMethodsWithSupervisor()
+    {
+        $reset = $this->resets('reset1');
+        $attempts = $reset->attempts;
+
+        $this->assertEquals(0, EmailUtils::getEmailFilesCount());
+
+        $reset->send();
+
+        $this->assertEquals(3, EmailUtils::getEmailFilesCount());
+        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated($reset->code));
+        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated($reset->user->email));
+        $methods = Method::getVerifiedMethods($reset->user->employee_id);
+        $this->assertNotEmpty($methods);
+        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated($methods[0]['value']));
+        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('password change for your'));
+        $this->assertEquals($attempts + 1, $reset->attempts);
+
+        $reset->send();
+
+        $this->assertEquals(6, EmailUtils::getEmailFilesCount());
+        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated($reset->code));
+        $this->assertEquals($attempts + 2, $reset->attempts);
+    }
+
     public function testSendSupervisorHasSupervisor()
     {
         $reset = $this->resets('reset1');
@@ -183,7 +209,7 @@ class ResetTest extends Test
 
     public function testSendSupervisorNoSupervisor()
     {
-        $reset = $this->resets('reset2');
+        $reset = $this->resets('reset3');
         $reset->type = Reset::TYPE_SUPERVISOR;
 
         $this->assertEquals(0, EmailUtils::getEmailFilesCount());
