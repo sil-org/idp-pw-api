@@ -4,19 +4,41 @@ namespace frontend\controllers;
 
 use common\components\personnel\NotFoundException;
 use common\helpers\Utils;
-use common\models\Reset;
 use common\models\User;
+use Exception;
 use frontend\components\BaseRestController;
+use Sil\Idp\IdBroker\Client\IdBrokerClient;
+use Sil\Idp\IdBroker\Client\ServiceException;
+use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
-use yii\helpers\Json;
 use yii\web\BadRequestHttpException;
 use yii\web\HttpException;
-use yii\web\NotFoundHttpException;
-use yii\web\ServerErrorHttpException;
 
 class ResetController extends BaseRestController
 {
+    public IdBrokerClient $idBrokerClient;
+
+    /**
+     * @throws Exception
+     */
+    public function init(): void
+    {
+        parent::init();
+        $config = Yii::$app->params['idBrokerConfig'];
+        if (empty($config['baseUrl']) || empty($config['accessToken'])) {
+            throw new Exception('ID_BROKER_baseURL and ID_BROKER_accessToken are required', 1778752282);
+        }
+        $this->idBrokerClient = new IdBrokerClient(
+            $config['baseUrl'],
+            $config['accessToken'],
+            [
+                IdBrokerClient::TRUSTED_IPS_CONFIG => $config['validIpRanges'] ?? [],
+                IdBrokerClient::ASSERT_VALID_BROKER_IP_CONFIG => $config['assertValidBrokerIp'] ?? true,
+            ]
+        );
+    }
+
     /**
      * Access Control Filter
      * NEEDS TO BE UPDATED FOR EVERY ACTION
@@ -40,19 +62,19 @@ class ResetController extends BaseRestController
     }
 
     /**
-     * Create new reset process
+     * Create new password reset. Calls the ID Broker to request a new Reset record and send one or more email
+     * messages containing a link to click, which will direct the user to the Validate action in this controller.
      * @return void
      * @throws BadRequestHttpException
-     * @throws NotFoundHttpException
-     * @throws ServerErrorHttpException
+     * @throws ServiceException
      */
     public function actionCreate(): void
     {
-        $username = trim(\Yii::$app->request->getBodyParam('username', ''));
-        $verificationToken = trim(\Yii::$app->request->getBodyParam('verification_token', ''));
+        $username = trim(Yii::$app->request->getBodyParam('username', ''));
+        $verificationToken = trim(Yii::$app->request->getBodyParam('verification_token', ''));
 
         if ($username === '') {
-            throw new BadRequestHttpException(\Yii::t('app', 'Reset.MissingUsername'));
+            throw new BadRequestHttpException(Yii::t('app', 'Reset.MissingUsername'));
         }
 
         /*
@@ -60,153 +82,47 @@ class ResetController extends BaseRestController
          * This will throw an exception if not successful, checking response to
          * be double sure an exception is thrown.
          */
-        if (\Yii::$app->params['recaptcha']['required']) {
+        if (Yii::$app->params['recaptcha']['required']) {
             if ($verificationToken === '') {
-                throw new BadRequestHttpException(\Yii::t('app', 'Reset.MissingRecaptchaCode'));
+                throw new BadRequestHttpException(Yii::t('app', 'Reset.MissingRecaptchaCode'));
             }
 
-            $clientIp = Utils::getClientIp(\Yii::$app->request);
+            $clientIp = Utils::getClientIp(Yii::$app->request);
             if (!Utils::isRecaptchaResponseValid($verificationToken, $clientIp)) {
-                throw new BadRequestHttpException(\Yii::t('app', 'Reset.RecaptchaFailedVerification'));
+                throw new BadRequestHttpException(Yii::t('app', 'Reset.RecaptchaFailedVerification'));
             }
         }
 
-        /*
-         * Check if $username looks like an email address
-         */
-        $usernameIsEmail = false;
-        if (substr_count($username, '@')) {
-            $usernameIsEmail = true;
-        }
+        $this->idBrokerClient->createReset($username);
 
-        /*
-         * Find or create user
-         */
-        $user = null;
+        Yii::$app->response->statusCode = 204;
+    }
+
+    /**
+     * Validate reset code. If successful, a limited-access cookie will be set.
+     * @param string $uuid
+     * @return void
+     * @throws HttpException
+     * @throws NotFoundException
+     * @throws Exception
+     */
+    public function actionValidate(string $uuid): void
+    {
         try {
-            if ($usernameIsEmail) {
-                $user = User::findOrCreate(null, $username);
-            } else {
-                $user = User::findOrCreate($username);
-            }
-        } catch (NotFoundException $e) {
-            // ignore this to mitigate user enumeration attack
-        } catch (\Exception $e) {
-            \Yii::error([
-                'action' => 'create reset',
-                'username' => $username,
-                'status' => 'error',
-                'error' => $e->getMessage(),
-            ]);
-            throw new ServerErrorHttpException(
-                \Yii::t('app', 'Reset.CreateFailure'),
-                1469036552
-            );
+            $brokerResponse = $this->idBrokerClient->verifyReset($uuid);
+        } catch (ServiceException $e) {
+            throw new HttpException($e->httpStatusCode);
         }
 
-        /*
-         * Find or create a reset
-         */
-        if ($user !== null && !$user->isLocked()) {
-            $reset = Reset::findOrCreate($user);
+        $user = User::findOrCreate(null, null, $brokerResponse['employee_id']);
 
-            if ($reset->isExpired()) {
-                $reset->restart();
-            } else {
-                $reset->send();
-            }
-        }
+        $user->createAccessToken(User::AUTH_TYPE_RESET);
 
-        \Yii::$app->response->statusCode = 204;
-    }
-
-    /**
-     * Validate reset code. Logs user in if successful
-     * @param string $uid
-     * @return null
-     * @throws BadRequestHttpException
-     * @throws NotFoundHttpException
-     * @throws ServerErrorHttpException
-     * @throws \Exception
-     * @throws \Throwable
-     */
-    public function actionValidate($uid)
-    {
-        /** @var Reset $reset */
-        $reset = Reset::findOne(['uid' => $uid]);
-        if ($reset === null) {
-            throw new NotFoundHttpException();
-        }
-
-        $log = [
-            'action' => 'Validate reset',
-            'reset_id' => $reset->id,
-            'type' => $reset->type,
-            'user' => $reset->user->email,
-        ];
-
-        if ($reset->isUserProvidedCodeCorrect($this->getCodeFromRequestBody())) {
-            if ($reset->isExpired()) {
-                $reset->restart();
-                throw new HttpException(410);
-            }
-
-            $ipAddress = Utils::getClientIp(\Yii::$app->request);
-
-            $log['attempts'] = $reset->attempts;
-            $log['ip_address'] = $ipAddress;
-            $log['method_value'] = $reset->getMaskedValue();
-            $log['status'] = 'success';
-
-            /*
-             * Reset verified successfully, create access token for user
-             */
-            try {
-                $reset->user->createAccessToken(User::AUTH_TYPE_RESET);
-
-                \Yii::info($log);
-
-                /*
-                 * Delete reset record, log errors, but let user proceed
-                 */
-                if (!$reset->delete()) {
-                    \Yii::warning([
-                        'action' => 'delete reset after validation',
-                        'reset_id' => $reset->id,
-                        'status' => 'error',
-                        'error' => Json::encode($reset->getFirstErrors()),
-                    ]);
-                }
-                return null;
-
-            } catch (\Exception $e) {
-                $log['status'] = 'error';
-                $log['error'] = 'Unable to log user in after successful reset verification';
-                \Yii::error($log);
-                throw $e;
-            }
-        }
-
-        $log['attempts'] = $reset->attempts;
-        $log['status'] = 'error';
-        $log['error'] = 'Reset code verification failed';
-        \Yii::warning($log);
-        throw new BadRequestHttpException(
-            \Yii::t('app', 'Reset.InvalidCode'),
-            1462991098
-        );
-    }
-
-    /**
-     * @return string
-     * @throws BadRequestHttpException
-     */
-    protected function getCodeFromRequestBody(): string
-    {
-        $code = trim(\Yii::$app->request->getBodyParam('code', ''));
-        if ($code === '') {
-            throw new BadRequestHttpException(\Yii::t('app', 'Reset.MissingCode'), 1462989866);
-        }
-        return $code;
+        Yii::info([
+        'action' => 'Validate reset',
+            'status' => 'success',
+            'employee_id' => $user->employee_id,
+            'ip_address' => Utils::getClientIp(Yii::$app->request),
+        ]);
     }
 }
