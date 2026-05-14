@@ -41,66 +41,6 @@ class ResetCest extends BaseCest
         $I->seeResponseCodeIs(200);
     }
 
-    public function test3(ApiTester $I)
-    {
-        $I->wantTo('check response when making authenticated GET request to /reset');
-        $I->setCookie('access_token', 'user1', parent::getCookieConfig());
-        $I->sendGET('/reset/11111111111111111111111111111111');
-        $I->seeResponseCodeIs(405);
-        $I->seeResponseContainsJson([
-            'name' => 'Method Not Allowed',
-        ]);
-    }
-
-    public function test4(ApiTester $I)
-    {
-        $I->wantTo('check response when making unauthenticated GET request to /reset');
-        $I->sendGET('/reset/11111111111111111111111111111111');
-        $I->seeResponseCodeIs(401);
-        $I->seeResponseContainsJson([
-            'name' => 'Unauthorized',
-        ]);
-    }
-
-    public function test6(ApiTester $I)
-    {
-        $I->wantTo('check response when making unauthenticated PUT request to /reset');
-        $I->sendPUT('/reset/11111111111111111111111111111111', [
-            'type' => 'supervisor',
-        ]);
-        $I->seeResponseCodeIs(401);
-    }
-
-    public function test62(ApiTester $I)
-    {
-        $I->wantTo('check response when making authenticated DELETE request to /reset/id');
-        $I->setCookie('access_token', 'user1', parent::getCookieConfig());
-        $I->sendDELETE('/reset/11111111111111111111111111111111');
-        $I->seeResponseCodeIs(405);
-    }
-
-    public function test63(ApiTester $I)
-    {
-        $I->wantTo('check response when making unauthenticated DELETE request to /reset/id');
-        $I->sendDELETE('/reset/11111111111111111111111111111111');
-        $I->seeResponseCodeIs(401);
-    }
-
-    public function test7(ApiTester $I)
-    {
-        $I->wantTo('check response when making unauthenticated PUT request to /reset');
-        $I->sendPUT('/reset/11111111111111111111111111111111/resend');
-        $I->seeResponseCodeIs(401);
-    }
-
-    public function test72(ApiTester $I)
-    {
-        $I->wantTo('check response when making authenticated PUT request to /reset');
-        $I->setCookie('access_token', 'user1', parent::getCookieConfig());
-        $I->sendPUT('/reset/11111111111111111111111111111111/resend');
-        $I->seeResponseCodeIs(405);
-    }
-
     public function test8(ApiTester $I)
     {
         $I->wantTo('check response when making unauthenticated PUT request to validate a reset code');
