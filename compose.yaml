@@ -166,6 +166,7 @@ services:
       - ./dockerbuild/broker/m381901_235959_insert_test_data.php:/app/console/migrations/m381901_235959_insert_test_data.php
       - ./dockerbuild/broker/User.php:/app/console/migrations/User.php
       - ./dockerbuild/broker/Method.php:/app/console/migrations/Method.php
+      - ./dockerbuild/broker/Reset.php:/app/console/migrations/Reset.php
     environment:
       EMAILER_CLASS: \Sil\SilIdBroker\Behat\Context\fakes\FakeEmailer
       IDP_NAME: idp1

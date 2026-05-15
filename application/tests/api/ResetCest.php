@@ -41,54 +41,34 @@ class ResetCest extends BaseCest
         $I->seeResponseCodeIs(200);
     }
 
-    public function test8(ApiTester $I)
+    public function test800(ApiTester $I)
     {
         $I->wantTo('check response when making unauthenticated PUT request to validate a reset code');
-        $I->sendPUT('/reset/33333333333333333333333333333333/validate', ['code' => '333']);
+        $I->sendPUT('/reset/11111111111111111111111111111111/validate');
         $I->seeResponseCodeIs(200);
     }
 
-    public function test81(ApiTester $I)
+    public function test810(ApiTester $I)
     {
         $I->wantTo('check response when making unauthenticated PUT request to validate an expired reset code');
-        $I->sendPUT('/reset/33333333333333333333333333333334/validate', ['code' => '444']);
+        $I->sendPUT('/reset/22222222222222222222222222222222/validate');
         $I->seeResponseCodeIs(410);
     }
 
-    public function test812(ApiTester $I)
-    {
-        $I->wantTo('check response on unauthenticated PUT request to validate an expired, incorrect reset code');
-        $I->sendPUT('/reset/33333333333333333333333333333334/validate', ['code' => 'xxx']);
-        $I->seeResponseCodeIs(400);
-    }
-
-    public function test82(ApiTester $I)
+    public function test820(ApiTester $I)
     {
         $I->wantTo('check response when making authenticated PUT request to validate a reset code');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
-        $I->sendPUT('/reset/33333333333333333333333333333333/validate', ['code' => '333']);
+        $I->sendPUT('/reset/33333333333333333333333333333333/validate');
         $I->seeResponseCodeIs(200);
     }
 
-    public function test83(ApiTester $I)
+    public function test830(ApiTester $I)
     {
         $I->wantTo('check response when making authenticated DELETE request to reset/id/validate');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
-        $I->sendDELETE('/reset/33333333333333333333333333333333/validate', ['code' => '333']);
+        $I->sendDELETE('/reset/44444444444444444444444444444444/validate');
         $I->seeResponseCodeIs(405);
-    }
-
-    public function test9(ApiTester $I)
-    {
-        $I->wantTo('check response when making multiple authenticated PUT request to validate a reset code');
-        for ($i = 0; $i < 10; $i++) {
-            $I->sendPUT('/reset/33333333333333333333333333333334/validate', ['code' => '344']);
-            if ($i < 9) {
-                $I->seeResponseCodeIs(400);
-            } else {
-                $I->seeResponseCodeIs(429);
-            }
-        }
     }
 
     public function test91(ApiTester $I)
