@@ -119,7 +119,7 @@ class ResetController extends BaseRestController
         $user->createAccessToken(User::AUTH_TYPE_RESET);
 
         Yii::info([
-        'action' => 'Validate reset',
+            'action' => 'Validate reset',
             'status' => 'success',
             'employee_id' => $user->employee_id,
             'ip_address' => Utils::getClientIp(Yii::$app->request),
