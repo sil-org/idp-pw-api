@@ -599,9 +599,9 @@ types:
           200:
             description: >
               Reset was validated. Subsequent API calls will use a http only cookie for the access token.
-          410:
+          404:
             description: >
-              The code has expired.
+              The reset was not found or has expired.
 /site:
   /system-status:
     get:

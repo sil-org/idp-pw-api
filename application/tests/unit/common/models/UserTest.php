@@ -3,18 +3,15 @@
 namespace tests\unit\common\models;
 
 use common\components\personnel\PersonnelUser;
-use common\models\Reset;
 use common\models\User;
 use Sil\Codeception\TestCase\Test;
 use tests\helpers\BrokerUtils;
-use tests\unit\fixtures\common\models\ResetFixture;
 use tests\unit\fixtures\common\models\UserFixture;
 
 /**
  * Class UserTest
  * @package tests\unit\common\models
  * @method User users($key)
- * @method Reset resets($key)
  */
 class UserTest extends Test
 {
@@ -28,7 +25,6 @@ class UserTest extends Test
     {
         return [
             'users' => UserFixture::class,
-            'resets' => ResetFixture::class,
         ];
     }
 

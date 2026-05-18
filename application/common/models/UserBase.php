@@ -19,8 +19,6 @@ use Yii;
  * @property string|null $auth_type
  * @property string|null $uuid
  * @property string|null $display_name
- *
- * @property Reset $reset
  */
 class UserBase extends \yii\db\ActiveRecord
 {
@@ -77,17 +75,6 @@ class UserBase extends \yii\db\ActiveRecord
             'display_name' => Yii::t('model', 'Display Name'),
         ];
     }
-
-    /**
-     * Gets query for [[Reset]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getReset()
-    {
-        return $this->hasOne(Reset::class, ['user_id' => 'id']);
-    }
-
 
     /**
      * column auth_type ENUM value labels
