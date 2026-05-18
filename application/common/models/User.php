@@ -478,7 +478,7 @@ class User extends UserBase implements IdentityInterface
 
         if ($this->hasSupervisor()) {
             $methods[] = [
-                'type' => method::TYPE_SUPERVISOR,
+                'type' => Method::TYPE_SUPERVISOR,
                 'value' => $this->getSupervisorEmail(),
             ];
         }
