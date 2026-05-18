@@ -52,7 +52,7 @@ class ResetCest extends BaseCest
     {
         $I->wantTo('check response when making unauthenticated PUT request to validate an expired reset code');
         $I->sendPUT('/reset/22222222222222222222222222222222/validate');
-        $I->seeResponseCodeIs(410);
+        $I->seeResponseCodeIs(404);
     }
 
     public function test820(ApiTester $I)

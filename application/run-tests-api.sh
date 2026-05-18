@@ -19,7 +19,8 @@ make-ssl-cert generate-default-snakeoil
 apache2ctl start
 
 # Run codeception tests
-/data/vendor/bin/codecept run api --debug
+/data/vendor/bin/codecept run api
+#/data/vendor/bin/codecept run api --debug
 TESTRESULTS_API=$?
 
 echo "Note: If there are unexpected errors, try 'make clean' or manually redo id-broker test migration."
