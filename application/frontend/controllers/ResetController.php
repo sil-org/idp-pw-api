@@ -51,12 +51,13 @@ class ResetController extends BaseRestController
                 'rules' => [
                     [
                         'allow' => true,
-                        'roles' => ['?'],
+                        'actions' => ['create', 'validate'],
+                        'roles' => ['@', '?'],
                     ],
                 ],
             ],
             'authenticator' => [
-                'only' => [''], // Bypass authentication for all actions
+                'optional' => ['create', 'validate'], // bypass authentication for specified routes
             ],
         ]);
     }
