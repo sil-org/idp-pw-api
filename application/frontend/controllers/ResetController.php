@@ -67,7 +67,7 @@ class ResetController extends BaseRestController
      * messages containing a link to click, which will direct the user to the Validate action in this controller.
      * @return void
      * @throws BadRequestHttpException
-     * @throws ServiceException
+     * @throws HttpException
      */
     public function actionCreate(): void
     {
@@ -94,7 +94,11 @@ class ResetController extends BaseRestController
             }
         }
 
-        $this->idBrokerClient->createReset($username);
+        try {
+            $this->idBrokerClient->createReset($username);
+        } catch (ServiceException $e) {
+            throw new HttpException($e->httpStatusCode);
+        }
 
         Yii::$app->response->statusCode = 204;
     }
