@@ -571,11 +571,7 @@ types:
   post:
     securedBy: null
     description: |
-      Initiate a password reset.
-      Sends reset email to primary email address with a link like
-      `https://idp-pw.local/#/recovery/verify/{resetUuid}/0`
-      Responds with id of reset object and all available email addresses
-      for the user.
+      Requests a password reset to be initiated by the connected ID Broker.
     body:
       properties:
         username:
@@ -587,14 +583,11 @@ types:
           type: string
     responses:
       204:
-  /{resetId}:
+  /{uuid}:
     /validate:
       put:
         securedBy: null
-        description: Validate reset UUID to complete password reset process
-        body:
-          properties:
-            code: string
+        description: Validate reset UUID to complete password reset process.
         responses:
           200:
             description: >
