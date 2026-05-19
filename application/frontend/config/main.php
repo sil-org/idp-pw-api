@@ -132,14 +132,9 @@ return [
                 /*
                  * Reset routes
                  */
-                'GET /reset/' . UID_ROUTE_PATTERN => 'reset/view',
                 'POST /reset' => 'reset/create',
-                'PUT /reset/' . UID_ROUTE_PATTERN => 'reset/update',
-                'PUT /reset/' . UID_ROUTE_PATTERN . '/resend' => 'reset/resend',
                 'PUT /reset/' . UID_ROUTE_PATTERN . '/validate' => 'reset/validate',
                 'OPTIONS /reset' => 'reset/options',
-                'OPTIONS /reset/' . UID_ROUTE_PATTERN => 'reset/options',
-                'OPTIONS /reset/' . UID_ROUTE_PATTERN . '/resend' => 'reset/options',
                 'OPTIONS /reset/' . UID_ROUTE_PATTERN . '/validate' => 'reset/options',
 
                 /*

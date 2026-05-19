@@ -99,16 +99,6 @@ class ResetTest extends Test
         $this->assertEquals($existing->id, $new->id);
     }
 
-    public function testFindOrCreateExistingResetTypeToPrimary()
-    {
-        $existing = $this->resets('reset1');
-        $existing->setType(Reset::TYPE_SUPERVISOR);
-
-        $new = Reset::findOrCreate($existing->user);
-        $this->assertEquals($existing->id, $new->id);
-        $this->assertEquals(Reset::TYPE_PRIMARY, $new->type);
-    }
-
     public function testIsUserProvidedCodeCorrect()
     {
         $reset = $this->resets('reset3');
@@ -189,37 +179,6 @@ class ResetTest extends Test
         $this->assertEquals($attempts + 2, $reset->attempts);
     }
 
-    public function testSendSupervisorHasSupervisor()
-    {
-        $reset = $this->resets('reset1');
-        $reset->type = Reset::TYPE_SUPERVISOR;
-        $attempts = $reset->attempts;
-
-        $this->assertEquals(0, EmailUtils::getEmailFilesCount());
-
-        $reset->send();
-
-        $this->assertEquals(1, EmailUtils::getEmailFilesCount());
-        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated($reset->code));
-        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated($reset->user->email));
-        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('supervisor@domain.org'));
-        $this->assertTrue(EmailUtils::hasEmailFileBeenCreated('requested a password change for their'));
-        $this->assertEquals($attempts + 1, $reset->attempts);
-    }
-
-    public function testSendSupervisorNoSupervisor()
-    {
-        $reset = $this->resets('reset3');
-        $reset->type = Reset::TYPE_SUPERVISOR;
-
-        $this->assertEquals(0, EmailUtils::getEmailFilesCount());
-
-        $this->expectException(\Exception::class);
-        $this->expectExceptionCode(1461173406);
-        $reset->send();
-        $this->assertEquals(0, EmailUtils::getEmailFilesCount());
-    }
-
     public function testSendMethodEmail()
     {
         $reset = $this->resets('reset3');
@@ -246,21 +205,6 @@ class ResetTest extends Test
         $reset->disable();
         $this->assertTrue($reset->isDisabled());
         $this->assertEqualsWithDelta($expireDate, strtotime($reset->disable_until), 2, '');
-    }
-
-    public function testSetType()
-    {
-        $reset = $this->resets('reset1');
-        $this->assertEquals(Reset::TYPE_PRIMARY, $reset->type);
-
-        $reset->setType(Reset::TYPE_SUPERVISOR);
-        $this->assertEquals(Reset::TYPE_SUPERVISOR, $reset->type);
-
-        $reset->setType(Reset::TYPE_METHOD, '22222222222222222222222222222222');
-        $this->assertEquals(Reset::TYPE_METHOD, $reset->type);
-
-        $reset->setType(Reset::TYPE_PRIMARY);
-        $this->assertEquals(Reset::TYPE_PRIMARY, $reset->type);
     }
 
     public function testTrackAttempt()
@@ -290,15 +234,6 @@ class ResetTest extends Test
     {
         $reset = $this->resets('reset1');
         $this->assertEquals('f****_l**t@o***********.o**', $reset->getMaskedValue());
-
-        $reset->setType(Reset::TYPE_SUPERVISOR);
-        $this->assertEquals('s********r@d*****.o**', $reset->getMaskedValue());
-
-        $reset->setType(Reset::TYPE_METHOD, '22222222222222222222222222222222');
-
-        $reset = Reset::findOne(['id' => $reset->id]);
-
-        $this->assertEquals('e**************9@d*****.o**', $reset->getMaskedValue());
     }
 
 }
