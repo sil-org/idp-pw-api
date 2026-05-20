@@ -133,9 +133,9 @@ return [
                  * Reset routes
                  */
                 'POST /reset' => 'reset/create',
-                'PUT /reset/' . UID_ROUTE_PATTERN . '/validate' => 'reset/validate',
+                'PUT /reset/<uuid>/validate' => 'reset/validate',
                 'OPTIONS /reset' => 'reset/options',
-                'OPTIONS /reset/' . UID_ROUTE_PATTERN . '/validate' => 'reset/options',
+                'OPTIONS /reset/<uuid>/validate' => 'reset/options',
 
                 /*
                  * User  routes

@@ -190,13 +190,13 @@ Returns configuration parameters supplied by environment variables.
 
 This endpoint verifies connectivity to the database.
 
-#### `POST /reset` and `PUT /reset/{uid}/validate`
+#### `POST /reset` and `PUT /reset/{uuid}/validate`
 
 This combination requires connection to a PasswordStore component and a Personnel
 component containing a valid user record. After sending the `POST`, retrieve the reset
-code from the email or the database, and the reset uid from the response body, then
-supply them in the `PUT` request body and URI. The response will contain an
-`access_token` to use for subsequent calls that require it.
+UUID from the user via the password reset email message, then supply it in the `PUT`
+request URI. The response will contain a Set-Cookie header to use for subsequent calls
+to set a new password.
 
 #### `GET /auth/login`
 

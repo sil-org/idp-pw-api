@@ -573,7 +573,7 @@ types:
     description: |
       Initiate a password reset.
       Sends reset email to primary email address with a link like
-      `https://idp-pw.local/#/recovery/verify/{resetUid}/{code}`
+      `https://idp-pw.local/#/recovery/verify/{resetUuid}/0`
       Responds with id of reset object and all available email addresses
       for the user.
     body:
@@ -591,7 +591,7 @@ types:
     /validate:
       put:
         securedBy: null
-        description: Validate reset code to complete password reset process
+        description: Validate reset UUID to complete password reset process
         body:
           properties:
             code: string
@@ -599,9 +599,6 @@ types:
           200:
             description: >
               Reset was validated. Subsequent API calls will use a http only cookie for the access token.
-          400:
-            description: >
-              The provided code was incorrect.
           410:
             description: >
               The code has expired.

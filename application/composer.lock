@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a1bc05cfa85cccbbed6c1c01951de921",
+    "content-hash": "4cc3aedaf5f40a272362573548095c5a",
     "packages": [
         {
             "name": "behat/gherkin",
@@ -7895,16 +7895,16 @@
         },
         {
             "name": "sil-org/idp-id-broker-php-client",
-            "version": "4.9.0",
+            "version": "4.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sil-org/idp-id-broker-php-client.git",
-                "reference": "8f395f3ee7ac6eec439796abf399ede1802c0501"
+                "reference": "89bc67a2cf7385710f6281233ff5281cd8550cd5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sil-org/idp-id-broker-php-client/zipball/8f395f3ee7ac6eec439796abf399ede1802c0501",
-                "reference": "8f395f3ee7ac6eec439796abf399ede1802c0501",
+                "url": "https://api.github.com/repos/sil-org/idp-id-broker-php-client/zipball/89bc67a2cf7385710f6281233ff5281cd8550cd5",
+                "reference": "89bc67a2cf7385710f6281233ff5281cd8550cd5",
                 "shasum": ""
             },
             "require": {
@@ -7915,7 +7915,7 @@
             },
             "require-dev": {
                 "behat/behat": "^3.3",
-                "phpunit/phpunit": "^8.0"
+                "webmozart/assert": "^1.12"
             },
             "type": "library",
             "autoload": {
@@ -7944,9 +7944,9 @@
             ],
             "support": {
                 "issues": "https://github.com/sil-org/idp-id-broker-php-client/issues",
-                "source": "https://github.com/sil-org/idp-id-broker-php-client/tree/4.9.0"
+                "source": "https://github.com/sil-org/idp-id-broker-php-client/tree/4.10.0"
             },
-            "time": "2025-10-15T04:27:43+00:00"
+            "time": "2026-05-14T08:24:42+00:00"
         },
         {
             "name": "sil-org/php-env",
@@ -12334,5 +12334,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.6.0"
 }

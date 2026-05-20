@@ -44,6 +44,14 @@ class m381901_235959_insert_test_data extends Migration
             array_keys($methodData['method2']),
             $methodData
         );
+
+        $resetData = require(__DIR__ . '/Reset.php');
+
+        $this->batchInsert(
+            '{{reset}}',
+            array_keys($resetData['reset2']),
+            $resetData
+        );
     }
 
     /**
