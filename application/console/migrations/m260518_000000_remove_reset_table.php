@@ -29,7 +29,6 @@ class m260518_000000_remove_reset_table extends Migration
             "ENGINE=InnoDB DEFAULT CHARSET=utf8"
         );
         $this->addForeignKey('fk_reset_user_id', '{{reset}}', 'user_id', '{{user}}', 'id', 'CASCADE', 'NO ACTION');
-        $this->addForeignKey('fk_reset_method_id', '{{reset}}', 'method_id', '{{method}}', 'id', 'CASCADE', 'NO ACTION');
         $this->createIndex('uq_reset_uid', '{{reset}}', 'uid', true);
         $this->createIndex('uq_reset_user_id', '{{reset}}', 'user_id', true);
         $this->createIndex('uq_reset_code', '{{reset}}', 'code', false);
