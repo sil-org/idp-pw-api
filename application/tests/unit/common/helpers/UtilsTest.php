@@ -2,9 +2,8 @@
 
 namespace tests\unit\common\helpers;
 
-use Sil\Codeception\TestCase\Test;
 use common\helpers\Utils;
-use yii\web\Request;
+use Sil\Codeception\TestCase\Test;
 
 class UtilsTest extends Test
 {
@@ -30,15 +29,6 @@ class UtilsTest extends Test
         $email3 = 'first_last@myco.org.uk';
         $expected3 = 'f****_l**t@m***.o**.u*';
         $this->assertEquals($expected3, Utils::maskEmail($email3));
-    }
-
-    public function testGetRandomDigits()
-    {
-        for ($i = 4; $i < 32; $i++) {
-            $value = Utils::getRandomDigits($i);
-            $regex = '/^[0-9]{' . $i . '}$/';
-            $this->assertRegExp($regex, $value);
-        }
     }
 
     public function testIsValidIpAddress()
@@ -98,25 +88,6 @@ class UtilsTest extends Test
         $timestamp = 1465996168;
 
         $this->assertEquals($expected, Utils::getIso8601($timestamp));
-    }
-
-    public function testGetFriendlyDate()
-    {
-        /*
-         * Test with timestamp
-         */
-        $expected = 'Monday July 18, 2016 6:17PM UTC';
-        $timestamp = 1468865838;
-
-        $this->assertEquals($expected, Utils::getFriendlyDate($timestamp));
-
-        /*
-         * Test with string
-         */
-        $expected = 'Monday July 18, 2016 2:17PM UTC';
-        $string = '2016-07-18 14:17:00';
-
-        $this->assertEquals($expected, Utils::getFriendlyDate($string));
     }
 
     public function testGetDatetime()

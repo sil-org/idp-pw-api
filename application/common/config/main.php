@@ -19,7 +19,6 @@ $mysqlPassword = Env::get('MYSQL_PASSWORD');
 
 $alertsEmail = Env::get('ALERTS_EMAIL');
 $alertsEmailEnabled = Env::get('ALERTS_EMAIL_ENABLED');
-$emailSignature = Env::get('EMAIL_SIGNATURE', Env::get('FROM_NAME'));
 $idpName = Env::get('IDP_NAME');
 $idpDisplayName = Env::get('IDP_DISPLAY_NAME', $idpName);
 $recaptchaRequired = Env::get('RECAPTCHA_REQUIRED', true);
@@ -245,18 +244,10 @@ return [
     ],
     'params' => [
         'idpDisplayName' => $idpDisplayName,
-        'emailSignature' => $emailSignature,
         'helpCenterUrl' => $helpCenterUrl,
         'uiUrl' => $uiUrl,
         'uiCorsOrigin' => $uiCorsOrigin,
         'rpOrigin' => $rpOrigin,
-        'reset' => [
-            'lifetimeSeconds' => 3600,  // 1 hour
-            'gracePeriod' => '-1 week', // time between expiration and deletion, relative to now (time of execution)
-            'disableDuration' => 900,   // 15 minutes
-            'codeLength' => $codeLength,
-            'maxAttempts' => 10,
-        ],
         'accessTokenHashKey' => $accessTokenHashKey,
         'accessTokenLifetime' => 1800, // 30 minutes
         'passwordRules' => $passwordRules,

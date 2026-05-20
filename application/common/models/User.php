@@ -465,7 +465,7 @@ class User extends UserBase implements IdentityInterface
         }
 
         $methods[] = [
-            'type' => Reset::TYPE_PRIMARY,
+            'type' => Method::TYPE_PRIMARY,
             'value' => $this->email,
         ];
 
@@ -478,7 +478,7 @@ class User extends UserBase implements IdentityInterface
 
         if ($this->hasSupervisor()) {
             $methods[] = [
-                'type' => Reset::TYPE_SUPERVISOR,
+                'type' => Method::TYPE_SUPERVISOR,
                 'value' => $this->getSupervisorEmail(),
             ];
         }

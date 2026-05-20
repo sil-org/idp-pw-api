@@ -10,6 +10,8 @@ use yii\web\ServerErrorHttpException;
 class Method
 {
     public const TYPE_EMAIL = 'email';
+    public const TYPE_PRIMARY = 'primary';
+    public const TYPE_SUPERVISOR = 'supervisor';
 
     protected static function getIdBrokerClient()
     {
