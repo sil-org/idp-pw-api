@@ -56,11 +56,6 @@ class AuthController extends BaseRestController
         $log = ['action' => 'login'];
 
         try {
-            /*
-             * Grab state for use in response after successful login
-             */
-            $state = $this->getRequestState();
-
             try {
                 $user = $this->authenticateUser();
             } catch (ServiceException $e) {
@@ -75,15 +70,18 @@ class AuthController extends BaseRestController
                 }
             }
 
-            $accessToken = $user->createAccessToken(User::AUTH_TYPE_LOGIN);
-            $loginSuccessUrl = $this->getLoginSuccessRedirectUrl($state, $accessToken, $user->access_token_expiration);
+            /*
+             * Create access token and set the HttpOnly cookie on the response
+             */
+            $user->createAccessToken(User::AUTH_TYPE_LOGIN);
+            $loginSuccessUrl = $this->getLoginSuccessRedirectUrl();
 
             $log['email'] = $user->email;
             $log['status'] = 'success';
             \Yii::warning($log, 'application');
 
             /*
-             * Kill session
+             * Clear identity before redirecting
              */
             \Yii::$app->user->logout(true);
 
@@ -163,29 +161,11 @@ class AuthController extends BaseRestController
     }
 
     /**
-     * Get state from request or session and then store in session
-     * @return string
-     */
-    public function getRequestState()
-    {
-        $state = \Yii::$app->request->get('state');
-        if ($state === null) {
-            $state = \Yii::$app->session->get('state');
-        }
-        \Yii::$app->session->set('state', $state);
-
-        return $state;
-    }
-
-    /**
      * Build URL to redirect user to after successful login
-     * @param string $state
-     * @param string $accessToken
-     * @param string $tokenExpiration
      * @return string
      * @throws \Exception
      */
-    public function getLoginSuccessRedirectUrl($state, $accessToken, $tokenExpiration)
+    public function getLoginSuccessRedirectUrl()
     {
         /*
          * Relay state holds the return to path from UI

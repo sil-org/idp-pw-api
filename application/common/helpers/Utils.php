@@ -157,21 +157,6 @@ class Utils
     }
 
     /**
-     * Check if user session is available
-     * @return boolean
-     */
-    public static function isSessionAvailable()
-    {
-        try {
-            $sessionAvailable = ! \Yii::$app->user->isGuest;
-        } catch (\Exception $e) {
-            $sessionAvailable = false;
-        }
-
-        return $sessionAvailable;
-    }
-
-    /**
      * Call reCaptcha API to verify response token
      * @param string $verificationToken
      * @param string $ipAddress

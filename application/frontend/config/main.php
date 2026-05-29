@@ -1,24 +1,6 @@
 <?php
 
-use Sil\PhpEnv\Env;
-
-$mysqlHost = Env::get('MYSQL_HOST');
-$mysqlDatabase = Env::get('MYSQL_DATABASE');
-$mysqlUser = Env::get('MYSQL_USER');
-$mysqlPassword = Env::get('MYSQL_PASSWORD');
-
-$sessionLifetime = 1800; // 30 minutes
-
 const UID_ROUTE_PATTERN = '<uid:([a-zA-Z0-9_\-]{32})>';
-
-$dbAttributes = [];
-$caFile = '/data/console/runtime/ca.pem';
-if (file_exists($caFile)) {
-    $dbAttributes = [
-        PDO::MYSQL_ATTR_SSL_CA => $caFile,
-        PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => 1,
-    ];
-}
 
 return [
     'id' => 'app-frontend',
@@ -43,20 +25,6 @@ return [
             'enableAutoLogin' => false,
             'enableSession' => false,
             'loginUrl' => null,
-        ],
-        'session' => [
-            'class' => 'yii\web\DbSession',
-            'db' => [
-                'class' => 'yii\db\Connection',
-                'dsn' => sprintf('mysql:host=%s;dbname=%s', $mysqlHost, $mysqlDatabase),
-                'username' => $mysqlUser,
-                'password' => $mysqlPassword,
-                'charset' => 'utf8',
-                'emulatePrepare' => false,
-                'tablePrefix' => '',
-                'attributes' => $dbAttributes,
-            ],
-            // 'sessionTable' => 'session',  // defaults to 'session'
         ],
         'response' => [
             'class' => 'yii\web\Response',

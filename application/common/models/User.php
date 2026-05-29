@@ -309,17 +309,7 @@ class User extends UserBase implements IdentityInterface
             return $this->personnelUser;
         }
 
-        $sessionAvailable = Utils::isSessionAvailable();
-
-        if ($sessionAvailable && is_array(\Yii::$app->session->get('personnelUser'))) {
-            $this->personnelUser = \Yii::$app->session->get('personnelUser');
-            return $this->personnelUser;
-        }
-
         try {
-            /*
-             * Fetch data from Personnel system and cache it
-             */
             $this->personnelUser = $this->getPersonnelUserFromInterface();
         } catch (\Exception $e) {
             \Yii::error([
@@ -329,7 +319,6 @@ class User extends UserBase implements IdentityInterface
             ]);
             throw new \Exception('Unexpected error accessing personnel system.', 1553532344, $e);
         }
-        \Yii::$app->session->set('personnelUser', $this->personnelUser);
 
         return $this->personnelUser;
     }
