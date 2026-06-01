@@ -88,7 +88,7 @@ class User implements IdentityInterface
     {
         return [
             'uuid'         => \Yii::t('model', 'UUID'),
-            'employee_id'  => \Yii::t('model', 'Employee Id'),
+            'employee_id'  => \Yii::t('model', 'Employee ID'),
             'first_name'   => \Yii::t('model', 'First Name'),
             'last_name'    => \Yii::t('model', 'Last Name'),
             'display_name' => \Yii::t('model', 'Display Name'),

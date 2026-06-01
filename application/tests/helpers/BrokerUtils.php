@@ -47,7 +47,7 @@ class BrokerUtils
      * access with a stale cookie).
      *
      * This requires IdBroker to support `access_token`, `access_token_expiration`,
-     * and `auth_type` as user fields (see IDBROKER_API_CHANGES.md).
+     * and `auth_type` as user fields.
      */
     public static function setupTestAccessTokens()
     {
