@@ -131,6 +131,7 @@ class IdBroker extends Component implements PersonnelInterface
             $pUser->username = $response['username'];
             $pUser->supervisorEmail = $response['manager_email'] ?? null;
             $pUser->lastLogin = $response['last_login_utc'];
+            $pUser->authType = $response['auth_type'] ?? null;
 
             return $pUser;
         } catch (\Exception $e) {
@@ -248,5 +249,61 @@ class IdBroker extends Component implements PersonnelInterface
         $idBrokerClient = $this->getIdBrokerClient();
 
         return $idBrokerClient->listUsers(null, [$field => $value]);
+    }
+
+    /**
+     * Store an access token for the given user in IdBroker.
+     *
+     * @param string $employeeId
+     * @param string $authType
+     * @param string $accessTokenHash
+     * @param string $expiration
+     * @throws NotFoundException
+     * @throws ServiceException
+     */
+    public function setAccessToken(string $employeeId, string $authType, string $accessTokenHash, string $expiration): void
+    {
+        $this->updateUser([
+            'employee_id' => $employeeId,
+            'access_token' => $accessTokenHash,
+            'access_token_expiration' => $expiration,
+            'auth_type' => $authType,
+        ]);
+    }
+
+    /**
+     * Clear the access token for the given user in IdBroker.
+     *
+     * @param string $employeeId
+     * @throws ServiceException
+     */
+    public function clearAccessToken(string $employeeId): void
+    {
+        $this->updateUser([
+            'employee_id' => $employeeId,
+            'access_token' => null,
+            'access_token_expiration' => null,
+            'auth_type' => null,
+        ]);
+    }
+
+    /**
+     * Find a user by their hashed access token.
+     *
+     * @param string $accessTokenHash
+     * @return PersonnelUser
+     * @throws NotFoundException
+     * @throws ServiceException
+     * @throws \Exception
+     */
+    public function findByAccessToken(string $accessTokenHash): PersonnelUser
+    {
+        $results = $this->listUsers('access_token', $accessTokenHash);
+
+        if (count($results) === 1) {
+            return $this->returnPersonnelUserFromResponse('access_token', '***', $results[0]);
+        }
+
+        throw new NotFoundException();
     }
 }

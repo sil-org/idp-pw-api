@@ -52,4 +52,11 @@ class PersonnelUser
      * @var string
      */
     public $lastLogin;
+
+    /**
+     * The type of authentication used to create the current access token ('login' or 'reset').
+     * Populated when finding a user by access token.
+     * @var string|null
+     */
+    public $authType;
 }
