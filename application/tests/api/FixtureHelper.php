@@ -2,60 +2,47 @@
 
 namespace tests\api;
 
-//use tests\codeception\common\fixtures\UserFixture;
 use Codeception\Module;
-use tests\api\fixtures\UserFixture;
+use tests\helpers\BrokerUtils;
 use yii\test\FixtureTrait;
 
 /**
- * This helper is used to populate database with needed fixtures before any tests should be run.
- * For example - populate database with demo login user that should be used in acceptance and functional tests.
- * All fixtures will be loaded before suite will be starded and unloaded after it.
+ * This helper is used to populate the test IdBroker instance with needed test
+ * data before any tests are run, and to clean up afterwards.
  */
 class FixtureHelper extends Module
 {
     /**
-     * Redeclare visibility because codeception includes all public methods that not starts from "_"
-     * and not excluded by module settings, in actor class.
+     * Redeclare visibility because Codeception includes all public methods that
+     * do not start with "_" (and are not excluded) in the actor class.
      */
     use FixtureTrait {
-        loadFixtures as protected;
-        fixtures as protected;
+        loadFixtures   as protected;
+        fixtures       as protected;
         globalFixtures as protected;
         unloadFixtures as protected;
-        getFixtures as protected;
-        getFixture as protected;
+        getFixtures    as protected;
+        getFixture     as protected;
     }
 
     /**
-     * Method called before any suite tests run. Loads User fixture login user
-     * to use in acceptance and functional tests.
+     * Called before all suite tests run.
+     * Inserts test users (and their access tokens) into IdBroker.
+     *
      * @param array $settings
      */
     public function _beforeSuite($settings = [])
     {
-        $this->unloadFixtures();
-        $this->loadFixtures();
+        BrokerUtils::insertFakeUsers();
+        BrokerUtils::setupTestAccessTokens();
     }
 
     /**
-     * Method is called after all suite tests run
+     * Method is called after all suite tests run.
      */
     public function _afterSuite()
     {
-        $this->unloadFixtures();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function fixtures()
-    {
-        return [
-            'user' => [
-                'class' => UserFixture::className(),
-                'dataFile' => '@tests/api/fixtures/data/User.php',
-            ],
-        ];
+        // No local fixtures to unload; IdBroker test data persists until the
+        // broker container is restarted.
     }
 }
