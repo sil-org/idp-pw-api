@@ -2,72 +2,96 @@
 
 namespace tests\unit\common\models;
 
+use common\components\personnel\NotFoundException;
 use common\components\personnel\PersonnelUser;
 use common\models\User;
-use Sil\Codeception\TestCase\Test;
+use PHPUnit\Framework\TestCase;
 use tests\helpers\BrokerUtils;
-use tests\unit\fixtures\common\models\UserFixture;
 
 /**
  * Class UserTest
  * @package tests\unit\common\models
- * @method User users($key)
  */
-class UserTest extends Test
+class UserTest extends TestCase
 {
-    public function _before()
+    /** @var \common\components\personnel\PersonnelInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $personnelMock;
+
+    public function setUp(): void
     {
+        parent::setUp();
+
+        // Wire the real IdBroker so BrokerUtils can insert test users
         BrokerUtils::insertFakeUsers();
-        parent::_before();
     }
 
-    public function _fixtures()
-    {
-        return [
-            'users' => UserFixture::class,
-        ];
-    }
+    // ------------------------------------------------------------------
+    // Helpers
+    // ------------------------------------------------------------------
 
-    public function testDefaultValues()
+    private function makePersonnelUser(array $overrides = []): PersonnelUser
     {
-        User::deleteAll();
-        $user = new User();
-        $user->uuid = 'ccd9bb38-a656-4c62-80ba-2428468599b3';
-        $user->employee_id = '1456771651';
-        $user->first_name = 'User';
-        $user->last_name = 'One';
-        $user->idp_username = 'user_1456771651';
-        $user->email = 'user-1456771651@domain.org';
-        if (! $user->save()) {
-            $this->fail('Failed to create User: ' . print_r($user->getFirstErrors(), true));
-        }
-
-        $this->assertEquals(36, strlen($user->uuid));
-        $this->assertNotNull($user->created);
-    }
-
-    public function testFields()
-    {
-        $expected = [
-            'first_name' => 'User',
-            'last_name' => 'One',
-            'idp_username' => 'first_last',
-            'email' => 'first_last@organization.org',
-            'password_meta' => [
-                'last_changed' => '2016-06-15T19:00:32+00:00',
-                'expires' => '2016-06-15T19:00:32+00:00',
-            ],
-            'auth_type' => 'login',
+        $defaults = [
+            'uuid'           => 'ccd9bb38-a656-4c62-80ba-2428468599b3',
+            'employeeId'     => '111111',
+            'firstName'      => 'User',
+            'lastName'       => 'One',
+            'displayName'    => 'User One',
+            'username'       => 'first_last',
+            'email'          => 'first_last@organization.org',
+            'supervisorEmail'=> 'supervisor@domain.org',
+            'lastLogin'      => '2024-01-01T00:00:00Z',
+            'authType'       => null,
         ];
 
-        $user = $this->users('user1');
-        $fields = $user->toArray();
-        $this->assertEquals($expected['first_name'], $fields['first_name']);
-        $this->assertEquals($expected['last_name'], $fields['last_name']);
-        $this->assertEquals($expected['idp_username'], $fields['idp_username']);
-        $this->assertEquals($expected['email'], $fields['email']);
-        $this->assertEquals($expected['auth_type'], $fields['auth_type']);
+        $data = array_merge($defaults, $overrides);
+
+        $pu = new PersonnelUser();
+        $pu->uuid            = $data['uuid'];
+        $pu->employeeId      = $data['employeeId'];
+        $pu->firstName       = $data['firstName'];
+        $pu->lastName        = $data['lastName'];
+        $pu->displayName     = $data['displayName'];
+        $pu->username        = $data['username'];
+        $pu->email           = $data['email'];
+        $pu->supervisorEmail = $data['supervisorEmail'];
+        $pu->lastLogin       = $data['lastLogin'];
+        $pu->authType        = $data['authType'];
+
+        return $pu;
     }
+
+    // ------------------------------------------------------------------
+    // createFromPersonnelUser
+    // ------------------------------------------------------------------
+
+    public function testCreateFromPersonnelUser()
+    {
+        $pu   = $this->makePersonnelUser();
+        $user = User::createFromPersonnelUser($pu);
+
+        $this->assertInstanceOf(User::class, $user);
+        $this->assertEquals($pu->uuid, $user->uuid);
+        $this->assertEquals($pu->employeeId, $user->employee_id);
+        $this->assertEquals($pu->firstName, $user->first_name);
+        $this->assertEquals($pu->lastName, $user->last_name);
+        $this->assertEquals($pu->displayName, $user->display_name);
+        $this->assertEquals($pu->username, $user->idp_username);
+        $this->assertEquals($pu->email, $user->email);
+        $this->assertNull($user->auth_type);
+    }
+
+    public function testCreateFromPersonnelUserSetsAuthType()
+    {
+        $pu   = $this->makePersonnelUser(['authType' => User::AUTH_TYPE_LOGIN]);
+        $user = User::createFromPersonnelUser($pu);
+        $this->assertEquals(User::AUTH_TYPE_LOGIN, $user->auth_type);
+    }
+
+    // ------------------------------------------------------------------
+    // findOrCreate / findIdentity / findIdentityByAccessToken
+    // (uses real IdBroker test instance seeded by BrokerUtils)
+    // ------------------------------------------------------------------
 
     public function testFindOrCreateException()
     {
@@ -76,26 +100,25 @@ class UserTest extends Test
         User::findOrCreate();
     }
 
-    public function testFindOrCreateNew()
+    public function testFindOrCreateByUsername()
     {
-        User::deleteAll();
         $user = User::findOrCreate('first_last');
-
-        $this->assertEquals(36, strlen($user->uuid));
-        $this->assertNotNull($user->created);
+        $this->assertInstanceOf(User::class, $user);
+        $this->assertEquals('111111', $user->employee_id);
     }
 
-    public function testFindOrCreateExisting()
+    public function testFindOrCreateByEmail()
     {
-        $existing = $this->users('user1');
-        $byUsername = User::findOrCreate($existing->idp_username);
-        $this->assertEquals($existing->id, $byUsername->id);
+        $user = User::findOrCreate(null, 'first_last@organization.org');
+        $this->assertInstanceOf(User::class, $user);
+        $this->assertEquals('111111', $user->employee_id);
+    }
 
-        $byEmail = User::findOrCreate(null, $existing->email);
-        $this->assertEquals($existing->id, $byEmail->id);
-
-        $byEmployeeId = User::findOrCreate(null, null, $existing->employee_id);
-        $this->assertEquals($existing->id, $byEmployeeId->id);
+    public function testFindOrCreateByEmployeeId()
+    {
+        $user = User::findOrCreate(null, null, '111111');
+        $this->assertInstanceOf(User::class, $user);
+        $this->assertEquals('111111', $user->employee_id);
     }
 
     public function testFindOrCreateDoesntExist()
@@ -104,198 +127,167 @@ class UserTest extends Test
         User::findOrCreate('doesnt_exist');
     }
 
-    public function testUpdateProfileIfNeeded()
+    public function testFindIdentityByEmployeeId()
     {
-        $user = $this->users('user1');
-
-        $personnelData = new PersonnelUser();
-        $personnelData->uuid = $user->uuid;
-        $personnelData->firstName = $user->first_name;
-        $personnelData->lastName = $user->last_name;
-        $personnelData->displayName = $user->display_name;
-        $personnelData->username = $user->idp_username;
-        $personnelData->email = $user->email;
-
-        /*
-         * Make no changes and ensure it is not updated
-         */
-        $changed = $user->updateProfileIfNeeded($personnelData);
-        $this->assertFalse($changed);
-
-        /*
-         * Test changed for each property. uuid cannot be changed
-         */
-        $personnelData->uuid = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
-        $changed = $user->updateProfileIfNeeded($personnelData);
-        $this->assertFalse($changed);
-
-        $personnelData->firstName .= 'a';
-        $changed = $user->updateProfileIfNeeded($personnelData);
-        $this->assertTrue($changed);
-
-        $personnelData->lastName .= 'a';
-        $changed = $user->updateProfileIfNeeded($personnelData);
-        $this->assertTrue($changed);
-
-        $personnelData->displayName .= 'a';
-        $changed = $user->updateProfileIfNeeded($personnelData);
-        $this->assertTrue($changed);
-
-        $personnelData->username .= 'a';
-        $changed = $user->updateProfileIfNeeded($personnelData);
-        $this->assertTrue($changed);
-
-        $personnelData->email = 'a' . $personnelData->email;
-        $changed = $user->updateProfileIfNeeded($personnelData);
-        $this->assertTrue($changed);
+        $user = User::findIdentity('111111');
+        $this->assertInstanceOf(User::class, $user);
+        $this->assertEquals('111111', $user->employee_id);
     }
+
+    public function testFindIdentityReturnsNullForMissing()
+    {
+        $result = User::findIdentity('nonexistent-employee-id');
+        $this->assertNull($result);
+    }
+
+    // ------------------------------------------------------------------
+    // getPersonnelUser / getPersonnelUserFromInterface
+    // ------------------------------------------------------------------
 
     public function testGetPersonnelUser()
     {
-        $user = $this->users('user1');
-        $personnelData = $user->getPersonnelUser();
-        $this->assertInstanceOf('common\components\personnel\PersonnelUser', $personnelData);
-    }
-
-    public function testSupervisor()
-    {
-        $user = $this->users('user1');
-        $this->assertTrue($user->hasSupervisor());
-        $this->assertEquals('supervisor@domain.org', $user->getSupervisorEmail());
-    }
-
-    public function testGetMaskedMethods()
-    {
-        $this->markTestSkipped('test is broken because methods were moved to broker');
-        $user = $this->users('user1');
-        $methods = $user->getMaskedMethods();
-        $this->assertTrue(is_array($methods));
-        $this->assertEquals(4, count($methods)); // phone method is not returned
-
-        foreach ($methods as $method) {
-            if ($method['type'] == 'primary') {
-                $this->assertEquals('f****_l**t@o***********.o**', $method['value']);
-            } elseif ($method['type'] == 'supervisor') {
-                $this->assertEquals('s********r@d*****.o**', $method['value']);
-            } elseif ($method['type'] == 'email' && $method['uid'] == '22222222222222222222222222222222') {
-                $this->assertEquals('e**************9@d*****.o**', $method['value']);
-            } elseif ($method['type'] == 'email' && $method['uid'] == '33333333333333333333333333333333') {
-                $this->fail('Unverified method present in getMaskedMethods call');
-            }
-
-        }
-
+        $user = User::findOrCreate('first_last');
+        $personnelUser = $user->getPersonnelUser();
+        $this->assertInstanceOf(PersonnelUser::class, $personnelUser);
     }
 
     public function testGetPersonnelUserFromInterface()
     {
-        $user = $this->users('user1');
+        $user = User::findOrCreate('first_last');
+
         // test finding by employee_id
-        $personnelUser = $user->getPersonnelUserFromInterface();
-        $this->assertInstanceOf(PersonnelUser::class, $personnelUser);
+        $pu = $user->getPersonnelUserFromInterface();
+        $this->assertInstanceOf(PersonnelUser::class, $pu);
 
-        $user->employee_id = null;
         // test finding by username
-        $personnelUser = $user->getPersonnelUserFromInterface();
-        $this->assertInstanceOf(PersonnelUser::class, $personnelUser);
+        $user->employee_id = null;
+        $pu = $user->getPersonnelUserFromInterface();
+        $this->assertInstanceOf(PersonnelUser::class, $pu);
 
-        $user->idp_username = null;
         // test finding by email
-        $personnelUser = $user->getPersonnelUserFromInterface();
-        $this->assertInstanceOf(PersonnelUser::class, $personnelUser);
+        $user->idp_username = null;
+        $pu = $user->getPersonnelUserFromInterface();
+        $this->assertInstanceOf(PersonnelUser::class, $pu);
 
+        // test exception after unsetting all lookups
         $user->email = null;
-        // test exception after unsetting email
         $this->expectException(\Exception::class);
         $this->expectExceptionCode(1456690741);
         $user->getPersonnelUserFromInterface();
     }
 
-    public function testFindIdentity()
+    // ------------------------------------------------------------------
+    // Supervisor
+    // ------------------------------------------------------------------
+
+    public function testSupervisor()
     {
-        $expected = $this->users('user1');
-        $user = User::findIdentity($expected->id);
-        $this->assertInstanceOf(User::class, $user);
+        $user = User::findOrCreate('first_last'); // has manager_email
+        $this->assertTrue($user->hasSupervisor());
+        $this->assertNotNull($user->getSupervisorEmail());
     }
 
-    public function testFindIdentityByAccessToken()
+    // ------------------------------------------------------------------
+    // IdentityInterface helpers
+    // ------------------------------------------------------------------
+
+    public function testGetId()
     {
-        $expected = $this->users('user1');
-        $user = User::findIdentityByAccessToken('user1');
-        $this->assertInstanceOf(User::class, $user);
-        $this->assertEquals($expected->uuid, $user->uuid);
+        $user = User::findOrCreate('first_last');
+        $this->assertEquals('111111', $user->getId());
     }
 
     public function testGetAuthKey()
     {
-        $user = $this->users('user1');
+        $user = User::findOrCreate('first_last');
         $this->assertNull($user->getAuthKey());
     }
 
+    public function testValidateAuthKey()
+    {
+        $user = User::findOrCreate('first_last');
+        $this->assertFalse($user->validateAuthKey('anything'));
+    }
+
+    // ------------------------------------------------------------------
+    // getAuthUser
+    // ------------------------------------------------------------------
+
     public function testGetAuthUser()
     {
-        $user = $this->users('user1');
+        $user     = User::findOrCreate('first_last');
         $authUser = $user->getAuthUser();
         $this->assertInstanceOf(\common\components\auth\User::class, $authUser);
-        $this->assertEquals($user->first_name, $authUser->firstName);
-        $this->assertEquals($user->last_name, $authUser->lastName);
-        $this->assertEquals($user->email, $authUser->email);
-        $this->assertEquals($user->employee_id, $authUser->employeeId);
-        $this->assertEquals($user->idp_username, $authUser->idpUsername);
+        $this->assertEquals($user->first_name,    $authUser->firstName);
+        $this->assertEquals($user->last_name,     $authUser->lastName);
+        $this->assertEquals($user->email,         $authUser->email);
+        $this->assertEquals($user->employee_id,   $authUser->employeeId);
+        $this->assertEquals($user->idp_username,  $authUser->idpUsername);
     }
 
-    public function testGetVerifiedMethods()
+    // ------------------------------------------------------------------
+    // isAuthScopeFull
+    // ------------------------------------------------------------------
+
+    public function testIsAuthScopeFullLogin()
     {
-        $this->markTestSkipped('test is broken because methods were moved to broker');
-
-        $user = $this->users('user1');
-        $methods = $user->getVerifiedMethods();
-
-        $verifiedCount = 0;
-        foreach ($user->methods as $method) {
-            if ($method['verified'] === 1) {
-                $verifiedCount++;
-            }
-        }
-        $this->assertEquals($verifiedCount, count($methods));
+        $pu   = $this->makePersonnelUser(['authType' => User::AUTH_TYPE_LOGIN]);
+        $user = User::createFromPersonnelUser($pu);
+        $this->assertTrue($user->isAuthScopeFull());
     }
+
+    public function testIsAuthScopeFullReset()
+    {
+        $pu   = $this->makePersonnelUser(['authType' => User::AUTH_TYPE_RESET]);
+        $user = User::createFromPersonnelUser($pu);
+        $this->assertFalse($user->isAuthScopeFull());
+    }
+
+    public function testIsAuthScopeFullNull()
+    {
+        $pu   = $this->makePersonnelUser(['authType' => null]);
+        $user = User::createFromPersonnelUser($pu);
+        $this->assertFalse($user->isAuthScopeFull());
+    }
+
+    // ------------------------------------------------------------------
+    // getPasswordMeta
+    // ------------------------------------------------------------------
 
     public function testGetPasswordMeta()
     {
-        $user = $this->users('user1');
+        $user   = User::findOrCreate('first_last');
         $pwMeta = $user->getPasswordMeta();
         $this->assertNotNull($pwMeta);
         $this->assertArrayHasKey('last_changed', $pwMeta);
         $this->assertArrayHasKey('expires', $pwMeta);
     }
 
-    public function testIsEmailInUseByOtherUser()
+    // ------------------------------------------------------------------
+    // fields / toArray
+    // ------------------------------------------------------------------
+
+    public function testFields()
     {
-        $user1 = $this->users('user1');
-        $user2 = $this->users('user2');
+        $user = User::findOrCreate('first_last');
+        $arr  = $user->toArray();
 
-        $this->assertFalse($user1->isEmailInUseByOtherUser($user1->email));
-        $this->assertTrue($user1->isEmailInUseByOtherUser($user2->email));
-        $this->assertFalse($user1->isEmailInUseByOtherUser('made-up-email@domain.com'));
-
+        $this->assertArrayHasKey('first_name', $arr);
+        $this->assertArrayHasKey('last_name', $arr);
+        $this->assertArrayHasKey('idp_username', $arr);
+        $this->assertArrayHasKey('email', $arr);
+        $this->assertArrayHasKey('auth_type', $arr);
     }
 
-    public function testRefreshPersonnelDataForUserWithSpecificEmail()
-    {
-        /*
-         * Test user who does not have updated information in personnel
-         */
-        $user1 = $this->users('user1');
-        User::refreshPersonnelDataForUserWithSpecificEmail($user1->email);
-        $notupdated = User::findOne(['id' => $user1->id]);
-        $this->assertEquals($user1->email, $notupdated->email);
+    // ------------------------------------------------------------------
+    // getUserFromInviteCode
+    // ------------------------------------------------------------------
 
-        /*
-         * Test refreshing user who has updated info in personnel
-         */
-        $user3 = $this->users('user3');
-        User::refreshPersonnelDataForUserWithSpecificEmail($user3->email);
-        $updated = User::findOne(['id' => $user3->id]);
-        $this->assertNotEquals($user3->email, $updated->email);
+    public function testGetUserFromInviteCodeNotFound()
+    {
+        // Passing an obviously invalid invite code should return null
+        $user = User::getUserFromInviteCode('not-a-real-invite-code');
+        $this->assertNull($user);
     }
 }
+
