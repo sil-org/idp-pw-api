@@ -22,34 +22,34 @@ class User implements IdentityInterface
     public const AUTH_TYPE_RESET = 'reset';
 
     /** @var string */
-    public $uuid;
+    public string $uuid;
 
     /** @var string */
-    public $employee_id;
+    public string $employee_id;
 
     /** @var string */
-    public $first_name;
+    public string $first_name;
 
     /** @var string */
-    public $last_name;
+    public string $last_name;
 
     /** @var string|null */
-    public $display_name;
+    public ?string $display_name = null;
 
     /** @var string */
-    public $idp_username;
+    public string $idp_username;
 
     /** @var string */
-    public $email;
+    public string $email;
 
     /** @var string|null  One of AUTH_TYPE_LOGIN or AUTH_TYPE_RESET */
-    public $auth_type;
+    public ?string $auth_type = null;
 
     /**
      * Holds the cached personnelUser
      * @var PersonnelUser
      */
-    public $personnelUser;
+    public ?PersonnelUser $personnelUser = null;
 
     /**
      * @return PersonnelInterface
@@ -87,10 +87,14 @@ class User implements IdentityInterface
     public function attributeLabels(): array
     {
         return [
+            'uuid'         => \Yii::t('model', 'UUID'),
+            'employee_id'  => \Yii::t('model', 'Employee Id'),
             'first_name'   => \Yii::t('model', 'First Name'),
             'last_name'    => \Yii::t('model', 'Last Name'),
+            'display_name' => \Yii::t('model', 'Display Name'),
             'idp_username' => \Yii::t('model', 'Idp Username'),
             'email'        => \Yii::t('model', 'Email'),
+            'auth_type'    => \Yii::t('model', 'Auth Type'),
         ];
     }
 

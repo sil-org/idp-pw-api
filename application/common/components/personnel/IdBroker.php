@@ -254,9 +254,6 @@ class IdBroker extends Component implements PersonnelInterface
     /**
      * Store an access token for the given user in IdBroker.
      *
-     * Requires IdBroker to accept `access_token`, `access_token_expiration`, and `auth_type`
-     * as updateable user fields (see IDBROKER_API_CHANGES.md).
-     *
      * @param string $employeeId
      * @param string $authType
      * @param string $accessTokenHash
@@ -292,9 +289,6 @@ class IdBroker extends Component implements PersonnelInterface
 
     /**
      * Find a user by their hashed access token.
-     *
-     * Requires IdBroker to support filtering users by `access_token` in the list endpoint
-     * and to only return matches for non-expired tokens (see IDBROKER_API_CHANGES.md).
      *
      * @param string $accessTokenHash
      * @return PersonnelUser
