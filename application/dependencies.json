@@ -473,7 +473,7 @@
   },
   {
     "name": "symfony/dom-crawler",
-    "version": "v6.4.32"
+    "version": "v6.4.40"
   },
   {
     "name": "symfony/event-dispatcher",
@@ -517,7 +517,7 @@
   },
   {
     "name": "symfony/polyfill-intl-idn",
-    "version": "v1.33.0"
+    "version": "v1.38.1"
   },
   {
     "name": "symfony/polyfill-intl-normalizer",
@@ -573,7 +573,7 @@
   },
   {
     "name": "symfony/yaml",
-    "version": "v6.4.30"
+    "version": "v6.4.41"
   },
   {
     "name": "theseer/tokenizer",
@@ -585,7 +585,7 @@
   },
   {
     "name": "yiisoft/yii2",
-    "version": "2.0.54"
+    "version": "2.0.55"
   },
   {
     "name": "yiisoft/yii2-composer",
