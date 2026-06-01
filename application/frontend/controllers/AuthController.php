@@ -117,17 +117,24 @@ class AuthController extends BaseRestController
         $accessToken = $requestCookies->getValue('access_token');
         if ($accessToken !== null) {
             /*
-             * Clear access_token
+             * Remove access_token cookie from browser
              */
-            $accessTokenHash = Utils::getAccessTokenHash($accessToken);
             $responseCookies = \Yii::$app->response->cookies;
             $responseCookies->remove('access_token', true);
-            $user = User::findOne(['access_token' => $accessTokenHash]);
-            if ($user != null) {
-                $user->destroyAccessToken();
+
+            /*
+             * Look up and clear the token in IdBroker, then log out of IdP
+             */
+            try {
+                $accessTokenHash = Utils::getAccessTokenHash($accessToken);
+                /** @var \common\components\personnel\PersonnelInterface $personnel */
+                $personnel = \Yii::$app->personnel;
+                $personnelUser = $personnel->findByAccessToken($accessTokenHash);
+
+                $personnel->clearAccessToken($personnelUser->employeeId);
 
                 /** @var AuthUser $authUser */
-                $authUser = $user->getAuthUser();
+                $authUser = User::createFromPersonnelUser($personnelUser)->getAuthUser();
 
                 /*
                  * Log user out of IdP
@@ -139,6 +146,10 @@ class AuthController extends BaseRestController
                 } catch (RedirectException $e) {
                     return $this->redirect($e->getUrl());
                 }
+            } catch (\common\components\personnel\NotFoundException $e) {
+                /*
+                 * Token not found in IdBroker – user already logged out or token expired.
+                 */
             }
         }
 
