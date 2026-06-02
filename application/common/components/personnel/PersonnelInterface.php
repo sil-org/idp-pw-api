@@ -49,7 +49,7 @@ interface PersonnelInterface
     public function updateUser($properties);
 
     /**
-     * Store an access token for the given user in IdBroker.
+     * Store an access token for the given user in the personnel system.
      *
      * @param string $employeeId
      * @param string $authType  One of 'login' or 'reset'
