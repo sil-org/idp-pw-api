@@ -9,6 +9,7 @@ use common\components\personnel\NotFoundException;
 use common\components\personnel\PersonnelInterface;
 use common\components\personnel\PersonnelUser;
 use common\helpers\Utils;
+use yii\base\Arrayable;
 use yii\web\IdentityInterface;
 use yii\web\ServerErrorHttpException;
 
@@ -16,7 +17,7 @@ use yii\web\ServerErrorHttpException;
  * Class User
  * @package common\models
  */
-class User implements IdentityInterface
+class User implements IdentityInterface, Arrayable
 {
     public const AUTH_TYPE_LOGIN = 'login';
     public const AUTH_TYPE_RESET = 'reset';
@@ -44,6 +45,9 @@ class User implements IdentityInterface
 
     /** @var string|null  One of AUTH_TYPE_LOGIN or AUTH_TYPE_RESET */
     public ?string $auth_type = null;
+
+    /** @var string */
+    public ?string $last_login;
 
     /**
      * Holds the cached personnelUser
@@ -76,6 +80,7 @@ class User implements IdentityInterface
         $user->idp_username = $personnelUser->username;
         $user->email = $personnelUser->email;
         $user->auth_type = $personnelUser->authType;
+        $user->last_login = $personnelUser->lastLogin;
         $user->personnelUser = $personnelUser;
         return $user;
     }
@@ -112,14 +117,7 @@ class User implements IdentityInterface
             'idp_username',
             'email',
             'auth_type',
-            'last_login' => function () {
-                try {
-                    $lastLogin = $this->getPersonnelUser()->lastLogin;
-                } catch (\Exception $e) {
-                    $lastLogin = null;
-                }
-                return $lastLogin;
-            },
+            'last_login',
         ];
 
         $pwMeta = $this->getPasswordMeta();
@@ -143,7 +141,7 @@ class User implements IdentityInterface
      * Serialize this User to an array of its fields() for API responses.
      * @return array
      */
-    public function toArray(): array
+    public function toArray(array $fields = [], array $expand = [], $recursive = true): array
     {
         $result = [];
         foreach ($this->fields() as $key => $value) {
@@ -155,6 +153,14 @@ class User implements IdentityInterface
             }
         }
         return $result;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function extraFields(): array
+    {
+        return [];
     }
 
     /**
