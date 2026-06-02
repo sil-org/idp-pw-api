@@ -4,6 +4,7 @@ namespace tests\helpers;
 
 use common\helpers\Utils;
 use Sil\Idp\IdBroker\Client\IdBrokerClient;
+use Sil\Idp\IdBroker\Client\ServiceException;
 
 class BrokerUtils
 {
@@ -43,7 +44,11 @@ class BrokerUtils
      */
     private static function setupTestAccessTokens(IdBrokerClient $idBrokerClient): void
     {
-        $expiration = Utils::getDatetime(time() + \Yii::$app->params['accessTokenLifetime']);
+        $accessTokenLifetime = (int) (\Yii::$app->params['accessTokenLifetime'] ?? 1800);
+        if ($accessTokenLifetime <= 0) {
+            $accessTokenLifetime = 1800;
+        }
+        $expiration = Utils::getDatetime(time() + $accessTokenLifetime);
         $tokenSetups = [
             ['cookie' => 'user1', 'employee_id' => '111111', 'auth_type' => 'login'],
             ['cookie' => 'user2', 'employee_id' => '222222', 'auth_type' => 'login'],
@@ -62,7 +67,7 @@ class BrokerUtils
                     'token_expiry_utc' => $expiration,
                     'token_type' => $setup['auth_type'],
                 ]);
-            } catch (\Exception $e) {
+            } catch (ServiceException $e) {
                 try {
                     $idBrokerClient->updateUser([
                         'employee_id' => $setup['employee_id'],
@@ -70,7 +75,14 @@ class BrokerUtils
                         'access_token_expiration' => $expiration,
                         'auth_type' => $setup['auth_type'],
                     ]);
-                } catch (\Exception $ignored) {
+                } catch (ServiceException $fallbackException) {
+                    \Yii::warning([
+                        'action' => 'setup test access token',
+                        'employee_id' => $setup['employee_id'],
+                        'status' => 'skipped',
+                        'primary_error' => $e->getMessage(),
+                        'fallback_error' => $fallbackException->getMessage(),
+                    ]);
                 }
             }
         }
