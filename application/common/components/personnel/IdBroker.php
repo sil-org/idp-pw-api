@@ -300,9 +300,12 @@ class IdBroker extends Component implements PersonnelInterface
     {
         $results = $this->listUsers('token_hash', $accessTokenHash);
 
-        if (count($results) === 1) {
+        $found = count($results);
+        if ($found === 1) {
             return $this->returnPersonnelUserFromResponse('token_hash', '***', $results[0]);
         }
+
+        \Yii::error("More than one user has the same token, found $found users with hash $accessTokenHash");
 
         throw new NotFoundException();
     }
