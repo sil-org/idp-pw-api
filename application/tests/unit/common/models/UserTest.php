@@ -157,17 +157,17 @@ class UserTest extends TestCase
         $this->assertInstanceOf(PersonnelUser::class, $pu);
 
         // test finding by username
-        $user->employee_id = null;
+        $user->employee_id = '';
         $pu = $user->getPersonnelUserFromInterface();
         $this->assertInstanceOf(PersonnelUser::class, $pu);
 
         // test finding by email
-        $user->idp_username = null;
+        $user->idp_username = '';
         $pu = $user->getPersonnelUserFromInterface();
         $this->assertInstanceOf(PersonnelUser::class, $pu);
 
         // test exception after unsetting all lookups
-        $user->email = null;
+        $user->email = '';
         $this->expectException(\Exception::class);
         $this->expectExceptionCode(1456690741);
         $user->getPersonnelUserFromInterface();
