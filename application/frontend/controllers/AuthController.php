@@ -125,20 +125,20 @@ class AuthController extends BaseRestController
             /*
              * Look up and clear the token in IdBroker, then log out of IdP
              */
-                $accessTokenHash = Utils::getAccessTokenHash($accessToken);
-                /** @var \common\components\personnel\PersonnelInterface $personnel */
-                $personnel = \Yii::$app->personnel;
+            $accessTokenHash = Utils::getAccessTokenHash($accessToken);
+            /** @var \common\components\personnel\PersonnelInterface $personnel */
+            $personnel = \Yii::$app->personnel;
 
             try {
                 $personnelUser = $personnel->findByAccessToken($accessTokenHash);
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 \Yii::error('Failed to find personnel user for logout: ' . $e->getMessage());
                 return $this->redirect(\Yii::$app->params['uiUrl']);
             }
 
             try {
                 $personnel->clearAccessToken($personnelUser->employeeId);
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 \Yii::error('Failed to clear access token for logout: ' . $e->getMessage());
             }
 
