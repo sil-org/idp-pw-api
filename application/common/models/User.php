@@ -92,7 +92,7 @@ class User implements IdentityInterface
             'first_name'   => \Yii::t('model', 'First Name'),
             'last_name'    => \Yii::t('model', 'Last Name'),
             'display_name' => \Yii::t('model', 'Display Name'),
-            'idp_username' => \Yii::t('model', 'Idp Username'),
+            'idp_username' => \Yii::t('model', 'IDP Username'),
             'email'        => \Yii::t('model', 'Email'),
             'auth_type'    => \Yii::t('model', 'Auth Type'),
         ];
