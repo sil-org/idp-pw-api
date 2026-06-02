@@ -2,9 +2,9 @@
 
 namespace frontend\controllers;
 
+use common\components\auth\AuthnInterface;
 use common\components\auth\RedirectException;
 use common\components\auth\User as AuthUser;
-use common\components\auth\AuthnInterface;
 use common\components\personnel\NotFoundException;
 use common\helpers\Utils;
 use common\models\User;
@@ -125,31 +125,34 @@ class AuthController extends BaseRestController
             /*
              * Look up and clear the token in IdBroker, then log out of IdP
              */
-            try {
                 $accessTokenHash = Utils::getAccessTokenHash($accessToken);
                 /** @var \common\components\personnel\PersonnelInterface $personnel */
                 $personnel = \Yii::$app->personnel;
+
+            try {
                 $personnelUser = $personnel->findByAccessToken($accessTokenHash);
+            } catch(\Exception $e) {
+                \Yii::error('Failed to find personnel user for logout: ' . $e->getMessage());
+                return $this->redirect(\Yii::$app->params['uiUrl']);
+            }
 
+            try {
                 $personnel->clearAccessToken($personnelUser->employeeId);
+            } catch(\Exception $e) {
+                \Yii::error('Failed to clear access token for logout: ' . $e->getMessage());
+            }
 
-                /** @var AuthUser $authUser */
-                $authUser = User::createFromPersonnelUser($personnelUser)->getAuthUser();
+            $authUser = User::constructFromPersonnelUser($personnelUser)->getAuthUser();
 
-                /*
-                 * Log user out of IdP
-                 */
-                try {
-                    /** @var AuthnInterface $auth */
-                    $auth = \Yii::$app->auth;
-                    $auth->logout(\Yii::$app->params['uiUrl'], $authUser);
-                } catch (RedirectException $e) {
-                    return $this->redirect($e->getUrl());
-                }
-            } catch (\common\components\personnel\NotFoundException $e) {
-                /*
-                 * Token not found in IdBroker – user already logged out or token expired.
-                 */
+            /*
+             * Log user out of IdP
+             */
+            try {
+                /** @var AuthnInterface $auth */
+                $auth = \Yii::$app->auth;
+                $auth->logout(\Yii::$app->params['uiUrl'], $authUser);
+            } catch (RedirectException $e) {
+                return $this->redirect($e->getUrl());
             }
         }
 
