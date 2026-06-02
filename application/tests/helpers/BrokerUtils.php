@@ -57,7 +57,7 @@ class BrokerUtils
             IdBrokerClient::ASSERT_VALID_BROKER_IP_CONFIG => false,
         ]);
 
-        $expiration = date('Y-m-d H:i:s', time() + 1800);
+        $expiration = Utils::getDatetime(time() + \Yii::$app->params['accessTokenLifetime']);
 
         $tokenSetups = [
             ['cookie' => 'user1', 'employee_id' => '111111', 'auth_type' => 'login'],

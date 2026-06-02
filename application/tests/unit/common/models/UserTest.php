@@ -14,9 +14,6 @@ use tests\helpers\BrokerUtils;
  */
 class UserTest extends TestCase
 {
-    /** @var \common\components\personnel\PersonnelInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $personnelMock;
-
     public function setUp(): void
     {
         parent::setUp();
@@ -123,7 +120,7 @@ class UserTest extends TestCase
 
     public function testFindOrCreateDoesntExist()
     {
-        $this->expectException(\common\components\personnel\NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         User::findOrCreate('doesnt_exist');
     }
 

@@ -17,12 +17,12 @@ class FixtureHelper extends Module
      * do not start with "_" (and are not excluded) in the actor class.
      */
     use FixtureTrait {
-        loadFixtures   as protected;
-        fixtures       as protected;
+        loadFixtures as protected;
+        fixtures as protected;
         globalFixtures as protected;
         unloadFixtures as protected;
-        getFixtures    as protected;
-        getFixture     as protected;
+        getFixtures as protected;
+        getFixture as protected;
     }
 
     /**
@@ -35,14 +35,5 @@ class FixtureHelper extends Module
     {
         BrokerUtils::insertFakeUsers();
         BrokerUtils::setupTestAccessTokens();
-    }
-
-    /**
-     * Method is called after all suite tests run.
-     */
-    public function _afterSuite()
-    {
-        // No local fixtures to unload; IdBroker test data persists until the
-        // broker container is restarted.
     }
 }
