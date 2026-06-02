@@ -520,10 +520,10 @@ class User implements IdentityInterface
     {
         $accessToken = Utils::generateRandomString(32);
         $accessTokenHash = Utils::getAccessTokenHash($accessToken);
-        $expiration = Utils::getDatetime(time() + \Yii::$app->params['accessTokenLifetime']);
+        $expiration = time() + \Yii::$app->params['accessTokenLifetime'];
 
         $personnel = self::getPersonnelComponent();
-        $personnel->setAccessToken($this->employee_id, $authType, $accessTokenHash, $expiration);
+        $personnel->setAccessToken($this->employee_id, $authType, $accessTokenHash, Utils::getDatetime($expiration));
 
         $this->auth_type = $authType;
 
@@ -531,7 +531,7 @@ class User implements IdentityInterface
         \Yii::$app->response->cookies->add(new \yii\web\Cookie([
             'name' => 'access_token',
             'value' => $accessToken,
-            'expire' => strtotime($expiration),
+            'expire' => $expiration,
             'httpOnly' => true,
             'secure' => $secure,
             'sameSite' => 'Lax',
