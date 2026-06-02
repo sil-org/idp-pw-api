@@ -9,6 +9,7 @@ use common\components\personnel\NotFoundException;
 use common\components\personnel\PersonnelInterface;
 use common\components\personnel\PersonnelUser;
 use common\helpers\Utils;
+use yii\base\Arrayable;
 use yii\web\IdentityInterface;
 use yii\web\ServerErrorHttpException;
 
@@ -16,7 +17,7 @@ use yii\web\ServerErrorHttpException;
  * Class User
  * @package common\models
  */
-class User implements IdentityInterface
+class User implements IdentityInterface, Arrayable
 {
     public const AUTH_TYPE_LOGIN = 'login';
     public const AUTH_TYPE_RESET = 'reset';
@@ -44,6 +45,9 @@ class User implements IdentityInterface
 
     /** @var string|null  One of AUTH_TYPE_LOGIN or AUTH_TYPE_RESET */
     public ?string $auth_type = null;
+
+    /** @var string */
+    public ?string $last_login;
 
     /**
      * Holds the cached personnelUser
@@ -76,6 +80,7 @@ class User implements IdentityInterface
         $user->idp_username = $personnelUser->username;
         $user->email = $personnelUser->email;
         $user->auth_type = $personnelUser->authType;
+        $user->last_login = $personnelUser->lastLogin;
         $user->personnelUser = $personnelUser;
         return $user;
     }
@@ -92,7 +97,7 @@ class User implements IdentityInterface
             'first_name'   => \Yii::t('model', 'First Name'),
             'last_name'    => \Yii::t('model', 'Last Name'),
             'display_name' => \Yii::t('model', 'Display Name'),
-            'idp_username' => \Yii::t('model', 'Idp Username'),
+            'idp_username' => \Yii::t('model', 'IDP Username'),
             'email'        => \Yii::t('model', 'Email'),
             'auth_type'    => \Yii::t('model', 'Auth Type'),
         ];
@@ -112,14 +117,7 @@ class User implements IdentityInterface
             'idp_username',
             'email',
             'auth_type',
-            'last_login' => function () {
-                try {
-                    $lastLogin = $this->getPersonnelUser()->lastLogin;
-                } catch (\Exception $e) {
-                    $lastLogin = null;
-                }
-                return $lastLogin;
-            },
+            'last_login',
         ];
 
         $pwMeta = $this->getPasswordMeta();
@@ -143,7 +141,7 @@ class User implements IdentityInterface
      * Serialize this User to an array of its fields() for API responses.
      * @return array
      */
-    public function toArray(): array
+    public function toArray(array $fields = [], array $expand = [], $recursive = true): array
     {
         $result = [];
         foreach ($this->fields() as $key => $value) {
@@ -155,6 +153,14 @@ class User implements IdentityInterface
             }
         }
         return $result;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function extraFields(): array
+    {
+        return [];
     }
 
     /**
@@ -246,11 +252,7 @@ class User implements IdentityInterface
      */
     public function getSupervisorEmail(): ?string
     {
-        try {
-            $personnelUser = $this->getPersonnelUser();
-        } catch (\Exception $e) {
-            return null;
-        }
+        $personnelUser = $this->getPersonnelUser();
         return $personnelUser->supervisorEmail;
     }
 
@@ -520,10 +522,10 @@ class User implements IdentityInterface
     {
         $accessToken = Utils::generateRandomString(32);
         $accessTokenHash = Utils::getAccessTokenHash($accessToken);
-        $expiration = Utils::getDatetime(time() + \Yii::$app->params['accessTokenLifetime']);
+        $expiration = time() + \Yii::$app->params['accessTokenLifetime'];
 
         $personnel = self::getPersonnelComponent();
-        $personnel->setAccessToken($this->employee_id, $authType, $accessTokenHash, $expiration);
+        $personnel->setAccessToken($this->employee_id, $authType, $accessTokenHash, Utils::getDatetime($expiration));
 
         $this->auth_type = $authType;
 
@@ -531,7 +533,7 @@ class User implements IdentityInterface
         \Yii::$app->response->cookies->add(new \yii\web\Cookie([
             'name' => 'access_token',
             'value' => $accessToken,
-            'expire' => strtotime($expiration),
+            'expire' => $expiration,
             'httpOnly' => true,
             'secure' => $secure,
             'sameSite' => 'Lax',
