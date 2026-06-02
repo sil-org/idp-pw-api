@@ -246,11 +246,7 @@ class User implements IdentityInterface
      */
     public function getSupervisorEmail(): ?string
     {
-        try {
-            $personnelUser = $this->getPersonnelUser();
-        } catch (\Exception $e) {
-            return null;
-        }
+        $personnelUser = $this->getPersonnelUser();
         return $personnelUser->supervisorEmail;
     }
 
