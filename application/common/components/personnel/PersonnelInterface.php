@@ -72,11 +72,10 @@ interface PersonnelInterface
 
     /**
      * Find a user by their access token hash.
-     * Implementations must treat expired tokens as not found.
      *
      * @param string $accessTokenHash  HMAC hash of the raw access token
      * @return PersonnelUser
-     * @throws NotFoundException if no active, non-expired token matches
+     * @throws NotFoundException if no active token matches
      * @throws \Exception
      */
     public function findByAccessToken(string $accessTokenHash): PersonnelUser;
