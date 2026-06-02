@@ -11,8 +11,8 @@ class UserCest extends BaseCest
         $I->sendGET('/user/me');
         $I->seeResponseCodeIs(200);
         $I->seeResponseContainsJson([
-            'first_name' => "User",
-            'last_name' => "One",
+            'first_name' => "First",
+            'last_name' => "Last",
             'idp_username' => 'first_last',
             'email' => 'first_last@organization.org',
         ]);
