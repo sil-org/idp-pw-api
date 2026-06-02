@@ -36,7 +36,7 @@ class UserTest extends TestCase
             'displayName'    => 'User One',
             'username'       => 'first_last',
             'email'          => 'first_last@organization.org',
-            'supervisorEmail'=> 'supervisor@domain.org',
+            'supervisorEmail' => 'supervisor@domain.org',
             'lastLogin'      => '2024-01-01T00:00:00Z',
             'authType'       => null,
         ];
@@ -59,13 +59,13 @@ class UserTest extends TestCase
     }
 
     // ------------------------------------------------------------------
-    // createFromPersonnelUser
+    // constructFromPersonnelUser
     // ------------------------------------------------------------------
 
-    public function testCreateFromPersonnelUser()
+    public function testconstructFromPersonnelUser()
     {
         $pu   = $this->makePersonnelUser();
-        $user = User::createFromPersonnelUser($pu);
+        $user = User::constructFromPersonnelUser($pu);
 
         $this->assertInstanceOf(User::class, $user);
         $this->assertEquals($pu->uuid, $user->uuid);
@@ -78,10 +78,10 @@ class UserTest extends TestCase
         $this->assertNull($user->auth_type);
     }
 
-    public function testCreateFromPersonnelUserSetsAuthType()
+    public function testconstructFromPersonnelUserSetsAuthType()
     {
         $pu   = $this->makePersonnelUser(['authType' => User::AUTH_TYPE_LOGIN]);
-        $user = User::createFromPersonnelUser($pu);
+        $user = User::constructFromPersonnelUser($pu);
         $this->assertEquals(User::AUTH_TYPE_LOGIN, $user->auth_type);
     }
 
@@ -215,11 +215,11 @@ class UserTest extends TestCase
         $user     = User::findOrCreate('first_last');
         $authUser = $user->getAuthUser();
         $this->assertInstanceOf(\common\components\auth\User::class, $authUser);
-        $this->assertEquals($user->first_name,    $authUser->firstName);
-        $this->assertEquals($user->last_name,     $authUser->lastName);
-        $this->assertEquals($user->email,         $authUser->email);
-        $this->assertEquals($user->employee_id,   $authUser->employeeId);
-        $this->assertEquals($user->idp_username,  $authUser->idpUsername);
+        $this->assertEquals($user->first_name, $authUser->firstName);
+        $this->assertEquals($user->last_name, $authUser->lastName);
+        $this->assertEquals($user->email, $authUser->email);
+        $this->assertEquals($user->employee_id, $authUser->employeeId);
+        $this->assertEquals($user->idp_username, $authUser->idpUsername);
     }
 
     // ------------------------------------------------------------------
@@ -229,21 +229,21 @@ class UserTest extends TestCase
     public function testIsAuthScopeFullLogin()
     {
         $pu   = $this->makePersonnelUser(['authType' => User::AUTH_TYPE_LOGIN]);
-        $user = User::createFromPersonnelUser($pu);
+        $user = User::constructFromPersonnelUser($pu);
         $this->assertTrue($user->isAuthScopeFull());
     }
 
     public function testIsAuthScopeFullReset()
     {
         $pu   = $this->makePersonnelUser(['authType' => User::AUTH_TYPE_RESET]);
-        $user = User::createFromPersonnelUser($pu);
+        $user = User::constructFromPersonnelUser($pu);
         $this->assertFalse($user->isAuthScopeFull());
     }
 
     public function testIsAuthScopeFullNull()
     {
         $pu   = $this->makePersonnelUser(['authType' => null]);
-        $user = User::createFromPersonnelUser($pu);
+        $user = User::constructFromPersonnelUser($pu);
         $this->assertFalse($user->isAuthScopeFull());
     }
 
@@ -287,4 +287,3 @@ class UserTest extends TestCase
         $this->assertNull($user);
     }
 }
-
