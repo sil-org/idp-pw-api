@@ -131,7 +131,7 @@ class IdBroker extends Component implements PersonnelInterface
             $pUser->username = $response['username'];
             $pUser->supervisorEmail = $response['manager_email'] ?? null;
             $pUser->lastLogin = $response['last_login_utc'];
-            $pUser->authType = $response['auth_type'] ?? null;
+            $pUser->authType = $response['token_type'] ?? null;
 
             return $pUser;
         } catch (\Exception $e) {
@@ -265,9 +265,9 @@ class IdBroker extends Component implements PersonnelInterface
     {
         $this->updateUser([
             'employee_id' => $employeeId,
-            'access_token' => $accessTokenHash,
-            'access_token_expiration' => $expiration,
-            'auth_type' => $authType,
+            'token_hash' => $accessTokenHash,
+            'token_expiry_utc' => $expiration,
+            'token_type' => $authType,
         ]);
     }
 
@@ -281,9 +281,9 @@ class IdBroker extends Component implements PersonnelInterface
     {
         $this->updateUser([
             'employee_id' => $employeeId,
-            'access_token' => null,
-            'access_token_expiration' => null,
-            'auth_type' => null,
+            'token_hash' => null,
+            'token_expiry_utc' => null,
+            'token_type' => null,
         ]);
     }
 
@@ -298,10 +298,10 @@ class IdBroker extends Component implements PersonnelInterface
      */
     public function findByAccessToken(string $accessTokenHash): PersonnelUser
     {
-        $results = $this->listUsers('access_token', $accessTokenHash);
+        $results = $this->listUsers('token_hash', $accessTokenHash);
 
         if (count($results) === 1) {
-            return $this->returnPersonnelUserFromResponse('access_token', '***', $results[0]);
+            return $this->returnPersonnelUserFromResponse('token_hash', '***', $results[0]);
         }
 
         throw new NotFoundException();
