@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4cc3aedaf5f40a272362573548095c5a",
+    "content-hash": "3bd19993d23ffdfc7f1420f231adc834",
     "packages": [
         {
             "name": "behat/gherkin",
@@ -7895,16 +7895,16 @@
         },
         {
             "name": "sil-org/idp-id-broker-php-client",
-            "version": "4.10.0",
+            "version": "4.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sil-org/idp-id-broker-php-client.git",
-                "reference": "89bc67a2cf7385710f6281233ff5281cd8550cd5"
+                "reference": "efc93458463f29906fe4158556045e6d4ca4deba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sil-org/idp-id-broker-php-client/zipball/89bc67a2cf7385710f6281233ff5281cd8550cd5",
-                "reference": "89bc67a2cf7385710f6281233ff5281cd8550cd5",
+                "url": "https://api.github.com/repos/sil-org/idp-id-broker-php-client/zipball/efc93458463f29906fe4158556045e6d4ca4deba",
+                "reference": "efc93458463f29906fe4158556045e6d4ca4deba",
                 "shasum": ""
             },
             "require": {
@@ -7944,9 +7944,9 @@
             ],
             "support": {
                 "issues": "https://github.com/sil-org/idp-id-broker-php-client/issues",
-                "source": "https://github.com/sil-org/idp-id-broker-php-client/tree/4.10.0"
+                "source": "https://github.com/sil-org/idp-id-broker-php-client/tree/4.12.0"
             },
-            "time": "2026-05-14T08:24:42+00:00"
+            "time": "2026-06-10T02:58:42+00:00"
         },
         {
             "name": "sil-org/php-env",
