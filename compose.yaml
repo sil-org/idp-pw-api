@@ -126,6 +126,7 @@ services:
     working_dir: /data
     environment:
       COMPOSER_CACHE_DIR: /composer
+      COMPOSER_ROOT_VERSION: dev-local
     env_file:
       - ./common.env
       - path: ./local.env
