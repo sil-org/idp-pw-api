@@ -4,10 +4,10 @@ test: testlocal testintegration
 
 testlocal: testunit testapi
 
-testunit: composer rmTestDb upTestDb broker yiimigratetestDb
+testunit: composer broker
 	docker compose run --rm unittest
 
-testapi: upTestDb yiimigratetestDb
+testapi:
 	docker compose kill broker
 	docker compose up -d broker
 	docker compose run --rm apitest
@@ -15,7 +15,7 @@ testapi: upTestDb yiimigratetestDb
 testintegration:
 	docker compose run --rm integrationtest
 
-api: upDb broker composer yiimigrate
+api: broker composer
 	docker compose up -d api zxcvbn phpmyadmin brokerpma emailpma
 
 composer:
@@ -34,35 +34,6 @@ email:
 emailcron:
 	docker compose up -d emailcron
 
-rmDb:
-	docker compose kill db
-	docker compose rm -f db
-
-upDb:
-	docker compose up -d db
-
-yiimigrate:
-	docker compose run --rm cli ./yii migrate --interactive=0
-
-yiimigratelocal:
-	docker compose run --rm cli ./yii migrate --migrationPath=console/migrations-local/ --interactive=0
-
-basemodels:
-	docker compose run --rm cli ./rebuildbasemodels.sh
-
-yiimigratetestDb:
-	docker compose run --rm unittest bash -c './yii migrate --interactive=0'
-
-yiimigratetestDblocal:
-	docker compose run --rm unittest bash -c './yii migrate --migrationPath=console/migrations-test/ --interactive=0'
-
-rmTestDb:
-	docker compose kill testdb
-	docker compose rm -f testdb
-
-upTestDb:
-	docker compose up -d testdb
-
 broker:
 	docker compose up -d broker
 
@@ -80,6 +51,3 @@ api.html: api.raml
 
 psr2:
 	docker compose run --rm cli bash -c "vendor/bin/php-cs-fixer fix ."
-
-certs:
-	db/make-db-certs.sh

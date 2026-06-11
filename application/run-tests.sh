@@ -15,9 +15,6 @@ mkdir -p /data/runtime/mail
 # Remove any ca.pem file that may have been added by the interactive test container
 rm --force /data/console/runtime/ca.pem
 
-# Run database migrations
-/data/yii migrate --interactive=0
-
 # Install and enable xdebug for code coverage
 apt-get update && apt-get install -y php-xdebug
 

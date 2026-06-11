@@ -50,48 +50,6 @@ if (extension_loaded('gd')) {
  * Adjust requirements according to your application specifics.
  */
 $requirements = [
-    // Database :
-    [
-        'name' => 'PDO extension',
-        'mandatory' => true,
-        'condition' => extension_loaded('pdo'),
-        'by' => 'All DB-related classes',
-    ],
-    [
-        'name' => 'PDO SQLite extension',
-        'mandatory' => false,
-        'condition' => extension_loaded('pdo_sqlite'),
-        'by' => 'All DB-related classes',
-        'memo' => 'Required for SQLite database.',
-    ],
-    [
-        'name' => 'PDO MySQL extension',
-        'mandatory' => false,
-        'condition' => extension_loaded('pdo_mysql'),
-        'by' => 'All DB-related classes',
-        'memo' => 'Required for MySQL database.',
-    ],
-    [
-        'name' => 'PDO PostgreSQL extension',
-        'mandatory' => false,
-        'condition' => extension_loaded('pdo_pgsql'),
-        'by' => 'All DB-related classes',
-        'memo' => 'Required for PostgreSQL database.',
-    ],
-    // Cache :
-    [
-        'name' => 'Memcache extension',
-        'mandatory' => false,
-        'condition' => extension_loaded('memcache') || extension_loaded('memcached'),
-        'by' => '<a href="http://www.yiiframework.com/doc-2.0/yii-caching-memcache.html">MemCache</a>',
-        'memo' => extension_loaded('memcached') ? 'To use memcached set <a href="http://www.yiiframework.com/doc-2.0/yii-caching-memcache.html#$useMemcached-detail">MemCache::useMemcached</a> to <code>true</code>.' : '',
-    ],
-    [
-        'name' => 'APC extension',
-        'mandatory' => false,
-        'condition' => extension_loaded('apc'),
-        'by' => '<a href="http://www.yiiframework.com/doc-2.0/yii-caching-apccache.html">ApcCache</a>',
-    ],
     // CAPTCHA:
     [
         'name' => 'GD PHP extension with FreeType support',
