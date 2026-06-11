@@ -129,27 +129,27 @@
   },
   {
     "name": "guzzlehttp/command",
-    "version": "1.3.2"
+    "version": "1.5.0"
   },
   {
     "name": "guzzlehttp/guzzle",
-    "version": "7.10.0"
+    "version": "7.11.1"
   },
   {
     "name": "guzzlehttp/guzzle-services",
-    "version": "1.4.2"
+    "version": "1.6.1"
   },
   {
     "name": "guzzlehttp/promises",
-    "version": "2.3.0"
+    "version": "2.5.0"
   },
   {
     "name": "guzzlehttp/psr7",
-    "version": "2.8.0"
+    "version": "2.11.0"
   },
   {
     "name": "guzzlehttp/uri-template",
-    "version": "v1.0.5"
+    "version": "v1.0.6"
   },
   {
     "name": "http-interop/http-factory-guzzle",
@@ -525,7 +525,7 @@
   },
   {
     "name": "symfony/polyfill-mbstring",
-    "version": "v1.38.1"
+    "version": "v1.38.2"
   },
   {
     "name": "symfony/polyfill-php80",
