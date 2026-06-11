@@ -1,0 +1,917 @@
+openapi: 3.0.0
+info:
+  title: Password Manager Backend
+  version: '10'
+servers: []
+paths:
+  /auth/login:
+    get:
+      responses:
+        '302':
+          description: >-
+            On successful login or invite, a redirection to `ReturnTo`. If
+            `invite` was provided, but it has expired, this response will be a
+            redirection to `ReturnToOnError` with no query string parameters.
+          headers:
+            location:
+              description: redirect URL
+              schema:
+                type: string
+        '400':
+          description: Error or missing information in request.
+      operationId: GET_auth-login
+      parameters:
+        - name: ReturnTo
+          in: query
+          required: true
+          description: URL to return to after login or invite
+          schema:
+            type: string
+        - name: ReturnToOnError
+          in: query
+          description: URL to return to in case of expired invite
+          schema:
+            type: string
+        - name: invite
+          in: query
+          description: New user invite code
+          schema:
+            type: string
+    post:
+      responses:
+        default:
+          description: ''
+      operationId: POST_auth-login
+      requestBody:
+        content:
+          mediaType:
+            schema:
+              $ref: '#/components/schemas/application/x-www-form-urlencoded'
+        required: true
+  /auth/logout:
+    get:
+      responses:
+        '200':
+          description: ''
+      operationId: GET_auth-logout
+  /config:
+    get:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Config'
+        '500':
+          description: Backend configuration is missing one or more parameters.
+      description: Request various configuration parameters.
+      operationId: GET_config
+  /method:
+    get:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Method'
+        '500':
+          description: User not found in personnel database.
+      description: >-
+        Request a list of password recovery methods, including methods not yet
+        verified.
+      operationId: GET_method
+    post:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Method'
+        '400':
+          description: Missing parameter
+        '409':
+          description: New method matches an already existing verified method
+        '500':
+          description: Database or other system error
+      description: >-
+        Create a new password recovery method. The creation of a method is not
+        completed until the following verification call is made. Unverified
+        Methods will automatically expire if not verified within a certain
+        amount of time.
+      operationId: POST_method
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                value:
+                  type: string
+              required:
+                - value
+              type: object
+        required: true
+  /method/{methodId}:
+    get:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Method'
+        '404':
+          description: Method not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: Request a single verified password recovery method.
+      operationId: GET_method-methodId
+    delete:
+      responses:
+        '204':
+          description: Method has been deleted.
+        '404':
+          description: Method not found.
+        '500':
+          description: Delete failed.
+      description: Delete a recovery method object.
+      operationId: DELETE_method-methodId
+    parameters:
+      - name: methodId
+        in: path
+        required: true
+        schema:
+          type: string
+  /method/{methodId}/verify:
+    put:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Method'
+        '400':
+          description: Submitted code was incorrect or missing.
+        '404':
+          description: Method not found.
+        '410':
+          description: Expired verification code
+        '429':
+          description: Too many verification attempts on this method.
+        '500':
+          description: Database or other system error
+      description: Attempt to verify a recovery method.
+      operationId: PUT_method-methodId-verify
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                code:
+                  type: string
+              required:
+                - code
+              type: object
+        required: true
+    parameters:
+      - name: methodId
+        in: path
+        required: true
+        schema:
+          type: string
+  /method/{methodId}/resend:
+    put:
+      responses:
+        '204':
+          description: Message sent.
+        '400':
+          description: Method already verified.
+        '500':
+          description: Resend failed.
+      description: Resend recovery verification message.
+      operationId: PUT_method-methodId-resend
+    parameters:
+      - name: methodId
+        in: path
+        required: true
+        schema:
+          type: string
+  /mfa:
+    get:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mfa'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: Request a list of MFA objects for logged in user.
+      operationId: GET_mfa
+    post:
+      responses:
+        '200':
+          description: |
+            MFA object created. Only `id` and `data` are in the response.
+            If `type` is `backupcode` then `data` is populated with the
+            backup codes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mfa'
+        '400':
+          description: Property `type` was omitted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: >-
+            An MFA of the requested type already exists. Note that this would
+            only be returned for 'totp' or 'webauthn'. The code types
+            ('backupcode' and 'manager') reuse the existing MFA and create new
+            codes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: |
+        Create a new MFA object. Only properties `type` and `label` are
+        needed in the request.
+      operationId: POST_mfa
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Mfa'
+        required: true
+  /mfa/{mfaId}:
+    put:
+      responses:
+        '200':
+          description: Object updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mfa'
+        '400':
+          description: Property `label` was blank or omitted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: Update an MFA object.
+      operationId: PUT_mfa-mfaId
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                label:
+                  type: string
+              required:
+                - label
+              type: object
+        required: true
+    delete:
+      responses:
+        '200':
+          description: Object deleted
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: Delete an MFA object.
+      operationId: DELETE_mfa-mfaId
+    parameters:
+      - name: mfaId
+        in: path
+        required: true
+        schema:
+          type: string
+  /mfa/{mfaId}/verify:
+    put:
+      responses:
+        '200':
+          description: MFA verified successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mfa'
+        '400':
+          description: Property `value` was omitted or incorrect.
+        '429':
+          description: Too many verify requests have been attempted.
+      description: Attempt to verify an MFA object.
+      operationId: PUT_mfa-mfaId-verify
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                value:
+                  type: string
+              required:
+                - value
+              type: object
+        required: true
+    parameters:
+      - name: mfaId
+        in: path
+        required: true
+        schema:
+          type: string
+  /mfa/{mfaId}/verify/registration:
+    put:
+      responses:
+        '200':
+          description: Value provided passed verification
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MfaWebauthn'
+        '400':
+          description: >-
+            Value provided failed verification or was unacceptable for some
+            other reason (such as current user's `employee_id` was not
+            accepted).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No MFA record found with that `id` and `employee_id`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: Verify the registration of a new mfa webauthn credential.
+      operationId: PUT_mfa-mfaId-verify-registration
+      requestBody:
+        content:
+          application/json:
+            example: |
+              {
+                "value": {
+                  "id":"abc123",
+                  "rawId":"abc123",
+                  "response":  {
+                    "attestationObject":"abc123",
+                    "clientDataJSON":"abc123"
+                  },
+                  "type":"public-key",
+                  "clientExtensionResults":{},
+                  "transports":["usb"]
+                }
+                "label": "Yubikey"
+            schema:
+              properties:
+                value:
+                  type: array
+                label:
+                  type: string
+              required:
+                - value
+                - label
+              type: object
+        required: true
+    parameters:
+      - name: mfaId
+        in: path
+        required: true
+        schema:
+          type: string
+  /mfa/{mfaId}/webauthn/{webauthnId}:
+    put:
+      responses:
+        '200':
+          description: Webauthn label successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webauthn'
+        '400':
+          description: Missing or blank label value or invalid employee_id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden for user with auth_type not 'login'.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+            No MFA record found with that `mfa_id` or no webauthn record found
+            with that `id` and that `mfa_id`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: Update the label of a MFA webauthn credential.
+      operationId: PUT_mfa-mfaId-webauthn-webauthnId
+      requestBody:
+        content:
+          application/json:
+            example:
+              label: My First Security Key
+            schema:
+              properties:
+                label:
+                  type: string
+              required:
+                - label
+              type: object
+        required: true
+    delete:
+      responses:
+        '204':
+          description: Successful deletion of record
+        '400':
+          description: current user's employee_id was not accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: The MFA record was not of type webauthn
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+            No MFA record found with that `mfa_id` or no webauthn record found
+            with that `id` and that `mfa_id`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Unable to delete the webauthn credential or the MFA record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: >-
+        Delete a webauthn credential from an MFA. If it is the last credential,
+        the whole MFA will be deleted.
+      operationId: DELETE_mfa-mfaId-webauthn-webauthnId
+    parameters:
+      - name: webauthnId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: mfaId
+        in: path
+        required: true
+        schema:
+          type: string
+  /password:
+    put:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PasswordMeta'
+        '500':
+          description: A password was not provided or it does not pass validation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: The requested password has been used too recently.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: Set a new password.
+      operationId: PUT_password
+      requestBody:
+        content:
+          application/json:
+            example:
+              password: abc123!@*ABC
+            schema:
+              properties:
+                password:
+                  type: string
+              required:
+                - password
+              type: object
+        required: true
+    get:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PasswordMeta'
+      description: Get password metadata.
+      operationId: GET_password
+  /password/assess:
+    put:
+      responses:
+        '204':
+          description: All validation rules pass.
+        '400':
+          description: A password was not provided or it does not pass validation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: The requested password has been used too recently.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: Assess whether a new password will pass all validation rules.
+      operationId: PUT_password-assess
+      requestBody:
+        content:
+          application/json:
+            example:
+              password: abc123!@#ABC
+            schema:
+              properties:
+                password:
+                  type: string
+              required:
+                - password
+              type: object
+        required: true
+  /reset:
+    post:
+      responses:
+        '204':
+          description: ''
+      description: |
+        Requests a password reset to be initiated by the connected ID Broker.
+      operationId: POST_reset
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                username:
+                  type: string
+                verification_token:
+                  description: |
+                    ReCAPTCHA verification token. Required if app is configured
+                    to require ReCAPTCHA for password reset.
+                  type: string
+              required:
+                - username
+              type: object
+        required: true
+  /reset/{uuid}/validate:
+    put:
+      responses:
+        '200':
+          description: >-
+            Reset was validated. Subsequent API calls will use a http only
+            cookie for the access token.
+        '404':
+          description: |
+            The reset was not found or has expired.
+      description: Validate reset UUID to complete password reset process.
+      operationId: PUT_reset-uuid-validate
+    parameters:
+      - name: uuid
+        in: path
+        required: true
+        schema:
+          type: string
+  /site/system-status:
+    get:
+      responses:
+        '200':
+          description: Site is operational.
+      description: Check site status.
+      operationId: GET_site-system-status
+  /user/me:
+    get:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      description: Request basic information for the user.
+      operationId: GET_user-me
+components:
+  schemas:
+    Config:
+      example:
+        idpName: Acme
+        support:
+          phone: 1-234-567-8901
+          email: support@example.com
+          url: http://support.example.com
+        passwordRules:
+          minLength: 10
+          maxLength: 255
+          minScore: 3
+          enableHIBP: true
+      type: object
+      properties:
+        idpName:
+          type: string
+        support:
+          type: object
+          properties:
+            phone:
+              type: string
+            email:
+              type: string
+            url:
+              type: string
+          required:
+            - phone
+            - email
+            - url
+        passwordRules:
+          type: object
+          properties:
+            minLength:
+              type: integer
+            maxLength:
+              type: integer
+            minScore:
+              type: integer
+            hibpEnable:
+              type: boolean
+          required:
+            - minLength
+            - maxLength
+            - minScore
+            - hibpEnable
+      required:
+        - idpName
+        - support
+        - passwordRules
+    Error:
+      example:
+        name: Bad Request
+        message: Unable to update password. If this password has been used before please
+          use something different.
+        code: 1469194882
+        status: 409
+      type: object
+      properties:
+        name:
+          type: string
+        message:
+          type: string
+        code:
+          type: integer
+        status:
+          type: integer
+      required:
+        - name
+        - message
+        - code
+        - status
+    Method:
+      example:
+        id: nFV7mQQJl3L0PB4kfS2tG1YYbmzT0Ghm
+        type: email
+        value: shep@gmail.com
+      type: object
+      properties:
+        id:
+          type: string
+        value:
+          type: string
+        type:
+          enum:
+            - primary
+            - supervisor
+            - email
+          type: string
+        verified:
+          type: boolean
+      required:
+        - value
+        - type
+    Mfa:
+      example:
+        id: 1
+        type: backupcode
+        label: a_label
+        created_utc: 2018-09-07T17:46:37Z
+        last_used_utc: 2018-09-07T17:47:06Z
+        data:
+          - count: 9
+      type: object
+      properties:
+        id:
+          type: integer
+        type:
+          enum:
+            - backupcode
+            - totp
+            - webauthn
+          type: string
+        label:
+          type: string
+        created_utc:
+          type: string
+        last_used_utc:
+          type: string
+        data:
+          type: array
+      required:
+        - type
+    MfaWebauthn:
+      example:
+        id: 1
+        type: webauthn
+        label: ''
+        created_utc: 2018-09-07T17:46:37Z
+        last_used_utc: 2018-09-07T17:47:06Z
+        data:
+          - id: 11
+            mfa_id: 1
+            key_handle_hash: ABC123
+            label: Security Key-1
+            created_utc: 2018-09-07T17:46:37Z
+            last_used_utc: 2018-09-07T17:47:06Z
+      type: object
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+        label:
+          type: string
+        created_utc:
+          type: string
+        last_used_utc:
+          type: string
+        data:
+          type: array
+      required:
+        - type
+    Webauthn:
+      example:
+        id: 11
+        mfa_id: 1
+        key_handle_hash: ABC123
+        label: My First Security Key
+        created_utc: 2018-09-07T17:46:37Z
+        last_used_utc: 2018-09-07T17:47:06Z
+      type: object
+      properties:
+        id:
+          type: integer
+        mfa_id:
+          type: integer
+        key_handle_hash:
+          type: string
+        label:
+          type: string
+        created_utc:
+          type: string
+        last_used_utc:
+          type: string
+      required:
+        - id
+        - mfa_id
+        - key_handle_hash
+        - label
+        - created_utc
+    PasswordMeta:
+      example:
+        last_changed: 2018-09-13T19:21:57Z
+        expires: 2020-09-13T23:59:59Z
+      type: object
+      properties:
+        last_changed:
+          type: string
+        expires:
+          type: string
+      required:
+        - last_changed
+        - expires
+    Reset:
+      description: |
+        An object holding the verified emails that can be used for performing
+        a password reset. The addresses in the response are
+        masked for privacy.
+      example:
+        uid: 123asdf123lkjfsdfw23
+        methods:
+          - type: primary
+            value: i****@s**.com
+          - type: supervisor
+            value: a*******@s**.org
+          - id: a4a45eg5h6h7tjy8kaw4w33
+            type: email
+            value: j****@c*********.com
+      type: object
+      properties:
+        uid:
+          type: string
+        methods:
+          type: array
+          items:
+            $ref: '#/components/schemas/Method'
+      required:
+        - uid
+        - methods
+    User:
+      description: >-
+        A limited set of information describing a user account. Does not
+        necessarily contain all of the properties in the personnel record, and may contain
+        other non-personnel information.
+      example:
+        uuid: 55b2447f-87f7-4286-8bd1-a7478f9dae38
+        first_name: John
+        last_name: Doe
+        idp_username: john_doe
+        email: john_doe@example.com
+        auth_type: login
+        last_login: 2018-09-13T19:21:57Z
+        password_meta:
+          last_changed: 2018-09-13T19:21:57Z
+          expires: 2020-09-13T23:59:59Z
+        manager_email: manager@example.com
+      type: object
+      properties:
+        uuid:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        idp_username:
+          type: string
+        email:
+          type: string
+        auth_type:
+          enum:
+            - login
+            - reset
+          type: string
+        last_login:
+          type: string
+        password_meta:
+          $ref: '#/components/schemas/PasswordMeta'
+        manager_email:
+          type: string
+      required:
+        - uuid
+        - first_name
+        - last_name
+        - idp_username
+        - email
+        - auth_type
+        - last_login
+  responses: {}
+  parameters: {}
+  examples: {}
+  requestBodies: {}
+  headers: {}
+  securitySchemes:
+    AuthzHttpOnlyCookie:
+      type: apiKey
+      in: header
+      name: Cookie
+  links: {}
+  callbacks: {}
