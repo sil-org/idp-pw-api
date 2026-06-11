@@ -131,6 +131,7 @@ class IdBroker extends Component implements PersonnelInterface
             $pUser->username = $response['username'];
             $pUser->supervisorEmail = $response['manager_email'] ?? null;
             $pUser->lastLogin = $response['last_login_utc'];
+            $pUser->authType = $response['token_type'] ?? null;
 
             return $pUser;
         } catch (\Exception $e) {
@@ -248,5 +249,64 @@ class IdBroker extends Component implements PersonnelInterface
         $idBrokerClient = $this->getIdBrokerClient();
 
         return $idBrokerClient->listUsers(null, [$field => $value]);
+    }
+
+    /**
+     * Store an access token for the given user in IdBroker.
+     *
+     * @param string $employeeId
+     * @param string $authType
+     * @param string $accessTokenHash
+     * @param string $expiration
+     * @throws NotFoundException
+     * @throws ServiceException
+     */
+    public function setAccessToken(string $employeeId, string $authType, string $accessTokenHash, string $expiration): void
+    {
+        $this->updateUser([
+            'employee_id' => $employeeId,
+            'token_hash' => $accessTokenHash,
+            'token_expiry_utc' => $expiration,
+            'token_type' => $authType,
+        ]);
+    }
+
+    /**
+     * Clear the access token for the given user in IdBroker.
+     *
+     * @param string $employeeId
+     * @throws ServiceException
+     */
+    public function clearAccessToken(string $employeeId): void
+    {
+        $this->updateUser([
+            'employee_id' => $employeeId,
+            'token_hash' => null,
+            'token_expiry_utc' => null,
+            'token_type' => null,
+        ]);
+    }
+
+    /**
+     * Find a user by their hashed access token.
+     *
+     * @param string $accessTokenHash
+     * @return PersonnelUser
+     * @throws NotFoundException
+     * @throws ServiceException
+     * @throws \Exception
+     */
+    public function findByAccessToken(string $accessTokenHash): PersonnelUser
+    {
+        $results = $this->listUsers('token_hash', $accessTokenHash);
+
+        $found = count($results);
+        if ($found === 1) {
+            return $this->returnPersonnelUserFromResponse('token_hash', '***', $results[0]);
+        }
+
+        \Yii::error("More than one user has the same token, found $found users with hash $accessTokenHash");
+
+        throw new NotFoundException();
     }
 }
