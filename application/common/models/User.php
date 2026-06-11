@@ -69,7 +69,7 @@ class User implements IdentityInterface, Arrayable
      * @param PersonnelUser $personnelUser
      * @return self
      */
-    public static function createFromPersonnelUser(PersonnelUser $personnelUser): self
+    public static function constructFromPersonnelUser(PersonnelUser $personnelUser): self
     {
         $user = new self();
         $user->uuid = $personnelUser->uuid;
@@ -211,7 +211,7 @@ class User implements IdentityInterface, Arrayable
             );
         }
 
-        return self::createFromPersonnelUser($personnelUser);
+        return self::constructFromPersonnelUser($personnelUser);
     }
 
     /**
@@ -286,7 +286,7 @@ class User implements IdentityInterface, Arrayable
         try {
             $personnel = self::getPersonnelComponent();
             $personnelUser = $personnel->findByEmployeeId($id);
-            return self::createFromPersonnelUser($personnelUser);
+            return self::constructFromPersonnelUser($personnelUser);
         } catch (\Exception $e) {
             return null;
         }
@@ -306,7 +306,7 @@ class User implements IdentityInterface, Arrayable
         try {
             $personnel = self::getPersonnelComponent();
             $personnelUser = $personnel->findByAccessToken($hash);
-            return self::createFromPersonnelUser($personnelUser);
+            return self::constructFromPersonnelUser($personnelUser);
         } catch (NotFoundException $e) {
             return null;
         } catch (\Exception $e) {
@@ -576,7 +576,7 @@ class User implements IdentityInterface, Arrayable
         $personnel = self::getPersonnelComponent();
         try {
             $personnelUser = $personnel->findByInvite($inviteCode);
-            return self::createFromPersonnelUser($personnelUser);
+            return self::constructFromPersonnelUser($personnelUser);
         } catch (NotFoundException $e) {
             return null;
         }
