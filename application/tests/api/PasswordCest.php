@@ -161,7 +161,7 @@ class PasswordCest extends BaseCest
     {
         $I->wantTo('check response when changing the password (PUT request) to something that contains the first_name');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
-        $I->sendPUT('/password', ['password' => 'aUSERz']);
+        $I->sendPUT('/password', ['password' => 'aFirstz012345']);
         $I->seeResponseCodeIs(400);
         $body = json_decode($I->grabResponse(), true);
         if (substr_count($body['message'], 'code 180') <= 0) {
@@ -173,7 +173,7 @@ class PasswordCest extends BaseCest
     {
         $I->wantTo('check response when changing the password (PUT request) to something that contains the last_name');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
-        $I->sendPUT('/password', ['password' => 'aONEz']);
+        $I->sendPUT('/password', ['password' => 'aLastz']);
         $I->seeResponseCodeIs(400);
         $body = json_decode($I->grabResponse(), true);
         if (substr_count($body['message'], 'code 180') <= 0) {

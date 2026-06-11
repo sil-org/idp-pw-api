@@ -2,19 +2,17 @@
 
 namespace tests\unit\common\models;
 
-use Sil\Codeception\TestCase\Test;
 use common\helpers\Utils;
 use common\models\Password;
 use common\models\User;
-use tests\unit\fixtures\common\models\UserFixture;
+use Sil\Codeception\TestCase\Test;
+use tests\helpers\BrokerUtils;
 
 class PasswordTest extends Test
 {
-    public function _fixtures()
+    public function _before()
     {
-        return [
-            'users' => UserFixture::class,
-        ];
+        BrokerUtils::insertFakeUsers();
     }
 
     public function testZxcvbn()
@@ -37,7 +35,7 @@ class PasswordTest extends Test
         $testData = $this->getTestData();
 
         $employeeId = '111111';
-        $user = User::findOne(['employee_id' => $employeeId]);
+        $user = User::findOrCreate(employeeId: $employeeId);
 
         foreach ($testData as $testCase) {
             $password = Password::create($user, $testCase['password']);
@@ -85,7 +83,7 @@ class PasswordTest extends Test
     public function testVsUserAttributes()
     {
         $employeeId = '111111';
-        $user = User::findOne(['employee_id' => $employeeId]);
+        $user = User::findOrCreate(employeeId: $employeeId);
 
         $testData = [
             'a' . $user->first_name . 'z',
@@ -116,7 +114,7 @@ class PasswordTest extends Test
     public function testBadBytes()
     {
         $employeeId = '111111';
-        $user = User::findOne(['employee_id' => $employeeId]);
+        $user = User::findOrCreate(employeeId: $employeeId);
 
         $badPassword = "1" . "\0" . "23456";
         $password = Password::create($user, $badPassword);
@@ -129,7 +127,7 @@ class PasswordTest extends Test
     public function testAlphaAndNumeric()
     {
         $employeeId = '111111';
-        $user = User::findOne(['employee_id' => $employeeId]);
+        $user = User::findOrCreate(employeeId: $employeeId);
 
         $passwords = [
             "123456" => false,

@@ -37,4 +37,22 @@ return [
         'username' => 'first4_last4',
         'manager_email' => 'supervisor4@example.com',
     ],
+    [
+        'first_name' => 'First5',
+        'last_name' => 'Last5',
+        'display_name' => 'First5 Last5',
+        'email' => 'user_five@organization.org',
+        'employee_id' => '5',
+        'username' => 'user_five',
+        'manager_email' => null,
+    ],
+    [
+        'first_name' => 'Us',
+        'last_name' => 'Sx',
+        'display_name' => 'Us Sx',
+        'email' => 'us_sx@organization.org',
+        'employee_id' => '6',
+        'username' => 'us_sx',
+        'manager_email' => null,
+    ],
 ];
