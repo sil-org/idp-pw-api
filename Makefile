@@ -73,11 +73,6 @@ clean:
 	docker compose kill
 	docker compose rm -f
 
-raml2html: api.html
-
-api.html: api.raml
-	docker compose run --rm raml2html
-
 psr2:
 	docker compose run --rm cli bash -c "vendor/bin/php-cs-fixer fix ."
 

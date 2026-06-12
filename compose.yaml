@@ -193,14 +193,6 @@ services:
       timeout: 5s
       retries: 20
 
-  raml2html:
-    image: mattjtodd/raml2html
-    platform: linux/amd64
-    volumes:
-      - ./api.raml:/api.raml
-      - ./api.html:/api.html
-    command: -i api.raml -o api.html
-
 networks:
   default:
     driver: bridge

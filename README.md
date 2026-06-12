@@ -173,8 +173,7 @@ will need to provide credentials in the `local.env file` in the
 
 ## API Documentation
 
-The API is described by [api.raml](api.raml), and an auto-generated [api.html](api.html) created by
-`raml2html`. To regenerate the HTML file, run `make raml2html`.
+The API is described by [openapi.yaml](openapi.yaml).
 
 ### Quick start for manually interacting with API
 
