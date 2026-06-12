@@ -16,19 +16,6 @@ trap 'kill ${!}; term_handler' SIGTERM
 
 echo "starting idp-pw-api version $GITHUB_REF_NAME"
 
-if [[ -n "$SSL_CA_BASE64" ]]; then
-    # Decode the base64 and write to the file
-    caFile="/data/console/runtime/ca.pem"
-    echo "$SSL_CA_BASE64" | base64 -d > "$caFile"
-    if [[ $? -ne 0 || ! -s "$caFile" ]]; then
-        echo "Failed to write database SSL certificate file: $caFile" >&2
-        exit 1
-    fi
-fi
-
-# Run database migrations
-/data/yii migrate --interactive=0
-
 if [[ $APP_ENV == "dev" ]]; then
     export XDEBUG_CONFIG="remote_enable=1 remote_host="$REMOTE_DEBUG_IP
     apt-get update && apt-get install -y php-xdebug

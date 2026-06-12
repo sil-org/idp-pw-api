@@ -10,9 +10,6 @@ mkdir -p /data/runtime/mail
 # Remove any ca.pem file that may have been added by the interactive test container
 rm --force /data/console/runtime/ca.pem
 
-# Run database migrations
-/data/yii migrate --interactive=0
-
 make-ssl-cert generate-default-snakeoil
 
 # Start apache

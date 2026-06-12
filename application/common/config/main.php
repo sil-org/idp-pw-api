@@ -12,10 +12,6 @@ use yii\helpers\Json;
 /*
  * Get config settings from ENV vars or set defaults
  */
-$mysqlHost = Env::get('MYSQL_HOST');
-$mysqlDatabase = Env::get('MYSQL_DATABASE');
-$mysqlUser = Env::get('MYSQL_USER');
-$mysqlPassword = Env::get('MYSQL_PASSWORD');
 
 $alertsEmail = Env::get('ALERTS_EMAIL');
 $alertsEmailEnabled = Env::get('ALERTS_EMAIL_ENABLED');
@@ -83,30 +79,11 @@ $logPrefix = function () use ($version) {
     return Json::encode($prefixData);
 };
 
-$dbAttributes = [];
-$caFile = '/data/console/runtime/ca.pem';
-if (is_readable($caFile) && Env::get('SSL_CA_BASE64', '')) {
-    $dbAttributes = [
-        PDO::MYSQL_ATTR_SSL_CA => $caFile,
-        PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => 1,
-    ];
-}
-
 return [
     'id' => 'app-common',
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'sourceLanguage' => '00',
     'components' => [
-        'db' => [
-            'class' => 'yii\db\Connection',
-            'dsn' => sprintf('mysql:host=%s;dbname=%s', $mysqlHost, $mysqlDatabase),
-            'username' => $mysqlUser,
-            'password' => $mysqlPassword,
-            'charset' => 'utf8',
-            'emulatePrepare' => false,
-            'tablePrefix' => '',
-            'attributes' => $dbAttributes,
-        ],
         'log' => [
             'traceLevel' => 0,
             'targets' => [

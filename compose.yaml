@@ -8,59 +8,22 @@ x-db_healthcheck: &db_healthcheck
 
 services:
 
-  db:
-    image: mariadb:10
-    volumes:
-      - ./db/certs:/certs:ro
-      - ./db/db.cnf:/etc/mysql/conf.d/my.cnf:ro
-    environment:
-      MYSQL_ROOT_PASSWORD: r00tp@ss!
-      MYSQL_DATABASE: pwmgr
-      MYSQL_USER: idpmgmt
-      MYSQL_PASSWORD: idpmgmt
-    <<: *db_healthcheck
-
-  testdb:
-    image: mariadb:10
-    environment:
-      MYSQL_ROOT_PASSWORD: r00tp@ss!
-      MYSQL_DATABASE: test
-      MYSQL_USER: idpmgmt
-      MYSQL_PASSWORD: idpmgmt
-    <<: *db_healthcheck
-
-  phpmyadmin:
-    image: phpmyadmin:5
-    ports:
-      - "51151:80"
-      - "51153:443"
-    environment:
-      PMA_HOST: db
-      PMA_USER: idpmgmt
-      PMA_PASSWORD: idpmgmt
-
   api:
     build: ./
     volumes:
       - ./application:/data
     ports:
       - "51155:80"
-    depends_on:
-      db:
-        condition: service_healthy
     env_file:
       - ./common.env
       - path: ./local.env
         required: false
-      - ./db/certs/test.env
 
   apitest:
     build: ./
     volumes:
       - ./application:/data
     depends_on:
-      testdb:
-        condition: service_healthy
       zxcvbn:
         condition: service_started
       broker:
@@ -69,8 +32,6 @@ services:
       - ./common.env
       - ./test.env
     environment:
-      MYSQL_HOST: testdb
-      MYSQL_DATABASE: test
       APP_ENV: test
       ID_BROKER_baseUrl: http://broker
     command: ["/data/run-tests-api.sh"]
@@ -80,16 +41,12 @@ services:
     volumes:
       - ./application:/data
     depends_on:
-      testdb:
-        condition: service_healthy
       zxcvbn:
         condition: service_started
     env_file:
       - ./common.env
       - ./test.env
     environment:
-      MYSQL_HOST: testdb
-      MYSQL_DATABASE: test
       APP_ENV: test
       ID_BROKER_baseUrl: http://broker
     command: ["/data/run-tests.sh"]
@@ -99,8 +56,6 @@ services:
     volumes:
       - ./application:/data
     depends_on:
-      testdb:
-        condition: service_healthy
       zxcvbn:
         condition: service_started
     env_file:
@@ -109,8 +64,6 @@ services:
       - path: ./local.env
         required: false
     environment:
-      MYSQL_HOST: testdb
-      MYSQL_DATABASE: test
       APP_ENV: test
       ID_BROKER_baseUrl: http://broker
     command: ["/data/run-tests-integration.sh"]
@@ -120,9 +73,6 @@ services:
     volumes:
       - ./application:/data
       - composer-cache:/composer
-    depends_on:
-      testdb:
-        condition: service_healthy
     working_dir: /data
     environment:
       COMPOSER_CACHE_DIR: /composer
