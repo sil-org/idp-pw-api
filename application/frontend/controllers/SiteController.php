@@ -2,8 +2,6 @@
 
 namespace frontend\controllers;
 
-use common\components\Emailer;
-use Exception;
 use frontend\components\BaseRestController;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
@@ -71,19 +69,5 @@ class SiteController extends BaseRestController
     /**
      * @throws HttpException
      */
-    public function actionSystemStatus()
-    {
-        /**
-         * Check for DB connection
-         */
-        try {
-            \Yii::$app->db->open();
-        } catch (Exception $e) {
-            throw new HttpException(
-                self::HttpExceptionBadGateway,
-                'Unable to connect to db, error code ' . $e->getCode(),
-                $e->getCode()
-            );
-        }
-    }
+    public function actionSystemStatus() {}
 }
