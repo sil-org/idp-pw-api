@@ -28,12 +28,6 @@ composerupdate:
 	docker compose run --rm cli bash -c "composer update"
 	make composershow
 
-email:
-	docker compose up -d email
-
-emailcron:
-	docker compose up -d emailcron
-
 broker:
 	docker compose up -d broker
 

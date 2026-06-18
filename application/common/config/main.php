@@ -1,6 +1,5 @@
 <?php
 
-use common\components\Emailer;
 use Sentry\Event;
 use Sil\JsonLog\target\EmailServiceTarget;
 use Sil\JsonLog\target\JsonStreamTarget;
@@ -30,8 +29,6 @@ $supportName = Env::get('SUPPORT_NAME', 'support');
 $supportPhone = Env::get('SUPPORT_PHONE');
 $supportUrl = Env::get('SUPPORT_URL');
 $accessTokenHashKey = Env::get('ACCESS_TOKEN_HASH_KEY');
-
-$emailerClass = Env::get('EMAILER_CLASS', Emailer::class);
 
 $authClass = Env::get('AUTH_CLASS', 'common\components\auth\Saml');
 $authConfig = Env::getArrayFromPrefix('AUTH_SAML_');
@@ -191,10 +188,6 @@ return [
                     ],
                 ],
             ],
-        ],
-        'emailer' => [
-            'class' => $emailerClass,
-            'emailServiceConfig' => $idBrokerConfig,
         ],
         'personnel' => ['class' => $personnelClass],
         'auth' => ArrayHelper::merge(
