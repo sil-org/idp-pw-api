@@ -3,11 +3,13 @@ FROM ghcr.io/sil-org/php8:8.3
 ARG GITHUB_REF_NAME
 ENV GITHUB_REF_NAME=$GITHUB_REF_NAME
 
-RUN apt-get update && \
-    apt-get --no-install-recommends install -y ssl-cert && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    a2enmod ssl
+RUN apt-get update \
+    && apt-get --no-install-recommends install -y \
+        ssl-cert \
+        php-bcmath \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && a2enmod ssl
 
 WORKDIR /data
 

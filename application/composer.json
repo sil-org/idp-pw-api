@@ -50,6 +50,7 @@
     },
     "allow-plugins": {
       "yiisoft/yii2-composer": true,
+      "simplesamlphp/composer-xmlprovider-installer": true,
       "php-http/discovery": false
     }
   },
