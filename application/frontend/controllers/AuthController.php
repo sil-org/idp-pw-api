@@ -133,7 +133,7 @@ class AuthController extends BaseRestController
                 $personnelUser = $personnel->findByAccessToken($accessTokenHash);
             } catch (\Exception $e) {
                 \Yii::error('Failed to find personnel user for logout: ' . $e->getMessage());
-                return $this->redirect(\Yii::$app->params['uiUrl']);
+                return $this->redirect(Utils::getTrustedUiUrl());
             }
 
             try {
@@ -150,28 +150,29 @@ class AuthController extends BaseRestController
             try {
                 /** @var AuthnInterface $auth */
                 $auth = \Yii::$app->auth;
-                $auth->logout(\Yii::$app->params['uiUrl'], $authUser);
+                $auth->logout(Utils::getTrustedUiUrl(), $authUser);
             } catch (RedirectException $e) {
                 return $this->redirect($e->getUrl());
             }
         }
 
-        return $this->redirect(\Yii::$app->params['uiUrl']);
+        return $this->redirect(Utils::getTrustedUiUrl());
     }
 
     public function getAfterLoginUrl($returnTo)
     {
+        $trustedUiUrl = Utils::getTrustedUiUrl();
         /*
-         * If $returnTo starts with UI_URL, return it, else relative build absolute
+         * If $returnTo starts with $trustedUiUrl, return it, else relative build absolute
          */
-        if (strpos($returnTo, \Yii::$app->params['uiUrl']) === 0) {
+        if (str_starts_with($returnTo, $trustedUiUrl)) {
             return $returnTo;
-        } elseif (substr($returnTo, 0, 1) == '/') {
+        } elseif (str_starts_with($returnTo, '/')) {
             $path = $returnTo;
         } else {
             $path = '';
         }
-        return \Yii::$app->params['uiUrl'] . $path;
+        return $trustedUiUrl . $path;
     }
 
     /**
@@ -198,13 +199,13 @@ class AuthController extends BaseRestController
     protected function getReturnTo()
     {
         /*
-                 * Collect return to url of where to send user after successful login
-                 * Expected as relative url starting with /
-                 * Before redirecting user after login this will be prefixed with ui_url
-                 */
+         * Collect return to url of where to send user after successful login
+         * Expected as relative url starting with /
+         * Before redirecting user after login this will be prefixed with ui_url
+         */
         $returnTo = \Yii::$app->request->get('ReturnTo', '');
-        if (substr($returnTo, 0, 1) == '/') {
-            $returnTo = \Yii::$app->params['uiUrl'] . $returnTo;
+        if (str_starts_with($returnTo, '/')) {
+            $returnTo = Utils::getTrustedUiUrl() . $returnTo;
         }
         return $returnTo;
     }
@@ -216,8 +217,8 @@ class AuthController extends BaseRestController
     protected function getReturnToOnError(): string
     {
         $returnTo = \Yii::$app->request->get('ReturnToOnError', '');
-        if (substr($returnTo, 0, 1) == '/') {
-            $returnTo = \Yii::$app->params['uiUrl'] . $returnTo;
+        if (str_starts_with($returnTo, '/')) {
+            $returnTo = Utils::getTrustedUiUrl() . $returnTo;
         }
         return $returnTo;
     }

@@ -59,6 +59,7 @@ class AuthCest extends BaseCest
         $I->seeResponseCodeIs(200);
         $I->sendGET('/auth/logout');
         $I->seeResponseCodeIs(302);
+        $I->seeHttpHeader('location', 'http://localhost/#');
         $I->setCookie('access_token', 'user2', parent::getCookieConfig());
         $I->sendGET('/user/me');
         $I->seeResponseCodeIs(401);
@@ -73,6 +74,7 @@ class AuthCest extends BaseCest
         $I->seeResponseCodeIs(401);
         $I->sendGET('/auth/logout');
         $I->seeResponseCodeIs(302);
+        $I->seeHttpHeader('location', 'http://localhost/#');
         $I->setCookie('access_token', 'user4', parent::getCookieConfig());
         $I->sendGET('/user/me');
         $I->seeResponseCodeIs(401);

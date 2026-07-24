@@ -10,8 +10,9 @@
   ],
   "require": {
     "php": "^8.3",
-    "ext-json": "*",
+    "ext-bcmath": "*",
     "ext-iconv": "*",
+    "ext-json": "*",
     "yiisoft/yii2": "~2.0.15",
     "yiisoft/yii2-swiftmailer": "*",
     "yiisoft/yii2-gii": "*",
