@@ -6,14 +6,14 @@ use common\helpers\Utils;
 
 class PasswordCest extends BaseCest
 {
-    public function test1(ApiTester $I)
+    public function getPasswordWithoutToken(ApiTester $I)
     {
         $I->wantTo('check response when making GET request with no token for obtaining info about password');
         $I->sendGET('/password');
         $I->seeResponseCodeIs(401);
     }
 
-    public function test2(ApiTester $I)
+    public function getPasswordWithInvalidToken(ApiTester $I)
     {
         $I->wantTo('check response when making GET request with incorrect token for obtaining info about password');
         $I->setCookie('access_token', 'invalidToken', parent::getCookieConfig());
@@ -21,7 +21,7 @@ class PasswordCest extends BaseCest
         $I->seeResponseCodeIs(401);
     }
 
-    public function test3(ApiTester $I)
+    public function postPasswordAuthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making authenticated POST request to /password');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -29,7 +29,7 @@ class PasswordCest extends BaseCest
         $I->seeResponseCodeIs(405);
     }
 
-    public function test4(ApiTester $I)
+    public function postPasswordUnauthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making unauthenticated POST request to /password');
         $I->setCookie('access_token', 'invalidToken', parent::getCookieConfig());
@@ -37,7 +37,7 @@ class PasswordCest extends BaseCest
         $I->seeResponseCodeIs(401);
     }
 
-    public function test5(ApiTester $I)
+    public function putPasswordAuthenticatedUpdates(ApiTester $I)
     {
         $I->wantTo('check response when making authenticated PUT request to update the password');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -45,7 +45,7 @@ class PasswordCest extends BaseCest
         $I->seeResponseCodeIs(200);
     }
 
-    public function test6(ApiTester $I)
+    public function deletePasswordAuthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making authenticated DELETE request to /password');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -53,7 +53,7 @@ class PasswordCest extends BaseCest
         $I->seeResponseCodeIs(405);
     }
 
-    public function test7(ApiTester $I)
+    public function getPasswordWithValidToken(ApiTester $I)
     {
         $I->wantTo('check response when making GET request with correct token for obtaining info about password');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -65,7 +65,7 @@ class PasswordCest extends BaseCest
         ]);
     }
 
-    public function test8(ApiTester $I)
+    public function deletePasswordUnauthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making unauthenticated DELETE request to /password');
         $I->setCookie('access_token', 'invalidToken', parent::getCookieConfig());
@@ -73,7 +73,7 @@ class PasswordCest extends BaseCest
         $I->seeResponseCodeIs(401);
     }
 
-    public function test9(ApiTester $I)
+    public function patchPasswordUnauthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making unauthenticated PATCH request to /password');
         $I->setCookie('access_token', 'invalidToken', parent::getCookieConfig());
@@ -81,7 +81,7 @@ class PasswordCest extends BaseCest
         $I->seeResponseCodeIs(401);
     }
 
-    public function test10(ApiTester $I)
+    public function patchPasswordAuthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making authenticated PATCH request to /password');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -89,7 +89,7 @@ class PasswordCest extends BaseCest
         $I->seeResponseCodeIs(405);
     }
 
-    public function test11(ApiTester $I)
+    public function optionsPasswordAuthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making authenticated OPTIONS request to /password');
         $I->setCookie('access_token', 'invalidToken', parent::getCookieConfig());
@@ -97,7 +97,7 @@ class PasswordCest extends BaseCest
         $I->seeResponseCodeIs(200);
     }
 
-    public function test12(ApiTester $I)
+    public function putPasswordTooShort(ApiTester $I)
     {
         $I->wantTo('check response when changing the password (PUT request) to something that '
             . 'does not meet minLength requirement');
@@ -110,7 +110,7 @@ class PasswordCest extends BaseCest
         }
     }
 
-    public function test15(ApiTester $I)
+    public function putPasswordWeakScoreOne(ApiTester $I)
     {
         $I->wantTo('check response when changing the password (PUT request) to something that '
             . 'has zxcvbn score of 1');
@@ -123,7 +123,7 @@ class PasswordCest extends BaseCest
         }
     }
 
-    public function test16(ApiTester $I)
+    public function putPasswordAcceptsScoreTwo(ApiTester $I)
     {
         $I->wantTo('check response when changing the password (PUT request) to something that has zxcvbn score of 2');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -131,7 +131,7 @@ class PasswordCest extends BaseCest
         $I->seeResponseCodeIs(200);
     }
 
-    public function test17(ApiTester $I)
+    public function putPasswordAcceptsScoreThree(ApiTester $I)
     {
         $I->wantTo('check response when changing the password (PUT request) to something that has zxcvbn score of 3');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -139,7 +139,7 @@ class PasswordCest extends BaseCest
         $I->seeResponseCodeIs(200);
     }
 
-    public function test18(ApiTester $I)
+    public function putPasswordTooLong(ApiTester $I)
     {
         $I->wantTo('check response when changing the password (PUT request) to something that '
             . 'does not meet maxLength requirement');
@@ -157,7 +157,7 @@ class PasswordCest extends BaseCest
         }
     }
 
-    public function test19(ApiTester $I)
+    public function putPasswordContainsFirstName(ApiTester $I)
     {
         $I->wantTo('check response when changing the password (PUT request) to something that contains the first_name');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -169,7 +169,7 @@ class PasswordCest extends BaseCest
         }
     }
 
-    public function test20(ApiTester $I)
+    public function putPasswordContainsLastName(ApiTester $I)
     {
         $I->wantTo('check response when changing the password (PUT request) to something that contains the last_name');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -181,7 +181,7 @@ class PasswordCest extends BaseCest
         }
     }
 
-    public function test21(ApiTester $I)
+    public function putPasswordContainsUsername(ApiTester $I)
     {
         $I->wantTo('check response when changing the password (PUT request) to something that contains the idp_username');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -193,7 +193,7 @@ class PasswordCest extends BaseCest
         }
     }
 
-    public function test22(ApiTester $I)
+    public function putPasswordContainsEmail(ApiTester $I)
     {
         $I->wantTo('check response when changing the password (PUT request) to something that contains the email address');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -205,7 +205,7 @@ class PasswordCest extends BaseCest
         }
     }
 
-    public function test23(ApiTester $I)
+    public function putPasswordWithInvalidToken(ApiTester $I)
     {
         $I->wantTo('check response when making PUT request with incorrect token');
         $I->setCookie('access_token', 'invalidToken', parent::getCookieConfig());
@@ -213,7 +213,7 @@ class PasswordCest extends BaseCest
         $I->seeResponseCodeIs(401);
     }
 
-    public function test24(ApiTester $I)
+    public function putPasswordContainingShortFirstName(ApiTester $I)
     {
         $I->wantTo('check response when changing the password (PUT request) to something that contains a short first_name');
         $I->setCookie('access_token', 'user6', parent::getCookieConfig());
@@ -221,7 +221,7 @@ class PasswordCest extends BaseCest
         $I->seeResponseCodeIs(200);
     }
 
-    public function test25(ApiTester $I)
+    public function putPasswordContainingShortLastName(ApiTester $I)
     {
         $I->wantTo('check response when changing the password (PUT request) to something that contains a short last_name');
         $I->setCookie('access_token', 'user6', parent::getCookieConfig());

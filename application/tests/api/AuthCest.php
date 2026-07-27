@@ -4,7 +4,7 @@ require_once "BaseCest.php";
 
 class AuthCest extends BaseCest
 {
-    public function test2(ApiTester $I)
+    public function loginGetWithoutToken(ApiTester $I)
     {
         $I->wantTo('check response when making a GET request for logging in with no access_token');
         $I->stopFollowingRedirects();
@@ -12,7 +12,7 @@ class AuthCest extends BaseCest
         $I->seeResponseCodeIs(302);
     }
 
-    public function test3(ApiTester $I)
+    public function loginPost(ApiTester $I)
     {
         $I->wantTo('check response when making a POST request for logging in');
         $I->stopFollowingRedirects();
@@ -21,7 +21,7 @@ class AuthCest extends BaseCest
         $I->seeResponseCodeIs(302);
     }
 
-    public function test33(ApiTester $I)
+    public function loginPut(ApiTester $I)
     {
         $I->wantTo('check response when making a PUT request for logging in');
         $I->stopFollowingRedirects();
@@ -30,7 +30,7 @@ class AuthCest extends BaseCest
         $I->seeResponseCodeIs(405);
     }
 
-    public function test34(ApiTester $I)
+    public function loginDelete(ApiTester $I)
     {
         $I->wantTo('check response when making a DELETE request for logging in');
         $I->stopFollowingRedirects();
@@ -39,7 +39,7 @@ class AuthCest extends BaseCest
         $I->seeResponseCodeIs(405);
     }
 
-    public function test35(ApiTester $I)
+    public function loginOptions(ApiTester $I)
     {
         $I->wantTo('check response when making a OPTIONS request for logging in');
         $I->stopFollowingRedirects();
@@ -48,7 +48,7 @@ class AuthCest extends BaseCest
         $I->seeResponseCodeIs(405);
     }
 
-    public function test4(ApiTester $I)
+    public function logoutGetLoggedIn(ApiTester $I)
     {
         $I->wantTo('check response for making a GET request for logging out when already logged in');
         $I->stopFollowingRedirects();
@@ -65,7 +65,7 @@ class AuthCest extends BaseCest
         $I->seeResponseCodeIs(401);
     }
 
-    public function test5(ApiTester $I)
+    public function logoutGetLoggedOutWithoutOrigin(ApiTester $I)
     {
         $I->wantTo('check response for making a GET request for logging out when already logged out and no origin header');
         $I->stopFollowingRedirects();
@@ -80,7 +80,7 @@ class AuthCest extends BaseCest
         $I->seeResponseCodeIs(401);
     }
 
-    public function test52(ApiTester $I)
+    public function logoutUntrustedOrigin(ApiTester $I)
     {
         $I->wantTo('check logout redirect falls back when origin is untrusted');
         $I->stopFollowingRedirects();
@@ -91,7 +91,7 @@ class AuthCest extends BaseCest
         $I->seeHttpHeader('location', 'http://localhost/#');
     }
 
-    public function test6(ApiTester $I)
+    public function logoutPost(ApiTester $I)
     {
         $I->wantTo('check response for making a POST request for logging out when already logged in');
         $I->stopFollowingRedirects();
@@ -100,7 +100,7 @@ class AuthCest extends BaseCest
         $I->seeResponseCodeIs(405);
     }
 
-    public function test7(ApiTester $I)
+    public function logoutPut(ApiTester $I)
     {
         $I->wantTo('check response for making a PUT request for logging out when already logged in');
         $I->stopFollowingRedirects();
@@ -109,7 +109,7 @@ class AuthCest extends BaseCest
         $I->seeResponseCodeIs(405);
     }
 
-    public function test8(ApiTester $I)
+    public function logoutOptions(ApiTester $I)
     {
         $I->wantTo('check response for making a OPTIONS request for logging out when already logged in');
         $I->stopFollowingRedirects();
@@ -118,7 +118,7 @@ class AuthCest extends BaseCest
         $I->seeResponseCodeIs(200);
     }
 
-    public function test91(ApiTester $I)
+    public function loginWithInviteWithoutToken(ApiTester $I)
     {
         $I->wantTo('check response for making a POST request for logging in with invite code and no access token');
         $I->stopFollowingRedirects();

@@ -4,7 +4,7 @@ require_once "BaseCest.php";
 
 class UserCest extends BaseCest
 {
-    public function test1(ApiTester $I)
+    public function getUserMeWithValidToken(ApiTester $I)
     {
         $I->wantTo('check response when making GET request to /user/me with correct token');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -18,7 +18,7 @@ class UserCest extends BaseCest
         ]);
     }
 
-    public function test2(ApiTester $I)
+    public function getUserMeWithInvalidToken(ApiTester $I)
     {
         $I->wantTo('check response when making GET request to /user/me with incorrect token');
         $I->setCookie('access_token', 'invalidToken', parent::getCookieConfig());
@@ -26,7 +26,7 @@ class UserCest extends BaseCest
         $I->seeResponseCodeIs(401);
     }
 
-    public function test3(ApiTester $I)
+    public function postUserMeAuthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making authenticated POST request to /user/me');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -34,7 +34,7 @@ class UserCest extends BaseCest
         $I->seeResponseCodeIs(405);
     }
 
-    public function test4(ApiTester $I)
+    public function postUserMeUnauthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making unauthenticated POST request to /user/me');
         $I->setCookie('access_token', 'invalidToken', parent::getCookieConfig());
@@ -42,7 +42,7 @@ class UserCest extends BaseCest
         $I->seeResponseCodeIs(401);
     }
 
-    public function test5(ApiTester $I)
+    public function deleteUserMeAuthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making authenticated DELETE request to /user/me');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -50,7 +50,7 @@ class UserCest extends BaseCest
         $I->seeResponseCodeIs(405);
     }
 
-    public function test6(ApiTester $I)
+    public function deleteUserMeUnauthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making unauthenticated DELETE request to /user/me');
         $I->setCookie('access_token', 'invalidToken', parent::getCookieConfig());
@@ -58,7 +58,7 @@ class UserCest extends BaseCest
         $I->seeResponseCodeIs(401);
     }
 
-    public function test7(ApiTester $I)
+    public function patchUserMeAuthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making authenticated PATCH request to /user/me');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -66,7 +66,7 @@ class UserCest extends BaseCest
         $I->seeResponseCodeIs(405);
     }
 
-    public function test8(ApiTester $I)
+    public function patchUserMeUnauthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making unauthenticated PATCH request to /user/me');
         $I->setCookie('access_token', 'invalidToken', parent::getCookieConfig());
@@ -74,7 +74,7 @@ class UserCest extends BaseCest
         $I->seeResponseCodeIs(401);
     }
 
-    public function test9(ApiTester $I)
+    public function optionsUserMeAuthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making authenticated OPTIONS request to /user/me');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -82,7 +82,7 @@ class UserCest extends BaseCest
         $I->seeResponseCodeIs(200);
     }
 
-    public function test10(ApiTester $I)
+    public function optionsUserMeUnauthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making unauthenticated OPTIONS request to /user/me');
         $I->setCookie('access_token', 'invalidToken', parent::getCookieConfig());
@@ -90,7 +90,7 @@ class UserCest extends BaseCest
         $I->seeResponseCodeIs(200);
     }
 
-    public function test11(ApiTester $I)
+    public function putUserMeAuthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making PUT request to /user/me with correct token');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -98,7 +98,7 @@ class UserCest extends BaseCest
         $I->seeResponseCodeIs(405);
     }
 
-    public function test12(ApiTester $I)
+    public function putUserMeUnauthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making PUT request to /user/me with incorrect token');
         $I->setCookie('access_token', 'invalidToken', parent::getCookieConfig());

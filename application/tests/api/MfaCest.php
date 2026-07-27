@@ -4,7 +4,7 @@ require_once "BaseCest.php";
 
 class MfaCest extends BaseCest
 {
-    public function test10(ApiTester $I)
+    public function getMfaWithInvalidToken(ApiTester $I)
     {
         $I->wantTo('check response when making GET request to /mfa with incorrect token');
         $I->setCookie('access_token', 'invalidToken', parent::getCookieConfig());
@@ -12,7 +12,7 @@ class MfaCest extends BaseCest
         $I->seeResponseCodeIs(401);
     }
 
-    public function test11(ApiTester $I)
+    public function getMfaForResetForbidden(ApiTester $I)
     {
         $I->wantTo('check response when making GET request to /mfa for a user'
             . ' with auth_type=reset');
@@ -23,7 +23,7 @@ class MfaCest extends BaseCest
 
     // TODO: Add test(s) for authorized access to GET /mfa
 
-    public function test20(ApiTester $I)
+    public function postMfaWithInvalidToken(ApiTester $I)
     {
         $I->wantTo('check response when making POST request to /mfa with incorrect token');
         $I->setCookie('access_token', 'invalidToken', parent::getCookieConfig());
@@ -31,7 +31,7 @@ class MfaCest extends BaseCest
         $I->seeResponseCodeIs(401);
     }
 
-    public function test21(ApiTester $I)
+    public function postMfaForResetForbidden(ApiTester $I)
     {
         $I->wantTo('check response when making POST request to /mfa for a user'
             . ' with auth_type=reset');
@@ -42,7 +42,7 @@ class MfaCest extends BaseCest
 
     // TODO: Add test(s) for authorized access to POST /mfa
 
-    public function test30(ApiTester $I)
+    public function putMfaByIdWithInvalidToken(ApiTester $I)
     {
         $I->wantTo('check response when making PUT request to mfa/{id} with incorrect token');
         $I->setCookie('access_token', 'invalidToken', parent::getCookieConfig());
@@ -50,7 +50,7 @@ class MfaCest extends BaseCest
         $I->seeResponseCodeIs(401);
     }
 
-    public function test31(ApiTester $I)
+    public function putMfaByIdForResetForbidden(ApiTester $I)
     {
         $I->wantTo('check response when making PUT request to mfa/{id} for a user'
             . ' with auth_type=reset');
@@ -59,7 +59,7 @@ class MfaCest extends BaseCest
         $I->seeResponseCodeIs(403);
     }
 
-    public function test33(ApiTester $I)
+    public function putMfaWebauthnWithInvalidToken(ApiTester $I)
     {
         $I->wantTo('check response when making PUT request to mfa/{id}/webauthn/{webauthn_id} with incorrect token');
         $I->setCookie('access_token', 'invalidToken', parent::getCookieConfig());
@@ -67,7 +67,7 @@ class MfaCest extends BaseCest
         $I->seeResponseCodeIs(401);
     }
 
-    public function test34(ApiTester $I)
+    public function putMfaWebauthnForResetForbidden(ApiTester $I)
     {
         $I->wantTo('check response when making PUT request to mfa/{id}/webauthn/{webauthn_id} for a user'
             . ' with auth_type=reset');
@@ -78,7 +78,7 @@ class MfaCest extends BaseCest
 
     // TODO: Add test(s) for authorized access to PUT /mfa/{id}
 
-    public function test40(ApiTester $I)
+    public function deleteMfaByIdWithInvalidToken(ApiTester $I)
     {
         $I->wantTo('check response when making DELETE request to mfa/{id} with incorrect token');
         $I->setCookie('access_token', 'invalidToken', parent::getCookieConfig());
@@ -86,7 +86,7 @@ class MfaCest extends BaseCest
         $I->seeResponseCodeIs(401);
     }
 
-    public function test41(ApiTester $I)
+    public function deleteMfaByIdForResetForbidden(ApiTester $I)
     {
         $I->wantTo('check response when making DELETE request to mfa/{id} for a user'
             . ' with auth_type=reset');
@@ -95,7 +95,7 @@ class MfaCest extends BaseCest
         $I->seeResponseCodeIs(403);
     }
 
-    public function test42(ApiTester $I)
+    public function deleteMfaWebauthnWithInvalidToken(ApiTester $I)
     {
         $I->wantTo('check response when making DELETE request to mfa/{id}/webauthn/{webauthn_id} with incorrect token');
         $I->setCookie('access_token', 'invalidToken', parent::getCookieConfig());
@@ -103,7 +103,7 @@ class MfaCest extends BaseCest
         $I->seeResponseCodeIs(401);
     }
 
-    public function test43(ApiTester $I)
+    public function deleteMfaWebauthnForResetForbidden(ApiTester $I)
     {
         $I->wantTo('check response when making DELETE request to mfa/{id}/webauthn/{webauthn_id} for a user'
             . ' with auth_type=reset');
@@ -114,7 +114,7 @@ class MfaCest extends BaseCest
 
     // TODO: Add test(s) for authorized access to DELETE /mfa/{id}
 
-    public function test50(ApiTester $I)
+    public function verifyMfaWithInvalidToken(ApiTester $I)
     {
         $I->wantTo('check response when making PUT request to mfa/{id}/verify with incorrect token');
         $I->setCookie('access_token', 'invalidToken', parent::getCookieConfig());
@@ -122,7 +122,7 @@ class MfaCest extends BaseCest
         $I->seeResponseCodeIs(401);
     }
 
-    public function test51(ApiTester $I)
+    public function verifyMfaForResetForbidden(ApiTester $I)
     {
         $I->wantTo('check response when making PUT request to mfa/{id}/verify for a user'
             . ' with auth_type=reset');
@@ -131,7 +131,7 @@ class MfaCest extends BaseCest
         $I->seeResponseCodeIs(403);
     }
 
-    public function test52(ApiTester $I)
+    public function verifyMfaRegistrationForResetForbidden(ApiTester $I)
     {
         $I->wantTo('check response when making PUT request to mfa/{id}/verify/registration for a user'
             . ' with auth_type=reset');
