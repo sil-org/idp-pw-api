@@ -1,7 +1,5 @@
 <?php
 
-use common\helpers\Utils;
-
 const UID_ROUTE_PATTERN = '<uid:([a-zA-Z0-9_\-]{32})>';
 
 return [
@@ -33,12 +31,7 @@ return [
             'on beforeSend' => function ($event) {
                 /** @var yii\web\Response $response */
                 $response = $event->sender;
-
-                $origin = Utils::getTrustedOrigin();
-                if ($origin !== '') {
-                    $response->headers->set('Access-Control-Allow-Origin', $origin);
-                }
-
+                $response->headers->set('Access-Control-Allow-Origin', \Yii::$app->params['uiCorsOrigin']);
                 $response->headers->set('Access-Control-Allow-Credentials', 'true');
                 $response->headers->set(
                     'Access-Control-Allow-Methods',
