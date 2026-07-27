@@ -1,5 +1,8 @@
 <?php
 
+use tests\api\FixtureHelper;
+use tests\helpers\BrokerUtils;
+
 class BaseCest
 {
     /** @var  tests\api\FixtureHelper */
@@ -20,7 +23,7 @@ class BaseCest
         $this->fixtureHelper->_afterSuite();
     }
 
-    protected function getCookieConfig()
+    public function getCookieConfig()
     {
         return
         [
