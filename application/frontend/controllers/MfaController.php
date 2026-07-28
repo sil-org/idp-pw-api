@@ -2,7 +2,6 @@
 
 namespace frontend\controllers;
 
-use common\helpers\Utils;
 use frontend\components\BaseRestController;
 use Sil\Idp\IdBroker\Client\IdBrokerClient;
 use Sil\Idp\IdBroker\Client\ServiceException;
@@ -69,7 +68,7 @@ class MfaController extends BaseRestController
     {
         return $this->idBrokerClient->mfaList(
             \Yii::$app->user->identity->employee_id,
-            $this->getRpOrigin()
+            \Yii::$app->params['rpOrigin']
         );
     }
 
@@ -96,7 +95,7 @@ class MfaController extends BaseRestController
                 \Yii::$app->user->identity->employee_id,
                 $type,
                 $label,
-                $this->getRpOrigin()
+                \Yii::$app->params['rpOrigin']
             );
         } catch (ServiceException $e) {
             \Yii::error([
@@ -190,11 +189,6 @@ class MfaController extends BaseRestController
         return $value;
     }
 
-    private function getRpOrigin(): string
-    {
-        return Utils::getTrustedOrigin();
-    }
-
     /**
      * @param $mfaId
      * @return array|bool
@@ -218,7 +212,7 @@ class MfaController extends BaseRestController
                 $mfaId,
                 \Yii::$app->user->identity->employee_id,
                 $value,
-                $this->getRpOrigin()
+                \Yii::$app->params['rpOrigin']
             );
         } catch (ServiceException $e) {
             \Yii::warning([
@@ -262,7 +256,7 @@ class MfaController extends BaseRestController
                 $mfaId,
                 \Yii::$app->user->identity->employee_id,
                 $value,
-                $this->getRpOrigin(),
+                \Yii::$app->params['rpOrigin'],
                 'registration',
                 $label,
             );
