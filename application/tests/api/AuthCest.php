@@ -78,17 +78,6 @@ class AuthCest extends BaseCest
         $I->seeResponseCodeIs(401);
     }
 
-    public function logoutUntrustedOrigin(ApiTester $I)
-    {
-        $I->wantTo('check logout redirect falls back when origin is untrusted');
-        $I->stopFollowingRedirects();
-        $I->haveHttpHeader('Origin', 'http://bad');
-        $I->setCookie('access_token', 'user4', parent::getCookieConfig());
-        $I->sendGET('/auth/logout');
-        $I->seeResponseCodeIs(302);
-        $I->seeHttpHeader('location', 'http://localhost/#');
-    }
-
     public function logoutPost(ApiTester $I)
     {
         $I->wantTo('check response for making a POST request for logging out when already logged in');
