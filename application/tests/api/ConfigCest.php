@@ -4,7 +4,7 @@ require_once "BaseCest.php";
 
 class ConfigCest extends BaseCest
 {
-    public function test1(ApiTester $I)
+    public function getConfigUnauthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making unauthenticated GET request to config');
         $I->sendGET('/config');
@@ -16,7 +16,7 @@ class ConfigCest extends BaseCest
         }
     }
 
-    public function test12(ApiTester $I)
+    public function getConfigAuthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making authenticated GET request to config');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -29,14 +29,14 @@ class ConfigCest extends BaseCest
         }
     }
 
-    public function test2(ApiTester $I)
+    public function postConfigUnauthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making unauthenticated POST request to config');
         $I->sendPOST('/config');
         $I->seeResponseCodeIs(401);
     }
 
-    public function test22(ApiTester $I)
+    public function postConfigAuthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making authenticated POST request to config');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -44,14 +44,14 @@ class ConfigCest extends BaseCest
         $I->seeResponseCodeIs(405);
     }
 
-    public function test3(ApiTester $I)
+    public function putConfigUnauthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making unathenticated PUT request to config');
         $I->sendPUT('/config');
         $I->seeResponseCodeIs(401);
     }
 
-    public function test32(ApiTester $I)
+    public function putConfigAuthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making authenticated PUT request to config');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -59,14 +59,14 @@ class ConfigCest extends BaseCest
         $I->seeResponseCodeIs(405);
     }
 
-    public function test4(ApiTester $I)
+    public function deleteConfigUnauthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making unathenticated DELETE request to config');
         $I->sendDELETE('/config');
         $I->seeResponseCodeIs(401);
     }
 
-    public function test42(ApiTester $I)
+    public function deleteConfigAuthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making authenticated DELETE request to config');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -74,14 +74,14 @@ class ConfigCest extends BaseCest
         $I->seeResponseCodeIs(405);
     }
 
-    public function test5(ApiTester $I)
+    public function patchConfigUnauthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making unathenticated PATCH request to config');
         $I->sendPATCH('/config');
         $I->seeResponseCodeIs(401);
     }
 
-    public function test52(ApiTester $I)
+    public function patchConfigAuthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making authenticated PATCH request to config');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -89,14 +89,14 @@ class ConfigCest extends BaseCest
         $I->seeResponseCodeIs(405);
     }
 
-    public function test6(ApiTester $I)
+    public function optionsConfigUnauthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making unauthenticated OPTIONS request to config');
         $I->sendOPTIONS('/config');
         $I->seeResponseCodeIs(200);
     }
 
-    public function test7(ApiTester $I)
+    public function optionsConfigAuthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making authenticated OPTIONS request to config');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());

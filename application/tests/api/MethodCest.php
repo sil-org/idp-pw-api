@@ -4,14 +4,14 @@ require_once "BaseCest.php";
 
 class MethodCest extends BaseCest
 {
-    public function test1(ApiTester $I)
+    public function deleteMethodUnauthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making unauthenticated DELETE request to method');
         $I->sendDELETE('/method');
         $I->seeResponseCodeIs(401);
     }
 
-    public function test2(ApiTester $I)
+    public function deleteMethodAuthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making authenticated DELETE request to method');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -19,14 +19,14 @@ class MethodCest extends BaseCest
         $I->seeResponseCodeIs(405);
     }
 
-    public function test3(ApiTester $I)
+    public function patchMethodUnauthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making unauthenticated PATCH request to method');
         $I->sendPATCH('/method');
         $I->seeResponseCodeIs(401);
     }
 
-    public function test4(ApiTester $I)
+    public function patchMethodAuthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making authenticated PATCH request to method');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -34,7 +34,7 @@ class MethodCest extends BaseCest
         $I->seeResponseCodeIs(405);
     }
 
-    public function test5(ApiTester $I)
+    public function getMethodsUnauthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making unauthenticated GET request for obtaining the'
             . ' methods of a user');
@@ -42,7 +42,7 @@ class MethodCest extends BaseCest
         $I->seeResponseCodeIs(401);
     }
 
-    public function test6(ApiTester $I, $scenario)
+    public function getMethodsAuthenticated(ApiTester $I, $scenario)
     {
         /**
          * This test may fail if the database is not in its unmodified state.
@@ -67,7 +67,7 @@ class MethodCest extends BaseCest
         ]);
     }
 
-    public function test62(ApiTester $I)
+    public function getMethodsForReset(ApiTester $I)
     {
         $I->wantTo('check response for authenticated GET request to method for a user'
             . ' with auth_type=reset');
@@ -76,14 +76,14 @@ class MethodCest extends BaseCest
         $I->seeResponseCodeIs(403);
     }
 
-    public function test7(ApiTester $I)
+    public function createMethodUnauthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making unauthenticated POST request for creating a new method');
         $I->sendPOST('/method', ['type' => 'email','value' => 'user@domain.com']);
         $I->seeResponseCodeIs(401);
     }
 
-    public function test8(ApiTester $I)
+    public function createMethodAuthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making authenticated POST request for creating a new method');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -95,7 +95,7 @@ class MethodCest extends BaseCest
         ]);
     }
 
-    public function test82(ApiTester $I, $scenario)
+    public function createExistingMethodAuthenticated(ApiTester $I, $scenario)
     {
         $I->wantTo('check response when making authenticated POST request for creating an'
             . ' already existing method');
@@ -105,7 +105,7 @@ class MethodCest extends BaseCest
         $I->seeResponseCodeIs(200);
     }
 
-    public function test84(ApiTester $I)
+    public function createMethodForResetForbidden(ApiTester $I)
     {
         $I->wantTo('check response for authenticated POST request to method for a user with'
             . ' auth_type=reset');
@@ -114,14 +114,14 @@ class MethodCest extends BaseCest
         $I->seeResponseCodeIs(403);
     }
 
-    public function test9(ApiTester $I)
+    public function getMethodByIdUnauthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making unauthenticated GET request to obtain a method');
         $I->sendGET('/method/11111111111111111111111111111111');
         $I->seeResponseCodeIs(401);
     }
 
-    public function test10(ApiTester $I, $scenario)
+    public function getMethodByIdAuthenticated(ApiTester $I, $scenario)
     {
         $I->wantTo('check response when making authenticated GET request to obtain a method');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -134,7 +134,7 @@ class MethodCest extends BaseCest
         ]);
     }
 
-    public function test102(ApiTester $I)
+    public function getMethodByIdForResetForbidden(ApiTester $I)
     {
         $I->wantTo('check response for authenticated GET request to method/{uid} for a user'
             . ' with auth_type=reset');
@@ -143,7 +143,7 @@ class MethodCest extends BaseCest
         $I->seeResponseCodeIs(403);
     }
 
-    public function test11(ApiTester $I)
+    public function getMethodByIdAsNonOwner(ApiTester $I)
     {
         $I->wantTo('check response when making authenticated GET request to obtain a method as'
             . ' a non-owner of the method');
@@ -152,14 +152,14 @@ class MethodCest extends BaseCest
         $I->seeResponseCodeIs(404);
     }
 
-    public function test12(ApiTester $I)
+    public function postMethodByIdUnauthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making unauthenticated POST request to method/id');
         $I->sendPOST('/method/11111111111111111111111111111111');
         $I->seeResponseCodeIs(401);
     }
 
-    public function test13(ApiTester $I)
+    public function postMethodByIdAuthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making authenticated POST request method/id');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -167,14 +167,14 @@ class MethodCest extends BaseCest
         $I->seeResponseCodeIs(405);
     }
 
-    public function test14(ApiTester $I)
+    public function verifyMethodWithoutCode(ApiTester $I)
     {
         $I->wantTo('check response when making a PUT /method/{uid}/verify with no code');
         $I->sendPUT('/method/11111111111111111111111111111111/verify');
         $I->seeResponseCodeIs(400);
     }
 
-    public function test153(ApiTester $I)
+    public function verifyMethodInvalidCodeExpired(ApiTester $I)
     {
         $I->wantTo('check response when making a PUT /method/{uid}/verify with invalid code and'
             . ' expired verification time');
@@ -182,7 +182,7 @@ class MethodCest extends BaseCest
         $I->seeResponseCodeIs(400);
     }
 
-    public function test154(ApiTester $I)
+    public function verifyMethodValidCodeExpired(ApiTester $I)
     {
         $I->wantTo('check response when making a PUT /method/{uid}/verify with valid code and'
             . ' expired verification time');
@@ -190,7 +190,7 @@ class MethodCest extends BaseCest
         $I->seeResponseCodeIs(410);
     }
 
-    public function test155(ApiTester $I, $scenario)
+    public function verifyMethodValidCodeUnverifiedMethod(ApiTester $I, $scenario)
     {
         /**
          * This test modifies the database, so is only a valid test the first time through.
@@ -209,7 +209,7 @@ class MethodCest extends BaseCest
         ]);
     }
 
-    public function test157(ApiTester $I, $scenario)
+    public function verifyMethodInvalidCodeRateLimited(ApiTester $I, $scenario)
     {
         /**
          * This test modifies the database, and will only pass the first time through.
@@ -243,14 +243,14 @@ class MethodCest extends BaseCest
         $I->seeResponseCodeIs(429);
     }
 
-    public function test16(ApiTester $I)
+    public function deleteMethodByIdUnauthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making unauthenticated DELETE request to method/id');
         $I->sendDELETE('/method/11111111111111111111111111111111');
         $I->seeResponseCodeIs(401);
     }
 
-    public function test17(ApiTester $I, $scenario)
+    public function deleteMethodByIdAuthenticated(ApiTester $I, $scenario)
     {
         /**
          * This test modifies the database, so will only pass the first time through.
@@ -266,7 +266,7 @@ class MethodCest extends BaseCest
         $I->seeResponseCodeIs(404);
     }
 
-    public function test172(ApiTester $I, $scenario)
+    public function deleteMethodByIdAsNonOwner(ApiTester $I, $scenario)
     {
         $I->wantTo('check response when making authenticated DELETE request as a non-owner of'
             . ' the method');
@@ -276,7 +276,7 @@ class MethodCest extends BaseCest
         $I->seeResponseCodeIs(404);
     }
 
-    public function test174(ApiTester $I)
+    public function deleteMethodByIdForResetForbidden(ApiTester $I)
     {
         $I->wantTo('check response for authenticated DELETE request to method/{uid} for a user'
             . ' with auth_type=reset');
@@ -285,7 +285,7 @@ class MethodCest extends BaseCest
         $I->seeResponseCodeIs(403);
     }
 
-    public function test18(ApiTester $I)
+    public function patchMethodByIdAuthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making authenticated PATCH request to method/id');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -293,7 +293,7 @@ class MethodCest extends BaseCest
         $I->seeResponseCodeIs(405);
     }
 
-    public function test19(ApiTester $I)
+    public function optionsMethodByIdAuthenticated(ApiTester $I)
     {
         $I->wantTo('check response when making authenticated OPTIONS request to method/id');
         $I->setCookie('access_token', 'user1', parent::getCookieConfig());
@@ -301,7 +301,7 @@ class MethodCest extends BaseCest
         $I->seeResponseCodeIs(200);
     }
 
-    public function test20(ApiTester $I)
+    public function resendMethodWithInvalidToken(ApiTester $I)
     {
         $I->wantTo('check response when making PUT request to method/{uid}/resend with incorrect token');
         $I->setCookie('access_token', 'invalidToken', parent::getCookieConfig());
@@ -309,7 +309,7 @@ class MethodCest extends BaseCest
         $I->seeResponseCodeIs(401);
     }
 
-    public function test21(ApiTester $I)
+    public function resendMethodForResetForbidden(ApiTester $I)
     {
         $I->wantTo('check response when making PUT request to method/{uid}/resend for a user'
             . ' with auth_type=reset');
