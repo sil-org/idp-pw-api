@@ -412,23 +412,6 @@ class User implements IdentityInterface, Arrayable
     }
 
     /**
-     * Return array of arrays of masked out methods
-     * @return array<array>
-     */
-    public function getMaskedMethods(): array
-    {
-        $methods = $this->getMethodsAndPersonnelEmails();
-        foreach ($methods as $key => $method) {
-            if ($method['verified'] ?? true) {
-                $methods[$key]['value'] = Utils::maskEmail($method['value']);
-            } else {
-                unset($methods[$key]);
-            }
-        }
-        return array_values($methods);
-    }
-
-    /**
      * Get password metadata from password store interface, and return in an array
      * for use in an API response.
      * @return array|null

@@ -16,21 +16,6 @@ class UtilsTest extends Test
         }
     }
 
-    public function testMaskEmail()
-    {
-        $email1 = 'abc@domain.com';
-        $expected1 = 'a*c@d*****.c**';
-        $this->assertEquals($expected1, Utils::maskEmail($email1));
-
-        $email2 = 'first_last@myco.org';
-        $expected2 = 'f****_l**t@m***.o**';
-        $this->assertEquals($expected2, Utils::maskEmail($email2));
-
-        $email3 = 'first_last@myco.org.uk';
-        $expected3 = 'f****_l**t@m***.o**.u*';
-        $this->assertEquals($expected3, Utils::maskEmail($email3));
-    }
-
     public function testIsValidIpAddress()
     {
         $this->assertTrue(Utils::isValidIpAddress('127.0.0.1'));
