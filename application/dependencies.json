@@ -133,7 +133,7 @@
   },
   {
     "name": "guzzlehttp/guzzle",
-    "version": "7.11.1"
+    "version": "7.15.1"
   },
   {
     "name": "guzzlehttp/guzzle-services",
@@ -141,11 +141,11 @@
   },
   {
     "name": "guzzlehttp/promises",
-    "version": "2.5.0"
+    "version": "2.5.1"
   },
   {
     "name": "guzzlehttp/psr7",
-    "version": "2.11.0"
+    "version": "2.13.0"
   },
   {
     "name": "guzzlehttp/uri-template",
@@ -245,7 +245,7 @@
   },
   {
     "name": "phpseclib/phpseclib",
-    "version": "3.0.52"
+    "version": "3.0.55"
   },
   {
     "name": "phpspec/php-diff",
@@ -448,8 +448,20 @@
     "version": "2.0.4"
   },
   {
+    "name": "simplesamlphp/assert",
+    "version": "v2.0.2"
+  },
+  {
+    "name": "simplesamlphp/composer-xmlprovider-installer",
+    "version": "v1.3.1"
+  },
+  {
     "name": "simplesamlphp/saml2",
-    "version": "v4.19.1"
+    "version": "v4.20.3"
+  },
+  {
+    "name": "simplesamlphp/xml-common",
+    "version": "v2.8.1"
   },
   {
     "name": "swiftmailer/swiftmailer",
@@ -469,7 +481,7 @@
   },
   {
     "name": "symfony/deprecation-contracts",
-    "version": "v3.7.0"
+    "version": "v3.7.1"
   },
   {
     "name": "symfony/dom-crawler",
@@ -581,7 +593,7 @@
   },
   {
     "name": "webmozart/assert",
-    "version": "1.12.1"
+    "version": "2.4.1"
   },
   {
     "name": "yiisoft/yii2",
