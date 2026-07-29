@@ -45,7 +45,7 @@ class UtilsTest extends Test
             'idpDisplayName' => 'My IdP',
             'passwordRules' => [
                 'minLength' => 10,
-                'maxLength' => 255,
+                'maxLength' => 72,
                 'minScore' => 2,
                 'enableHIBP' => true,
             ],
@@ -66,7 +66,7 @@ class UtilsTest extends Test
 
         $expectedPasswordRules = [
             'minLength' => 10,
-            'maxLength' => 255,
+            'maxLength' => 72,
             'minScore' => 2,
             'enableHIBP' => true,
         ];
