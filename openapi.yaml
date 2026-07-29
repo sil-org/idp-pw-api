@@ -645,7 +645,7 @@ components:
           url: http://support.example.com
         passwordRules:
           minLength: 10
-          maxLength: 255
+          maxLength: 72
           minScore: 3
           enableHIBP: true
       type: object
