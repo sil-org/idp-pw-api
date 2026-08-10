@@ -34,6 +34,7 @@ services:
     environment:
       APP_ENV: test
       ID_BROKER_baseUrl: http://broker
+      COMPOSER_ROOT_VERSION: dev-local
     command: ["/data/run-tests-api.sh"]
 
   unittest:
@@ -49,6 +50,7 @@ services:
     environment:
       APP_ENV: test
       ID_BROKER_baseUrl: http://broker
+      COMPOSER_ROOT_VERSION: dev-local
     command: ["/data/run-tests.sh"]
 
   integrationtest:
