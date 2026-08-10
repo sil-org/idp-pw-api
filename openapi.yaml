@@ -49,11 +49,28 @@ paths:
               $ref: '#/components/schemas/application/x-www-form-urlencoded'
         required: true
   /auth/logout:
-    get:
+    post:
       responses:
         '200':
-          description: ''
-      operationId: GET_auth-logout
+          description: >-
+            Logout succeeded (or user was already logged out). Response body is
+            a JSON object with a `redirectUrl` string that the UI should
+            navigate the browser to (either the IdP Single Logout endpoint or
+            the UI's own base URL).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [redirectUrl]
+                properties:
+                  redirectUrl:
+                    type: string
+                    format: uri
+        '400':
+          description: >-
+            The request did not come from a trusted UI origin. `Origin` was
+            missing or not in the configured `TRUSTED_ORIGINS` list.
+      operationId: POST_auth-logout
   /config:
     get:
       responses:

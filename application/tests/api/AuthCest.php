@@ -48,55 +48,70 @@ class AuthCest extends BaseCest
         $I->seeResponseCodeIs(405);
     }
 
-    public function logoutGetLoggedIn(ApiTester $I)
+    public function logoutPostLoggedIn(ApiTester $I)
     {
-        $I->wantTo('check response for making a GET request for logging out when already logged in');
+        $I->wantTo('check response for POST /auth/logout from a trusted origin when logged in');
         $I->stopFollowingRedirects();
+        $I->haveHttpHeader('Origin', 'http://localhost');
         $I->setCookie('access_token', 'user2', parent::getCookieConfig());
         $I->haveHttpHeader('X-Codeception-CodeCoverage', '');
         $I->haveHttpHeader('HTTP_X_CODECEPTION_CODECOVERAGE', '');
         $I->sendGET('/user/me');
         $I->seeResponseCodeIs(200);
-        $I->sendGET('/auth/logout');
-        $I->seeResponseCodeIs(302);
-        $I->seeHttpHeader('location', 'http://localhost/#');
+        $I->sendPOST('/auth/logout');
+        $I->seeResponseCodeIs(200);
+        $I->seeResponseIsJson();
+        $I->seeResponseContainsJson(['redirectUrl' => 'http://localhost/#']);
         $I->setCookie('access_token', 'user2', parent::getCookieConfig());
         $I->sendGET('/user/me');
         $I->seeResponseCodeIs(401);
     }
 
-    public function logoutGetLoggedOutWithoutOrigin(ApiTester $I)
+    public function logoutPostLoggedOutFromTrustedOrigin(ApiTester $I)
     {
-        $I->wantTo('check response for making a GET request for logging out when already logged out and no origin header');
+        $I->wantTo('check response for POST /auth/logout from a trusted origin when already logged out');
         $I->stopFollowingRedirects();
+        $I->haveHttpHeader('Origin', 'http://localhost');
         $I->setCookie('access_token', 'user4', parent::getCookieConfig());
         $I->sendGET('/user/me');
         $I->seeResponseCodeIs(401);
-        $I->sendGET('/auth/logout');
-        $I->seeResponseCodeIs(302);
-        $I->seeHttpHeader('location', 'http://localhost/#');
+        $I->sendPOST('/auth/logout');
+        $I->seeResponseCodeIs(200);
+        $I->seeResponseIsJson();
+        $I->seeResponseContainsJson(['redirectUrl' => 'http://localhost/#']);
         $I->setCookie('access_token', 'user4', parent::getCookieConfig());
         $I->sendGET('/user/me');
         $I->seeResponseCodeIs(401);
     }
 
-    public function testLogoutWithUntrustedOrigin(ApiTester $I)
+    public function logoutPostWithoutOrigin(ApiTester $I)
     {
-        $I->wantTo('check logout redirect falls back when origin is untrusted');
-        $I->stopFollowingRedirects();
-        $I->haveHttpHeader('Origin', 'http://bad');
-        $I->setCookie('access_token', 'user4', parent::getCookieConfig());
-        $I->sendGET('/auth/logout');
-        $I->seeResponseCodeIs(302);
-        $I->seeHttpHeader('location', 'http://localhost/#');
-    }
-
-    public function logoutPost(ApiTester $I)
-    {
-        $I->wantTo('check response for making a POST request for logging out when already logged in');
+        $I->wantTo('check response for POST /auth/logout when no Origin header is sent');
         $I->stopFollowingRedirects();
         $I->setCookie('access_token', 'user2', parent::getCookieConfig());
         $I->sendPOST('/auth/logout');
+        $I->seeResponseCodeIs(400);
+        $I->dontSeeHttpHeader('Location');
+    }
+
+    public function logoutPostWithUntrustedOrigin(ApiTester $I)
+    {
+        $I->wantTo('check response for POST /auth/logout when Origin is untrusted');
+        $I->stopFollowingRedirects();
+        $I->haveHttpHeader('Origin', 'http://bad');
+        $I->setCookie('access_token', 'user4', parent::getCookieConfig());
+        $I->sendPOST('/auth/logout');
+        $I->seeResponseCodeIs(400);
+        $I->dontSeeHttpHeader('Location');
+    }
+
+    public function logoutGetNotAllowed(ApiTester $I)
+    {
+        $I->wantTo('check that GET /auth/logout is no longer accepted');
+        $I->stopFollowingRedirects();
+        $I->haveHttpHeader('Origin', 'http://localhost');
+        $I->setCookie('access_token', 'user2', parent::getCookieConfig());
+        $I->sendGET('/auth/logout');
         $I->seeResponseCodeIs(405);
     }
 

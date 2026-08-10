@@ -13,6 +13,7 @@ use Sil\Idp\IdBroker\Client\ServiceException;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use yii\web\BadRequestHttpException;
+use yii\web\Response;
 use yii\web\ServerErrorHttpException;
 
 class AuthController extends BaseRestController
@@ -47,7 +48,10 @@ class AuthController extends BaseRestController
     public function actionLogin()
     {
         if (! \Yii::$app->user->isGuest) {
-            return $this->redirect($this->getAfterLoginUrl($this->getReturnTo()));
+            return $this->safeUiRedirect(
+                $this->getAfterLoginUrl($this->getReturnTo()),
+                'You are already signed in. Please return to the application you started from.'
+            );
         }
 
         /*
@@ -64,7 +68,10 @@ class AuthController extends BaseRestController
                     $log['error'] = 'invite code expired';
                     \Yii::info($log, 'application');
 
-                    return $this->redirect($this->getReturnToOnError());
+                    return $this->safeUiRedirect(
+                        $this->getReturnToOnError(),
+                        'Your invitation has expired. Please request a new one from the application you started from.'
+                    );
                 } else {
                     throw $e;
                 }
@@ -88,7 +95,10 @@ class AuthController extends BaseRestController
             /*
              * Redirect to UI
              */
-            return $this->redirect($loginSuccessUrl);
+            return $this->safeUiRedirect(
+                $loginSuccessUrl,
+                'You are signed in. Please return to the application you started from.'
+            );
 
         } catch (RedirectException $e) {
             /*
@@ -113,6 +123,25 @@ class AuthController extends BaseRestController
 
     public function actionLogout()
     {
+        $trustedUiUrl = Utils::getTrustedUiUrl();
+        if ($trustedUiUrl === '') {
+            /*
+             * Because /auth/logout is POST-only, browsers always send Origin.
+             * An absent or untrusted Origin means the request did not come from
+             * a trusted UI, so we refuse rather than guess a destination.
+             */
+            \Yii::warning([
+                'action' => 'logout',
+                'status' => 'rejected',
+                'reason' => 'untrusted_origin',
+                'origin' => \Yii::$app->request->getOrigin(),
+                'ip' => \Yii::$app->request->getUserIP(),
+            ], 'application');
+            throw new BadRequestHttpException('Untrusted origin');
+        }
+
+        $redirectUrl = $trustedUiUrl;
+
         $requestCookies = \Yii::$app->request->cookies;
         $accessToken = $requestCookies->getValue('access_token');
         if ($accessToken !== null) {
@@ -131,32 +160,67 @@ class AuthController extends BaseRestController
 
             try {
                 $personnelUser = $personnel->findByAccessToken($accessTokenHash);
+
+                try {
+                    $personnel->clearAccessToken($personnelUser->employeeId);
+                } catch (\Exception $e) {
+                    \Yii::error('Failed to clear access token for logout: ' . $e->getMessage());
+                }
+
+                $authUser = User::constructFromPersonnelUser($personnelUser)->getAuthUser();
+
+                /*
+                 * Ask the IdP to perform Single Logout. It signals the target
+                 * URL by throwing RedirectException; we pass that URL back to
+                 * the UI so the UI can navigate the browser there.
+                 */
+                try {
+                    /** @var AuthnInterface $auth */
+                    $auth = \Yii::$app->auth;
+                    $auth->logout($trustedUiUrl, $authUser);
+                } catch (RedirectException $e) {
+                    $redirectUrl = $e->getUrl();
+                }
             } catch (\Exception $e) {
                 \Yii::error('Failed to find personnel user for logout: ' . $e->getMessage());
-                return $this->redirect(Utils::getTrustedUiUrl());
-            }
-
-            try {
-                $personnel->clearAccessToken($personnelUser->employeeId);
-            } catch (\Exception $e) {
-                \Yii::error('Failed to clear access token for logout: ' . $e->getMessage());
-            }
-
-            $authUser = User::constructFromPersonnelUser($personnelUser)->getAuthUser();
-
-            /*
-             * Log user out of IdP
-             */
-            try {
-                /** @var AuthnInterface $auth */
-                $auth = \Yii::$app->auth;
-                $auth->logout(Utils::getTrustedUiUrl(), $authUser);
-            } catch (RedirectException $e) {
-                return $this->redirect($e->getUrl());
             }
         }
 
-        return $this->redirect(Utils::getTrustedUiUrl());
+        return ['redirectUrl' => $redirectUrl];
+    }
+
+    /**
+     * Redirect to $url if it points at the currently trusted UI, otherwise emit
+     * a minimal plain-text terminal response from the API's own origin.
+     *
+     * This is the only safe answer when no trusted origin can be determined:
+     * the backend supports multiple UI domains and has no fixed default, so it
+     * must not redirect anywhere derived from untrusted input, and it must not
+     * echo any request-supplied value back into the response.
+     */
+    protected function safeUiRedirect(string $url, string $fallbackMessage)
+    {
+        $trustedUiUrl = Utils::getTrustedUiUrl();
+        if ($trustedUiUrl !== '' && $url !== '' && str_starts_with($url, $trustedUiUrl)) {
+            return $this->redirect($url);
+        }
+
+        \Yii::warning([
+            'action' => 'safeUiRedirect',
+            'status' => 'blocked',
+            'reason' => $trustedUiUrl === '' ? 'no_trusted_origin' : 'target_not_trusted',
+            'origin' => \Yii::$app->request->getOrigin(),
+            'referrer' => \Yii::$app->request->getReferrer(),
+            'ip' => \Yii::$app->request->getUserIP(),
+        ], 'application');
+
+        $response = \Yii::$app->response;
+        $response->format = Response::FORMAT_RAW;
+        $response->headers->set('Content-Type', 'text/plain; charset=utf-8');
+        $response->headers->set('X-Content-Type-Options', 'nosniff');
+        $response->statusCode = 200;
+        $response->content = $fallbackMessage;
+        return $response;
     }
 
     public function getAfterLoginUrl($returnTo)
