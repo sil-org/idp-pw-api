@@ -15,8 +15,11 @@ testapi:
 testintegration:
 	docker compose run --rm integrationtest
 
-api: broker composer
-	docker compose up -d api zxcvbn phpmyadmin brokerpma emailpma
+api: broker composer adminer
+	docker compose up -d api zxcvbn
+
+adminer:
+	docker compose up -d adminer
 
 composer:
 	docker compose run --rm cli composer install
