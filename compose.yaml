@@ -100,14 +100,12 @@ services:
     environment: *mysql_env
     <<: *db_healthcheck
 
-  brokerpma:
-    image: phpmyadmin:5
+  adminer:
+    image: adminer
     ports:
-      - "51158:80"
+      - '51158:80'
     environment:
-      PMA_HOST: broker-db
-      PMA_USER: broker
-      PMA_PASSWORD: broker
+      ADMINER_DEFAULT_SERVER: 'broker-db'
 
   broker:
     image: ghcr.io/sil-org/idp-id-broker:8
