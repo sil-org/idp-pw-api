@@ -105,14 +105,31 @@ class AuthCest extends BaseCest
         $I->dontSeeHttpHeader('Location');
     }
 
-    public function logoutGetNotAllowed(ApiTester $I)
+    public function logoutGetLegacyWithOrigin(ApiTester $I)
     {
-        $I->wantTo('check that GET /auth/logout is no longer accepted');
+        $I->wantTo('check legacy GET /auth/logout works in single-origin mode with Origin header');
         $I->stopFollowingRedirects();
         $I->haveHttpHeader('Origin', 'http://localhost');
         $I->setCookie('access_token', 'user2', parent::getCookieConfig());
         $I->sendGET('/auth/logout');
-        $I->seeResponseCodeIs(405);
+        $I->seeResponseCodeIs(302);
+        $I->seeHttpHeader('location', 'http://localhost/#');
+        $I->setCookie('access_token', 'user2', parent::getCookieConfig());
+        $I->sendGET('/user/me');
+        $I->seeResponseCodeIs(401);
+    }
+
+    public function logoutGetLegacyWithoutOrigin(ApiTester $I)
+    {
+        $I->wantTo('check legacy GET /auth/logout falls back to plain-text in multi-origin mode without Origin header');
+        $I->stopFollowingRedirects();
+        $I->setCookie('access_token', 'user3', parent::getCookieConfig());
+        $I->sendGET('/auth/logout');
+        $I->seeResponseCodeIs(200);
+        $I->seeHttpHeader('Content-Type', 'text/plain; charset=utf-8');
+        $I->seeHttpHeader('X-Content-Type-Options', 'nosniff');
+        $I->dontSeeHttpHeader('Location');
+        $I->seeResponseContains('signed out');
     }
 
     public function logoutPut(ApiTester $I)

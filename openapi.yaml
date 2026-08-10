@@ -50,6 +50,11 @@ paths:
         required: true
   /auth/logout:
     post:
+      summary: Sign out (current user)
+      description: >-
+        Sign out the current user. Clears the access token cookie, revokes the token
+        in the identity broker, and initiates Single Logout at the IdP if applicable.
+        Returns a JSON object with a `redirectUrl` that the UI should navigate to.
       responses:
         '200':
           description: >-
@@ -71,6 +76,40 @@ paths:
             The request did not come from a trusted UI origin. `Origin` was
             missing or not in the configured `TRUSTED_ORIGINS` list.
       operationId: POST_auth-logout
+    get:
+      summary: Sign out (current user) - DEPRECATED
+      deprecated: true
+      description: >-
+        **DEPRECATED:** Use `POST /auth/logout` instead. This GET endpoint is
+        provided for backward compatibility with single-origin deployments only
+        (where `TRUSTED_ORIGINS` contains exactly one entry).
+        
+        
+        In multi-origin deployments, this endpoint will fail with a 400 error or
+        return a plain-text fallback message, since the backend cannot determine
+        which UI to redirect to without a trusted `Origin` header.
+        
+        
+        For single-origin deployments, this endpoint signs out the user and redirects
+        the browser to the IdP Single Logout endpoint or the UI base URL.
+      responses:
+        '302':
+          description: >-
+            Logout succeeded. Browser is redirected to the IdP Single Logout endpoint
+            or the UI base URL. Only works in single-origin deployments.
+        '200':
+          description: >-
+            Plain-text fallback message when no trusted origin can be determined
+            (multi-origin deployment with missing/untrusted Origin header).
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: >-
+            The request did not come from a trusted UI origin and the deployment
+            is multi-origin (cannot determine which UI to redirect to).
+      operationId: GET_auth-logout
   /config:
     get:
       responses:

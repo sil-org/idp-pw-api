@@ -73,6 +73,7 @@ return [
                 'GET /auth/login' => 'auth/login',
                 'POST /auth/login' => 'auth/login',
                 'POST /auth/logout' => 'auth/logout',
+                'GET /auth/logout' => 'auth/logout-legacy',  // DEPRECATED: backward compatibility only
                 'OPTIONS /auth/logout' => 'auth/options',
 
                 /*

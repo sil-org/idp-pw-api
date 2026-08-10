@@ -248,3 +248,34 @@ To run a single unit test with verbose output:
 ```
 docker compose run --rm unittest vendor/bin/codecept -vv run tests/unit/common/models/PasswordTest.php:testBadBytes
 ```
+
+## API Changes and Migration Notes
+
+### Logout Endpoint Contract Change (Multi-Origin Support)
+
+**Current behavior (POST /auth/logout):**
+
+The logout endpoint now accepts `POST` requests and returns a JSON response containing a `redirectUrl` that the UI must navigate to client-side.
+
+**Example:**
+```javascript
+const res = await fetch(`${apiBase}/auth/logout`, { 
+  method: 'POST', 
+  credentials: 'include' 
+});
+const { redirectUrl } = await res.json();
+window.location.assign(redirectUrl);
+```
+
+**Backward compatibility (GET /auth/logout - DEPRECATED):**
+
+For single-origin deployments (where `TRUSTED_ORIGINS` contains exactly one entry), the legacy `GET /auth/logout` endpoint is still available and will redirect the browser as before. This endpoint is **deprecated** and will be removed in a future version.
+
+In multi-origin deployments, the GET endpoint will fail with a 400 error or return a plain-text fallback message if no trusted origin can be determined.
+
+**Migration:**
+
+1. Update your UI to use `POST /auth/logout` instead of navigating to `GET /auth/logout`
+2. Update `TRUSTED_ORIGINS` in your environment configuration with all UI origins
+3. For single-origin deployments, you can continue using `UI_URL` for now, but `TRUSTED_ORIGINS` is preferred
+4. The `UI_URL` and `UI_CORS_ORIGIN` configuration variables are deprecated in favor of `TRUSTED_ORIGINS`

@@ -34,13 +34,13 @@ class AuthController extends BaseRestController
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['login', 'logout'],
+                        'actions' => ['login', 'logout', 'logout-legacy'],
                         'roles' => ['?'],
                     ],
                 ],
             ],
             'authenticator' => [
-                'except' => ['login', 'logout'], // bypass authentication for /auth/login
+                'except' => ['login', 'logout', 'logout-legacy'], // bypass authentication for /auth/login and logout
             ],
         ]);
     }
@@ -140,6 +140,50 @@ class AuthController extends BaseRestController
             throw new BadRequestHttpException('Untrusted origin');
         }
 
+        $redirectUrl = $this->performLogout($trustedUiUrl);
+
+        return ['redirectUrl' => $redirectUrl];
+    }
+
+    /**
+     * Legacy GET-based logout endpoint. Preserved for backward compatibility with
+     * single-origin deployments where UI_URL / TRUSTED_ORIGINS has exactly one entry.
+     *
+     * DEPRECATED: Use POST /auth/logout (actionLogout) instead. This endpoint will be
+     * removed in a future version.
+     *
+     * In multi-origin deployments (2+ trusted origins), this endpoint will fail with
+     * a 400 or plain-text fallback, since the backend cannot safely determine which
+     * UI to redirect to without an Origin header.
+     *
+     * @deprecated Use POST /auth/logout instead
+     */
+    public function actionLogoutLegacy()
+    {
+        $trustedUiUrl = Utils::getTrustedUiUrl();
+        if ($trustedUiUrl === '') {
+            /*
+             * Multi-origin deployment with no usable Origin header.
+             * Cannot safely redirect, so render a terminal plain-text page.
+             */
+            return $this->safeUiRedirect(
+                '',
+                'You have been signed out. Please close your browser to complete sign-out.'
+            );
+        }
+
+        $redirectUrl = $this->performLogout($trustedUiUrl);
+
+        return $this->redirect($redirectUrl);
+    }
+
+    /**
+     * Shared logout logic: clear cookie + token, call IdP SLO, return redirect URL.
+     * @param string $trustedUiUrl The trusted UI URL to use as the SLO return target
+     * @return string The URL to redirect the browser to (either IdP SLO or UI home)
+     */
+    protected function performLogout(string $trustedUiUrl): string
+    {
         $redirectUrl = $trustedUiUrl;
 
         $requestCookies = \Yii::$app->request->cookies;
@@ -171,8 +215,7 @@ class AuthController extends BaseRestController
 
                 /*
                  * Ask the IdP to perform Single Logout. It signals the target
-                 * URL by throwing RedirectException; we pass that URL back to
-                 * the UI so the UI can navigate the browser there.
+                 * URL by throwing RedirectException; we return that URL to the caller.
                  */
                 try {
                     /** @var AuthnInterface $auth */
@@ -186,7 +229,7 @@ class AuthController extends BaseRestController
             }
         }
 
-        return ['redirectUrl' => $redirectUrl];
+        return $redirectUrl;
     }
 
     /**

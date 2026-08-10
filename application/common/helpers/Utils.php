@@ -205,15 +205,30 @@ class Utils
 
     /**
      * Get the origin from the request if it is trusted, otherwise return an empty string.
+     *
+     * In single-origin deployments (exactly one entry in trustedOrigins), returns that
+     * origin even when the request's Origin header is missing or unusable. This preserves
+     * backward compatibility with top-level navigation and legacy GET-based logout.
+     *
+     * In multi-origin deployments, the request's Origin header is required.
+     *
      * @return string
      */
     public static function getTrustedOrigin(): string
     {
-        $origin = \Yii::$app->getRequest()->getOrigin();
         $trustedOrigins = \Yii::$app->params['trustedOrigins'] ?? [];
+        $origin = \Yii::$app->getRequest()->getOrigin();
 
-        if (in_array($origin, $trustedOrigins)) {
-            return $origin ?? '';
+        // If the request Origin is present and trusted, use it
+        if ($origin !== null && in_array($origin, $trustedOrigins, true)) {
+            return $origin;
+        }
+
+        // Legacy / single-tenant fallback: exactly one configured trusted origin
+        // is unambiguous and server-controlled, so it's safe to use when the
+        // request's Origin is missing (top-level nav) or unusable.
+        if (count($trustedOrigins) === 1) {
+            return $trustedOrigins[0];
         }
 
         return '';
