@@ -6,6 +6,12 @@ x-db_healthcheck: &db_healthcheck
     timeout: 5s
     retries: 3
 
+x-mysql_env: &mysql_env
+  MYSQL_DATABASE: "db"
+  MYSQL_USER: "user"
+  MYSQL_PASSWORD: "pass"
+  MYSQL_ROOT_PASSWORD: "pass"
+
 services:
 
   api:
@@ -91,11 +97,7 @@ services:
 
   brokerDb:
     image: mariadb:10
-    environment:
-      MYSQL_ROOT_PASSWORD: r00tp@ss!
-      MYSQL_DATABASE: broker
-      MYSQL_USER: broker
-      MYSQL_PASSWORD: broker
+    environment: *mysql_env
     <<: *db_healthcheck
 
   brokerpma:
@@ -124,9 +126,7 @@ services:
       EMAILER_CLASS: \Sil\SilIdBroker\Behat\Context\fakes\FakeEmailer
       IDP_NAME: idp1
       MYSQL_HOST: brokerDb
-      MYSQL_DATABASE: broker
-      MYSQL_USER: broker
-      MYSQL_PASSWORD: broker
+      <<: *mysql_env
       API_ACCESS_KEYS: abc123
       HELP_CENTER_URL: https://example.com/#/help
       PASSWORD_FORGOT_URL: https://example.com/#/forgot
