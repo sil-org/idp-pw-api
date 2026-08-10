@@ -68,7 +68,7 @@ class MfaController extends BaseRestController
     {
         return $this->idBrokerClient->mfaList(
             \Yii::$app->user->identity->employee_id,
-            \Yii::$app->params['rpOrigin']
+            static::getRpOrigin()
         );
     }
 
@@ -95,7 +95,7 @@ class MfaController extends BaseRestController
                 \Yii::$app->user->identity->employee_id,
                 $type,
                 $label,
-                \Yii::$app->params['rpOrigin']
+                static::getRpOrigin()
             );
         } catch (ServiceException $e) {
             \Yii::error([
@@ -212,7 +212,7 @@ class MfaController extends BaseRestController
                 $mfaId,
                 \Yii::$app->user->identity->employee_id,
                 $value,
-                \Yii::$app->params['rpOrigin']
+                static::getRpOrigin()
             );
         } catch (ServiceException $e) {
             \Yii::warning([
@@ -256,7 +256,7 @@ class MfaController extends BaseRestController
                 $mfaId,
                 \Yii::$app->user->identity->employee_id,
                 $value,
-                \Yii::$app->params['rpOrigin'],
+                static::getRpOrigin(),
                 'registration',
                 $label,
             );
@@ -342,5 +342,10 @@ class MfaController extends BaseRestController
              */
             throw $e;
         }
+    }
+
+    private function getRpOrigin(): string
+    {
+        return \Yii::$app->params['rpOrigin'];
     }
 }
