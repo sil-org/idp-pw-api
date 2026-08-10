@@ -157,4 +157,23 @@ class AuthCest extends BaseCest
         $I->sendGET('/auth/login?invite=abc123');
         $I->seeResponseCodeIs(302);
     }
+
+    public function loginReturnsToTrustedOriginAfterMultiOriginRoundTrip(ApiTester $I)
+    {
+        $I->wantTo(
+            'check that a successful login redirects back to the trusted origin carried in '
+            . 'RelayState, even though the postback request itself (from the IdP) has no '
+            . 'matching Origin header, as happens in a multi-origin deployment'
+        );
+        $I->stopFollowingRedirects();
+        // No Origin header is sent, simulating the IdP's POST-back to /auth/login rather
+        // than a direct request from the trusted UI.
+        $I->sendPOST('/auth/login', [
+            'username' => 'test',
+            'password' => 'pass',
+            'RelayState' => 'http://localhost/#/foo',
+        ]);
+        $I->seeResponseCodeIs(302);
+        $I->seeHttpHeader('location', 'http://localhost/#/foo');
+    }
 }

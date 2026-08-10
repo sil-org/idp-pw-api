@@ -248,15 +248,14 @@ class AuthController extends BaseRestController
      */
     protected function safeUiRedirect(string $url, string $fallbackMessage)
     {
-        $trustedUiUrl = Utils::getTrustedUiUrl();
-        if ($trustedUiUrl !== '' && $url !== '' && str_starts_with($url, $trustedUiUrl)) {
+        if (Utils::isTrustedUrl($url)) {
             return $this->redirect($url);
         }
 
         \Yii::warning([
             'action' => 'safeUiRedirect',
             'status' => 'blocked',
-            'reason' => $trustedUiUrl === '' ? 'no_trusted_origin' : 'target_not_trusted',
+            'reason' => $url === '' ? 'no_url' : 'target_not_trusted',
             'origin' => \Yii::$app->request->getOrigin(),
             'referrer' => \Yii::$app->request->getReferrer(),
             'ip' => \Yii::$app->request->getUserIP(),
@@ -273,18 +272,18 @@ class AuthController extends BaseRestController
 
     public function getAfterLoginUrl($returnTo)
     {
-        $trustedUiUrl = Utils::getTrustedUiUrl();
         /*
-         * If $returnTo starts with $trustedUiUrl, return it, else relative build absolute
+         * If $returnTo is already an absolute URL at a trusted origin, return it
+         * as-is (this is the case after a SAML round trip, where $returnTo was
+         * resolved to an absolute URL before being sent as RelayState).
+         * Otherwise treat it as a relative path and build an absolute URL using
+         * the trusted origin for the current request.
          */
-        if (str_starts_with($returnTo, $trustedUiUrl)) {
+        if (Utils::isTrustedUrl($returnTo)) {
             return $returnTo;
-        } elseif (str_starts_with($returnTo, '/')) {
-            $path = $returnTo;
-        } else {
-            $path = '';
         }
-        return $trustedUiUrl . $path;
+        $path = str_starts_with($returnTo, '/') ? $returnTo : '';
+        return Utils::getTrustedUiUrl() . $path;
     }
 
     /**

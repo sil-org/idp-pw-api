@@ -221,8 +221,6 @@ return [
     'params' => [
         'idpDisplayName' => $idpDisplayName,
         'helpCenterUrl' => $helpCenterUrl,
-        'uiUrl' => $uiUrl,
-        'uiCorsOrigin' => $uiCorsOrigin,
         'trustedOrigins' => $trustedOrigins,
         'accessTokenHashKey' => $accessTokenHashKey,
         'accessTokenLifetime' => 1800, // 30 minutes

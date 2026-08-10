@@ -82,4 +82,23 @@ class UtilsTest extends Test
 
         $this->assertEquals($expected, Utils::getDatetime($timestamp));
     }
+
+    public function testIsTrustedUrl()
+    {
+        \Yii::$app->params['trustedOrigins'] = ['https://a.example.com', 'http://localhost'];
+
+        $this->assertTrue(Utils::isTrustedUrl('https://a.example.com/#/foo'));
+        $this->assertTrue(Utils::isTrustedUrl('http://localhost/#/foo?x=1'));
+
+        // Not one of the configured origins, even though it starts with a trusted origin string
+        $this->assertFalse(Utils::isTrustedUrl('https://a.example.com.evil.com/#/foo'));
+
+        // Relative paths have no origin to check
+        $this->assertFalse(Utils::isTrustedUrl('/foo'));
+        $this->assertFalse(Utils::isTrustedUrl(''));
+
+        // Trust is independent of the current request's Origin header
+        \Yii::$app->request->headers->set('Origin', 'https://unrelated.example.com');
+        $this->assertTrue(Utils::isTrustedUrl('https://a.example.com/#/foo'));
+    }
 }

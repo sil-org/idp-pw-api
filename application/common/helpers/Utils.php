@@ -233,4 +233,36 @@ class Utils
 
         return '';
     }
+
+    /**
+     * Check whether $url's own origin (scheme + host + port) is one of the
+     * configured trusted origins.
+     *
+     * Unlike getTrustedOrigin(), this does not depend on the current request's
+     * Origin header, so it correctly validates a return-to URL carried through
+     * a round trip (e.g. SAML RelayState) where the postback request's origin
+     * is the IdP's, not the UI's.
+     *
+     * @param string $url
+     * @return bool
+     */
+    public static function isTrustedUrl(string $url): bool
+    {
+        if ($url === '') {
+            return false;
+        }
+
+        $parts = parse_url($url);
+        if (! isset($parts['scheme'], $parts['host'])) {
+            return false;
+        }
+
+        $origin = $parts['scheme'] . '://' . $parts['host'];
+        if (isset($parts['port'])) {
+            $origin .= ':' . $parts['port'];
+        }
+
+        $trustedOrigins = \Yii::$app->params['trustedOrigins'] ?? [];
+        return in_array($origin, $trustedOrigins, true);
+    }
 }
