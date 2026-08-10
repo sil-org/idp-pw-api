@@ -188,45 +188,50 @@ class AuthController extends BaseRestController
 
         $requestCookies = \Yii::$app->request->cookies;
         $accessToken = $requestCookies->getValue('access_token');
-        if ($accessToken !== null) {
-            /*
-             * Remove access_token cookie from browser
-             */
-            $responseCookies = \Yii::$app->response->cookies;
-            $responseCookies->remove('access_token', true);
+        if ($accessToken === null) {
+            return $redirectUrl;
+        }
 
-            /*
-             * Look up and clear the token in IdBroker, then log out of IdP
-             */
-            $accessTokenHash = Utils::getAccessTokenHash($accessToken);
-            /** @var \common\components\personnel\PersonnelInterface $personnel */
-            $personnel = \Yii::$app->personnel;
+        /*
+         * Remove access_token cookie from browser
+         */
+        $responseCookies = \Yii::$app->response->cookies;
+        $responseCookies->remove('access_token', true);
 
-            try {
-                $personnelUser = $personnel->findByAccessToken($accessTokenHash);
+        /*
+         * Look up user in personnel system
+         */
+        $accessTokenHash = Utils::getAccessTokenHash($accessToken);
+        /** @var \common\components\personnel\PersonnelInterface $personnel */
+        $personnel = \Yii::$app->personnel;
 
-                try {
-                    $personnel->clearAccessToken($personnelUser->employeeId);
-                } catch (\Exception $e) {
-                    \Yii::error('Failed to clear access token for logout: ' . $e->getMessage());
-                }
+        try {
+            $personnelUser = $personnel->findByAccessToken($accessTokenHash);
+        } catch (\Exception $e) {
+            \Yii::error('Failed to find personnel user for logout: ' . $e->getMessage());
+            return $redirectUrl;
+        }
 
-                $authUser = User::constructFromPersonnelUser($personnelUser)->getAuthUser();
+        /*
+         * Clear the token in IdBroker (best-effort)
+         */
+        try {
+            $personnel->clearAccessToken($personnelUser->employeeId);
+        } catch (\Exception $e) {
+            \Yii::error('Failed to clear access token for logout: ' . $e->getMessage());
+        }
 
-                /*
-                 * Ask the IdP to perform Single Logout. It signals the target
-                 * URL by throwing RedirectException; we return that URL to the caller.
-                 */
-                try {
-                    /** @var AuthnInterface $auth */
-                    $auth = \Yii::$app->auth;
-                    $auth->logout($trustedUiUrl, $authUser);
-                } catch (RedirectException $e) {
-                    $redirectUrl = $e->getUrl();
-                }
-            } catch (\Exception $e) {
-                \Yii::error('Failed to find personnel user for logout: ' . $e->getMessage());
-            }
+        /*
+         * Ask the IdP to perform Single Logout. It signals the target
+         * URL by throwing RedirectException; we return that URL to the caller.
+         */
+        $authUser = User::constructFromPersonnelUser($personnelUser)->getAuthUser();
+        try {
+            /** @var AuthnInterface $auth */
+            $auth = \Yii::$app->auth;
+            $auth->logout($trustedUiUrl, $authUser);
+        } catch (RedirectException $e) {
+            $redirectUrl = $e->getUrl();
         }
 
         return $redirectUrl;
