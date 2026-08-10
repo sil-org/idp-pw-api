@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\helpers\Utils;
 use frontend\components\BaseRestController;
 use Sil\Idp\IdBroker\Client\IdBrokerClient;
 use Sil\Idp\IdBroker\Client\ServiceException;
@@ -346,6 +347,6 @@ class MfaController extends BaseRestController
 
     private function getRpOrigin(): string
     {
-        return \Yii::$app->params['rpOrigin'];
+        return Utils::getTrustedOrigin();
     }
 }

@@ -34,6 +34,7 @@ services:
     environment:
       APP_ENV: test
       ID_BROKER_baseUrl: http://broker
+      TRUSTED_ORIGINS: https://localhost,http://localhost
     command: ["/data/run-tests-api.sh"]
 
   unittest:

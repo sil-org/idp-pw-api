@@ -59,6 +59,7 @@ class AuthCest extends BaseCest
         $I->seeResponseCodeIs(200);
         $I->sendGET('/auth/logout');
         $I->seeResponseCodeIs(302);
+        $I->seeHttpHeader('location', 'http://localhost/#');
         $I->setCookie('access_token', 'user2', parent::getCookieConfig());
         $I->sendGET('/user/me');
         $I->seeResponseCodeIs(401);
@@ -66,16 +67,28 @@ class AuthCest extends BaseCest
 
     public function logoutGetLoggedOutWithoutOrigin(ApiTester $I)
     {
-        $I->wantTo('check response for making a GET request for logging out when already logged out');
+        $I->wantTo('check response for making a GET request for logging out when already logged out and no origin header');
         $I->stopFollowingRedirects();
         $I->setCookie('access_token', 'user4', parent::getCookieConfig());
         $I->sendGET('/user/me');
         $I->seeResponseCodeIs(401);
         $I->sendGET('/auth/logout');
         $I->seeResponseCodeIs(302);
+        $I->seeHttpHeader('location', 'http://localhost/#');
         $I->setCookie('access_token', 'user4', parent::getCookieConfig());
         $I->sendGET('/user/me');
         $I->seeResponseCodeIs(401);
+    }
+
+    public function testLogoutWithUntrustedOrigin(ApiTester $I)
+    {
+        $I->wantTo('check logout redirect falls back when origin is untrusted');
+        $I->stopFollowingRedirects();
+        $I->haveHttpHeader('Origin', 'http://bad');
+        $I->setCookie('access_token', 'user4', parent::getCookieConfig());
+        $I->sendGET('/auth/logout');
+        $I->seeResponseCodeIs(302);
+        $I->seeHttpHeader('location', 'http://localhost/#');
     }
 
     public function logoutPost(ApiTester $I)

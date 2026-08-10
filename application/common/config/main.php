@@ -19,9 +19,15 @@ $idpDisplayName = Env::get('IDP_DISPLAY_NAME', $idpName);
 $recaptchaRequired = Env::get('RECAPTCHA_REQUIRED', true);
 $recaptchaSiteKey = Env::get('RECAPTCHA_SITE_KEY');
 $recaptchaSecretKey = Env::get('RECAPTCHA_SECRET_KEY');
+
 $uiUrl = Env::get('UI_URL');
 $uiCorsOrigin = Env::get('UI_CORS_ORIGIN', $uiUrl);
-$rpOrigin = $uiCorsOrigin;
+$uiOrigin = implode('/', array_slice(explode('/', $uiUrl), 0, 3));
+$trustedOrigins = Env::getArray('TRUSTED_ORIGINS');
+if (!empty($uiOrigin)) {
+    $trustedOrigins[] = $uiOrigin;
+}
+
 $helpCenterUrl = Env::get('HELP_CENTER_URL');
 $codeLength = Env::get('CODE_LENGTH', 6);
 $supportEmail = Env::get('SUPPORT_EMAIL');
@@ -217,7 +223,7 @@ return [
         'helpCenterUrl' => $helpCenterUrl,
         'uiUrl' => $uiUrl,
         'uiCorsOrigin' => $uiCorsOrigin,
-        'rpOrigin' => $rpOrigin,
+        'trustedOrigins' => $trustedOrigins,
         'accessTokenHashKey' => $accessTokenHashKey,
         'accessTokenLifetime' => 1800, // 30 minutes
         'passwordRules' => $passwordRules,

@@ -192,4 +192,30 @@ class Utils
     {
         return hash_hmac('sha256', $accessToken, \Yii::$app->params['accessTokenHashKey']);
     }
+
+    /**
+     * Get the request origin, plus the base UI path (/#), if it is trusted.
+     * @return string
+     */
+    public static function getTrustedUiUrl(): string
+    {
+        $origin = static::getTrustedOrigin();
+        return empty($origin) ? '' : $origin . '/#';
+    }
+
+    /**
+     * Get the origin from the request if it is trusted, otherwise return an empty string.
+     * @return string
+     */
+    public static function getTrustedOrigin(): string
+    {
+        $origin = \Yii::$app->getRequest()->getOrigin();
+        $trustedOrigins = \Yii::$app->params['trustedOrigins'] ?? [];
+
+        if (in_array($origin, $trustedOrigins)) {
+            return $origin ?? '';
+        }
+
+        return '';
+    }
 }
