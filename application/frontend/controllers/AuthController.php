@@ -220,25 +220,23 @@ class AuthController extends BaseRestController
     public function actionLogoutLegacy()
     {
         $trustedUiUrl = Utils::getTrustedUiUrl();
+        if ($trustedUiUrl !== '') {
+            return $this->redirect($this->performLogout($trustedUiUrl));
+        }
 
-        if ($trustedUiUrl === '') {
-            $defaultUiUrl = \Yii::$app->params['uiUrl'] ?? '';
-
-            if ($defaultUiUrl === '') {
-                /*
-                 * Nothing safe to redirect to. No IdP SLO is attempted because the
-                 * IdP would reject a bare or unlisted ReturnTo.
-                 */
-                throw new ServerErrorHttpException('No safe redirect target available for logout');
-            }
-
+        $defaultUiUrl = \Yii::$app->params['uiUrl'] ?? '';
+        if ($defaultUiUrl !== '') {
             /*
              * Fall back to the default UI URL.
              */
             return $this->redirect($this->performLogout($defaultUiUrl));
         }
 
-        return $this->redirect($this->performLogout($trustedUiUrl));
+        /*
+         * Nothing safe to redirect to. No IdP SLO is attempted because the
+         * IdP would reject a bare or unlisted ReturnTo.
+         */
+        throw new ServerErrorHttpException('No safe redirect target available for logout');
     }
 
     /**
