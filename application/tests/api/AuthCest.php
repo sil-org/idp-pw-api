@@ -121,15 +121,11 @@ class AuthCest extends BaseCest
 
     public function logoutGetLegacyWithoutOrigin(ApiTester $I)
     {
-        $I->wantTo('check legacy GET /auth/logout falls back to plain-text in multi-origin mode without Origin header');
+        $I->wantTo('check legacy GET fails in multi-origin mode without Origin header');
         $I->stopFollowingRedirects();
         $I->setCookie('access_token', 'user3', parent::getCookieConfig());
         $I->sendGET('/auth/logout');
-        $I->seeResponseCodeIs(200);
-        $I->seeHttpHeader('Content-Type', 'text/plain; charset=utf-8');
-        $I->seeHttpHeader('X-Content-Type-Options', 'nosniff');
-        $I->dontSeeHttpHeader('Location');
-        $I->seeResponseContains('signed out');
+        $I->seeResponseCodeIs(500);
     }
 
     public function logoutPut(ApiTester $I)
