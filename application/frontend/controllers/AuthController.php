@@ -40,18 +40,20 @@ class AuthController extends BaseRestController
                 ],
             ],
             'authenticator' => [
-                'except' => ['login', 'logout', 'logout-legacy'], // bypass authentication for /auth/login and logout
+                // bypass authentication for /auth/login, /auth/logout, and /auth/logout-legacy
+                'except' => ['login', 'logout', 'logout-legacy'],
             ],
         ]);
     }
 
-    public function actionLogin()
+    /**
+     * @throws BadRequestHttpException
+     * @throws ServerErrorHttpException
+     */
+    public function actionLogin(): Response
     {
         if (! \Yii::$app->user->isGuest) {
-            return $this->safeUiRedirect(
-                $this->getAfterLoginUrl($this->getReturnTo()),
-                'You are already signed in. Please return to the application you started from.'
-            );
+            return $this->safeUiRedirect($this->getAfterLoginUrl($this->getReturnTo()));
         }
 
         /*
@@ -68,10 +70,7 @@ class AuthController extends BaseRestController
                     $log['error'] = 'invite code expired';
                     \Yii::info($log, 'application');
 
-                    return $this->safeUiRedirect(
-                        $this->getReturnToOnError(),
-                        'Your invitation has expired. Please request a new one from the application you started from.'
-                    );
+                    return $this->safeUiRedirect($this->getReturnToOnError());
                 } else {
                     throw $e;
                 }
@@ -95,10 +94,7 @@ class AuthController extends BaseRestController
             /*
              * Redirect to UI
              */
-            return $this->safeUiRedirect(
-                $loginSuccessUrl,
-                'You are signed in. Please return to the application you started from.'
-            );
+            return $this->safeUiRedirect($loginSuccessUrl);
 
         } catch (RedirectException $e) {
             /*
@@ -218,6 +214,7 @@ class AuthController extends BaseRestController
      * removed in a future version. It should not be used if UI_URL is not provided in
      * the environment.
      *
+     * @throws ServerErrorHttpException
      * @deprecated Use POST /auth/logout instead
      */
     public function actionLogoutLegacy()
@@ -225,63 +222,43 @@ class AuthController extends BaseRestController
         $trustedUiUrl = Utils::getTrustedUiUrl();
 
         if ($trustedUiUrl === '') {
-            /*
-             * No usable per-request trusted UI origin (multi-origin deployment
-             * with missing/untrusted Origin on this top-level GET). Fall back to
-             * the deployment-wide default UI URL if configured: it is
-             * server-controlled and, being the legacy single-origin setting,
-             * is already registered as an allowed SLO ReturnTo at the IdP.
-             */
             $defaultUiUrl = \Yii::$app->params['uiUrl'] ?? '';
-            if ($defaultUiUrl !== '') {
-                return $this->redirect($this->performLogout($defaultUiUrl));
+
+            if ($defaultUiUrl === '') {
+                /*
+                 * Nothing safe to redirect to. No IdP SLO is attempted because the
+                 * IdP would reject a bare or unlisted ReturnTo.
+                 */
+                throw new ServerErrorHttpException('No safe redirect target available for logout');
             }
 
             /*
-             * Nothing safe to redirect to: render a terminal plain-text page.
-             * No IdP SLO is attempted because the IdP would reject a bare or
-             * unlisted ReturnTo.
+             * Fall back to the default UI URL.
              */
-            return $this->safeUiRedirect(
-                '',
-                'You have been signed out of this application.'
-            );
+            return $this->redirect($this->performLogout($defaultUiUrl));
         }
 
         return $this->redirect($this->performLogout($trustedUiUrl));
     }
 
     /**
-     * Redirect to $url if it points at the currently trusted UI, otherwise emit
-     * a minimal plain-text terminal response from the API's own origin.
-     *
-     * This is the only safe answer when no trusted origin can be determined:
-     * the backend supports multiple UI domains and has no fixed default, so it
-     * must not redirect anywhere derived from untrusted input, and it must not
-     * echo any request-supplied value back into the response.
+     * Redirect to $url if it points at the currently trusted UI.
+     * @throws ServerErrorHttpException
      */
-    protected function safeUiRedirect(string $url, string $fallbackMessage)
+    protected function safeUiRedirect(string $url): Response
     {
         if (Utils::isTrustedUrl($url)) {
             return $this->redirect($url);
         }
 
-        \Yii::warning([
+        \Yii::error([
             'action' => 'safeUiRedirect',
             'status' => 'blocked',
             'reason' => $url === '' ? 'no_url' : 'target_not_trusted',
-            'origin' => \Yii::$app->request->getOrigin(),
             'referrer' => \Yii::$app->request->getReferrer(),
-            'ip' => \Yii::$app->request->getUserIP(),
-        ], 'application');
+        ]);
 
-        $response = \Yii::$app->response;
-        $response->format = Response::FORMAT_RAW;
-        $response->headers->set('Content-Type', 'text/plain; charset=utf-8');
-        $response->headers->set('X-Content-Type-Options', 'nosniff');
-        $response->statusCode = 200;
-        $response->content = $fallbackMessage;
-        return $response;
+        throw new ServerErrorHttpException('No safe redirect target available');
     }
 
     public function getAfterLoginUrl($returnTo)
