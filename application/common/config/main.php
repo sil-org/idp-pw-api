@@ -1,5 +1,6 @@
 <?php
 
+use common\helpers\Utils;
 use Sentry\Event;
 use Sil\JsonLog\target\EmailServiceTarget;
 use Sil\JsonLog\target\JsonStreamTarget;
@@ -75,6 +76,8 @@ $logPrefix = function () use ($version) {
         $prefixData['ip'] = $request->getUserIP();
         $prefixData['method'] = $request->getMethod();
         $prefixData['url'] = $request->getUrl();
+        $prefixData['host'] = $request->getHostName();
+        $prefixData['origin'] = $request->getOrigin();
     } elseif ($request instanceof \yii\console\Request) {
         $prefixData['id'] = '(console)';
     }
@@ -222,6 +225,7 @@ return [
         'idpDisplayName' => $idpDisplayName,
         'helpCenterUrl' => $helpCenterUrl,
         'trustedOrigins' => $trustedOrigins,
+        'uiUrl' => $uiUrl,
         'accessTokenHashKey' => $accessTokenHashKey,
         'accessTokenLifetime' => 1800, // 30 minutes
         'passwordRules' => $passwordRules,

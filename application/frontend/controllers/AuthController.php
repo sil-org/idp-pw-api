@@ -121,6 +121,71 @@ class AuthController extends BaseRestController
 
     }
 
+    /**
+     * Shared logout logic: clear cookie + token, call IdP SLO, return redirect URL.
+     * @param string $returnTo The trusted UI URL to use as the SLO return target
+     * @return string The URL to redirect the browser to (either IdP SLO or UI home)
+     */
+    protected function performLogout(string $returnTo): string
+    {
+        $requestCookies = \Yii::$app->request->cookies;
+        $accessToken = $requestCookies->getValue('access_token');
+        if ($accessToken === null) {
+            return $returnTo;
+        }
+
+        /*
+         * Remove access_token cookie from browser
+         */
+        $responseCookies = \Yii::$app->response->cookies;
+        $responseCookies->remove('access_token', true);
+
+        /*
+         * Look up and clear the token in IdBroker, then log out of IdP
+         */
+        $accessTokenHash = Utils::getAccessTokenHash($accessToken);
+        /** @var \common\components\personnel\PersonnelInterface $personnel */
+        $personnel = \Yii::$app->personnel;
+
+        try {
+            $personnelUser = $personnel->findByAccessToken($accessTokenHash);
+        } catch (\Exception $e) {
+            \Yii::error('Failed to find personnel user for logout: ' . $e->getMessage());
+            return $returnTo;
+        }
+
+        /*
+         * Clear the token in IdBroker (best-effort)
+         */
+        try {
+            $personnel->clearAccessToken($personnelUser->employeeId);
+        } catch (\Exception $e) {
+            \Yii::error('Failed to clear access token for logout: ' . $e->getMessage());
+        }
+
+        /*
+         * Ask the IdP to perform Single Logout. It signals the target
+         * URL by throwing RedirectException; we return that URL to the caller.
+         */
+        $authUser = User::constructFromPersonnelUser($personnelUser)->getAuthUser();
+        try {
+            /** @var AuthnInterface $auth */
+            $auth = \Yii::$app->auth;
+            $auth->logout($returnTo, $authUser);
+        } catch (RedirectException $e) {
+            $returnTo = $e->getUrl();
+        }
+
+        return $returnTo;
+    }
+
+    /**
+     * Logout endpoint for POST requests. Clears the access token cookie and token in ID Broker,
+     * then calls the IdP SLO endpoint and returns a redirect URL to the caller.
+     *
+     * @return string[]
+     * @throws BadRequestHttpException
+     */
     public function actionLogout()
     {
         $trustedUiUrl = Utils::getTrustedUiUrl();
@@ -150,91 +215,40 @@ class AuthController extends BaseRestController
      * single-origin deployments where UI_URL / TRUSTED_ORIGINS has exactly one entry.
      *
      * DEPRECATED: Use POST /auth/logout (actionLogout) instead. This endpoint will be
-     * removed in a future version.
-     *
-     * In multi-origin deployments (2+ trusted origins), this endpoint will fail with
-     * a 400 or plain-text fallback, since the backend cannot safely determine which
-     * UI to redirect to without an Origin header.
+     * removed in a future version. It should not be used if UI_URL is not provided in
+     * the environment.
      *
      * @deprecated Use POST /auth/logout instead
      */
     public function actionLogoutLegacy()
     {
         $trustedUiUrl = Utils::getTrustedUiUrl();
+
         if ($trustedUiUrl === '') {
             /*
-             * Multi-origin deployment with no usable Origin header.
-             * Cannot safely redirect, so render a terminal plain-text page.
+             * No usable per-request trusted UI origin (multi-origin deployment
+             * with missing/untrusted Origin on this top-level GET). Fall back to
+             * the deployment-wide default UI URL if configured: it is
+             * server-controlled and, being the legacy single-origin setting,
+             * is already registered as an allowed SLO ReturnTo at the IdP.
+             */
+            $defaultUiUrl = \Yii::$app->params['uiUrl'] ?? '';
+            if ($defaultUiUrl !== '') {
+                return $this->redirect($this->performLogout($defaultUiUrl));
+            }
+
+            /*
+             * Nothing safe to redirect to: render a terminal plain-text page.
+             * No IdP SLO is attempted because the IdP would reject a bare or
+             * unlisted ReturnTo.
              */
             return $this->safeUiRedirect(
                 '',
-                'You have been signed out. Please close your browser to complete sign-out.'
+                'You have been signed out of this application.'
             );
         }
 
-        $redirectUrl = $this->performLogout($trustedUiUrl);
-
-        return $this->redirect($redirectUrl);
-    }
-
-    /**
-     * Shared logout logic: clear cookie + token, call IdP SLO, return redirect URL.
-     * @param string $trustedUiUrl The trusted UI URL to use as the SLO return target
-     * @return string The URL to redirect the browser to (either IdP SLO or UI home)
-     */
-    protected function performLogout(string $trustedUiUrl): string
-    {
-        $redirectUrl = $trustedUiUrl;
-
-        $requestCookies = \Yii::$app->request->cookies;
-        $accessToken = $requestCookies->getValue('access_token');
-        if ($accessToken === null) {
-            return $redirectUrl;
-        }
-
-        /*
-         * Remove access_token cookie from browser
-         */
-        $responseCookies = \Yii::$app->response->cookies;
-        $responseCookies->remove('access_token', true);
-
-        /*
-         * Look up user in personnel system
-         */
-        $accessTokenHash = Utils::getAccessTokenHash($accessToken);
-        /** @var \common\components\personnel\PersonnelInterface $personnel */
-        $personnel = \Yii::$app->personnel;
-
-        try {
-            $personnelUser = $personnel->findByAccessToken($accessTokenHash);
-        } catch (\Exception $e) {
-            \Yii::error('Failed to find personnel user for logout: ' . $e->getMessage());
-            return $redirectUrl;
-        }
-
-        /*
-         * Clear the token in IdBroker (best-effort)
-         */
-        try {
-            $personnel->clearAccessToken($personnelUser->employeeId);
-        } catch (\Exception $e) {
-            \Yii::error('Failed to clear access token for logout: ' . $e->getMessage());
-        }
-
-        /*
-         * Ask the IdP to perform Single Logout. It signals the target
-         * URL by throwing RedirectException; we return that URL to the caller.
-         */
-        $authUser = User::constructFromPersonnelUser($personnelUser)->getAuthUser();
-        try {
-            /** @var AuthnInterface $auth */
-            $auth = \Yii::$app->auth;
-            $auth->logout($trustedUiUrl, $authUser);
-        } catch (RedirectException $e) {
-            $redirectUrl = $e->getUrl();
-        }
-
-        return $redirectUrl;
+        return $this->redirect($this->performLogout($trustedUiUrl));
     }
 
     /**
