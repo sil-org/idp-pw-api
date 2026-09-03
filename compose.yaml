@@ -6,6 +6,12 @@ x-db_healthcheck: &db_healthcheck
     timeout: 5s
     retries: 3
 
+x-mysql_env: &mysql_env
+  MYSQL_DATABASE: "db"
+  MYSQL_USER: "user"
+  MYSQL_PASSWORD: "pass"
+  MYSQL_ROOT_PASSWORD: "pass"
+
 services:
 
   api:
@@ -34,6 +40,7 @@ services:
     environment:
       APP_ENV: test
       ID_BROKER_baseUrl: http://broker
+      COMPOSER_ROOT_VERSION: dev-local
       TRUSTED_ORIGINS: https://localhost,http://localhost
     command: ["/data/run-tests-api.sh"]
 
@@ -50,6 +57,7 @@ services:
     environment:
       APP_ENV: test
       ID_BROKER_baseUrl: http://broker
+      COMPOSER_ROOT_VERSION: dev-local
     command: ["/data/run-tests.sh"]
 
   integrationtest:
@@ -88,23 +96,17 @@ services:
     image: wcjr/zxcvbn-api:1.1.0
     platform: linux/amd64
 
-  brokerDb:
+  broker-db:
     image: mariadb:10
-    environment:
-      MYSQL_ROOT_PASSWORD: r00tp@ss!
-      MYSQL_DATABASE: broker
-      MYSQL_USER: broker
-      MYSQL_PASSWORD: broker
+    environment: *mysql_env
     <<: *db_healthcheck
 
-  brokerpma:
-    image: phpmyadmin:5
+  adminer:
+    image: adminer
     ports:
-      - "51158:80"
+      - '51158:8080'
     environment:
-      PMA_HOST: brokerDb
-      PMA_USER: broker
-      PMA_PASSWORD: broker
+      ADMINER_DEFAULT_SERVER: 'broker-db'
 
   broker:
     image: ghcr.io/sil-org/idp-id-broker:8
@@ -112,7 +114,7 @@ services:
     ports:
       - "51154:80"
     depends_on:
-      brokerDb:
+      broker-db:
         condition: service_healthy
     volumes:
       - ./dockerbuild/broker/m381901_235959_insert_test_data.php:/app/console/migrations/m381901_235959_insert_test_data.php
@@ -122,10 +124,8 @@ services:
     environment:
       EMAILER_CLASS: \Sil\SilIdBroker\Behat\Context\fakes\FakeEmailer
       IDP_NAME: idp1
-      MYSQL_HOST: brokerDb
-      MYSQL_DATABASE: broker
-      MYSQL_USER: broker
-      MYSQL_PASSWORD: broker
+      MYSQL_HOST: broker-db
+      <<: *mysql_env
       API_ACCESS_KEYS: abc123
       HELP_CENTER_URL: https://example.com/#/help
       PASSWORD_FORGOT_URL: https://example.com/#/forgot
