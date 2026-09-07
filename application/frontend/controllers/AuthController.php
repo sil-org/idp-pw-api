@@ -3,25 +3,35 @@
 namespace frontend\controllers;
 
 use common\components\auth\AuthnInterface;
+use common\components\auth\InvalidLoginException;
 use common\components\auth\RedirectException;
 use common\components\auth\User as AuthUser;
 use common\components\personnel\NotFoundException;
+use common\components\personnel\PersonnelInterface;
 use common\helpers\Utils;
 use common\models\User;
+use Exception;
 use frontend\components\BaseRestController;
 use Sil\Idp\IdBroker\Client\ServiceException;
+use Yii;
+use yii\base\InvalidConfigException;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
-use yii\web\BadRequestHttpException;
+use yii\web\Response;
 use yii\web\ServerErrorHttpException;
 
+/**
+ * AuthController handles authentication actions.
+ *
+ * @noinspection PhpUnused
+ */
 class AuthController extends BaseRestController
 {
     /**
      * Access Control Filter
      * NEEDS TO BE UPDATED FOR EVERY ACTION
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return ArrayHelper::merge(parent::behaviors(), [
             'access' => [
@@ -44,9 +54,14 @@ class AuthController extends BaseRestController
         ]);
     }
 
-    public function actionLogin()
+    /**
+     * Login action. Authenticates the user and redirects to the appropriate URL.
+     * @noinspection PhpUnused
+     * @throws ServerErrorHttpException
+     */
+    public function actionLogin(): Response
     {
-        if (! \Yii::$app->user->isGuest) {
+        if (! Yii::$app->user->isGuest) {
             return $this->redirect($this->getAfterLoginUrl($this->getReturnTo()));
         }
 
@@ -62,7 +77,7 @@ class AuthController extends BaseRestController
                 if ($e->httpStatusCode == 410) {
                     $log['status'] = 'info';
                     $log['error'] = 'invite code expired';
-                    \Yii::info($log, 'application');
+                    Yii::info($log);
 
                     return $this->redirect($this->getReturnToOnError());
                 } else {
@@ -78,12 +93,12 @@ class AuthController extends BaseRestController
 
             $log['email'] = $user->email;
             $log['status'] = 'success';
-            \Yii::warning($log, 'application');
+            Yii::warning($log);
 
             /*
              * Clear identity before redirecting
              */
-            \Yii::$app->user->logout(true);
+            Yii::$app->user->logout();
 
             /*
              * Redirect to UI
@@ -95,51 +110,54 @@ class AuthController extends BaseRestController
              * Login triggered redirect to IdP to login, so return a redirect to it
              */
             return $this->redirect($e->getUrl());
-        } catch (BadRequestHttpException $e) {
-            throw $e;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             /*
              * log exception
              */
             $log['status'] = 'error';
             $log['error'] = $e->getMessage();
             $log['code'] = $e->getCode();
-            \Yii::error($log, 'application');
+            Yii::error($log);
 
             throw new ServerErrorHttpException('server error ' . $e->getCode(), 1546440970);
         }
 
     }
 
-    public function actionLogout()
+    /**
+     * Logout action. Logs out the user and redirects to the appropriate URL.
+     * @noinspection PhpUnused
+     * @throws InvalidConfigException
+     */
+    public function actionLogout(): Response
     {
-        $requestCookies = \Yii::$app->request->cookies;
+        $requestCookies = Yii::$app->request->cookies;
         $accessToken = $requestCookies->getValue('access_token');
         if ($accessToken !== null) {
             /*
              * Remove access_token cookie from browser
              */
-            $responseCookies = \Yii::$app->response->cookies;
-            $responseCookies->remove('access_token', true);
+            $responseCookies = Yii::$app->response->cookies;
+            $responseCookies->remove('access_token');
 
             /*
              * Look up and clear the token in IdBroker, then log out of IdP
              */
             $accessTokenHash = Utils::getAccessTokenHash($accessToken);
-            /** @var \common\components\personnel\PersonnelInterface $personnel */
-            $personnel = \Yii::$app->personnel;
+            /** @var PersonnelInterface $personnel */
+            $personnel = Yii::$app->get('personnel');
 
             try {
                 $personnelUser = $personnel->findByAccessToken($accessTokenHash);
-            } catch (\Exception $e) {
-                \Yii::error('Failed to find personnel user for logout: ' . $e->getMessage());
-                return $this->redirect(\Yii::$app->params['uiUrl']);
+            } catch (Exception $e) {
+                Yii::error('Failed to find personnel user for logout: ' . $e->getMessage());
+                return $this->redirect(Yii::$app->params['uiUrl']);
             }
 
             try {
                 $personnel->clearAccessToken($personnelUser->employeeId);
-            } catch (\Exception $e) {
-                \Yii::error('Failed to clear access token for logout: ' . $e->getMessage());
+            } catch (Exception $e) {
+                Yii::error('Failed to clear access token for logout: ' . $e->getMessage());
             }
 
             $authUser = User::constructFromPersonnelUser($personnelUser)->getAuthUser();
@@ -149,42 +167,42 @@ class AuthController extends BaseRestController
              */
             try {
                 /** @var AuthnInterface $auth */
-                $auth = \Yii::$app->auth;
-                $auth->logout(\Yii::$app->params['uiUrl'], $authUser);
+                $auth = Yii::$app->get('auth');
+                $auth->logout(Yii::$app->params['uiUrl'], $authUser);
             } catch (RedirectException $e) {
                 return $this->redirect($e->getUrl());
             }
         }
 
-        return $this->redirect(\Yii::$app->params['uiUrl']);
+        return $this->redirect(Yii::$app->params['uiUrl']);
     }
 
-    public function getAfterLoginUrl($returnTo)
+    public function getAfterLoginUrl($returnTo): string
     {
         /*
          * If $returnTo starts with UI_URL, return it, else relative build absolute
          */
-        if (strpos($returnTo, \Yii::$app->params['uiUrl']) === 0) {
+        if (str_starts_with($returnTo, Yii::$app->params['uiUrl'])) {
             return $returnTo;
-        } elseif (substr($returnTo, 0, 1) == '/') {
+        } elseif (str_starts_with($returnTo, '/')) {
             $path = $returnTo;
         } else {
             $path = '';
         }
-        return \Yii::$app->params['uiUrl'] . $path;
+        return Yii::$app->params['uiUrl'] . $path;
     }
 
     /**
      * Build URL to redirect user to after successful login
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
-    public function getLoginSuccessRedirectUrl()
+    public function getLoginSuccessRedirectUrl(): string
     {
         /*
          * Relay state holds the return to path from UI
          */
-        $relayState = \Yii::$app->request->post('RelayState', $this->getReturnTo());
+        $relayState = Yii::$app->request->post('RelayState', $this->getReturnTo());
 
         /*
          * build url to redirect user to
@@ -193,18 +211,16 @@ class AuthController extends BaseRestController
     }
 
     /**
+     * Collect return to url of where to send user after successful login
+     * Expected as relative url starting with /
+     * Before redirecting user after login this will be prefixed with ui_url
      * @return array|mixed|string
      */
-    protected function getReturnTo()
+    protected function getReturnTo(): mixed
     {
-        /*
-                 * Collect return to url of where to send user after successful login
-                 * Expected as relative url starting with /
-                 * Before redirecting user after login this will be prefixed with ui_url
-                 */
-        $returnTo = \Yii::$app->request->get('ReturnTo', '');
-        if (substr($returnTo, 0, 1) == '/') {
-            $returnTo = \Yii::$app->params['uiUrl'] . $returnTo;
+        $returnTo = Yii::$app->request->get('ReturnTo', '');
+        if (str_starts_with($returnTo, '/')) {
+            $returnTo = Yii::$app->params['uiUrl'] . $returnTo;
         }
         return $returnTo;
     }
@@ -215,9 +231,9 @@ class AuthController extends BaseRestController
      */
     protected function getReturnToOnError(): string
     {
-        $returnTo = \Yii::$app->request->get('ReturnToOnError', '');
-        if (substr($returnTo, 0, 1) == '/') {
-            $returnTo = \Yii::$app->params['uiUrl'] . $returnTo;
+        $returnTo = Yii::$app->request->get('ReturnToOnError', '');
+        if (str_starts_with($returnTo, '/')) {
+            $returnTo = Yii::$app->params['uiUrl'] . $returnTo;
         }
         return $returnTo;
     }
@@ -228,12 +244,13 @@ class AuthController extends BaseRestController
      * @return User|null
      * @throws NotFoundException
      * @throws RedirectException
-     * @throws \common\components\auth\InvalidLoginException
+     * @throws InvalidLoginException
      * @throws ServiceException
+     * @throws InvalidConfigException
      */
-    protected function authenticateUser()
+    protected function authenticateUser(): ?User
     {
-        $inviteCode = \Yii::$app->request->get('invite');
+        $inviteCode = Yii::$app->request->get('invite');
 
         /**
          * @var $user User
@@ -250,9 +267,9 @@ class AuthController extends BaseRestController
              */
 
             /** @var AuthnInterface $auth */
-            $auth = \Yii::$app->auth;
+            $auth = Yii::$app->get('auth');
             /** @var AuthUser $authUser */
-            $authUser = $auth->login($this->getReturnTo(), \Yii::$app->request);
+            $authUser = $auth->login($this->getReturnTo(), Yii::$app->request);
 
             /*
              * Get local user instance or create one.
