@@ -1,0 +1,17 @@
+{
+  "sandbox": {
+    "filesystem": {
+      "allowRead": ["."],
+      "denyRead": [
+        "./local.env",
+        "./application/common/config/local.php"
+      ]
+    }
+  },
+  "permissions": {
+    "deny": [
+      "Read(./local.env)",
+      "Read(./application/common/config/local.php)"
+    ]
+  }
+}
