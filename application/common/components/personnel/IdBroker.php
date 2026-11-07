@@ -212,7 +212,11 @@ class IdBroker extends Component implements PersonnelInterface
         try {
             $idBrokerClient->updateUser($properties);
         } catch (ServiceException $e) {
-            if ($e->httpStatusCode == 204) {
+            /*
+             * ID Broker returns 404 for a nonexistent user. Accept 204 for
+             * compatibility with earlier ID Broker versions.
+             */
+            if ($e->httpStatusCode === 404 || $e->httpStatusCode === 204) {
                 throw new NotFoundException();
             } else {
                 throw $e;

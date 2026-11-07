@@ -5,6 +5,8 @@ namespace tests\unit\common\components;
 use common\components\personnel\IdBroker;
 use common\components\personnel\NotFoundException;
 use PHPUnit\Framework\TestCase;
+use Sil\Idp\IdBroker\Client\IdBrokerClient;
+use Sil\Idp\IdBroker\Client\ServiceException;
 
 class IdBrokerTest extends TestCase
 {
@@ -152,6 +154,49 @@ class IdBrokerTest extends TestCase
                 $propertyValue
             ));
         }
+    }
+
+    public static function userNotFoundStatusCodes(): array
+    {
+        return [
+            'current ID Broker' => [404],
+            'earlier ID Broker' => [204],
+        ];
+    }
+
+    /**
+     * @dataProvider userNotFoundStatusCodes
+     */
+    public function testUpdateUser_MissingUser(int $statusCode)
+    {
+        $idBroker = $this->getComponentWithClientThatThrows(
+            new ServiceException('Unexpected response', 0, $statusCode)
+        );
+
+        $this->expectException(NotFoundException::class);
+        $idBroker->updateUser(['employee_id' => '12345']);
+    }
+
+    public function testUpdateUser_OtherErrorIsRethrown()
+    {
+        $exception = new ServiceException('Unexpected response', 0, 422);
+        $idBroker = $this->getComponentWithClientThatThrows($exception);
+
+        $this->expectExceptionObject($exception);
+        $idBroker->updateUser(['employee_id' => '12345']);
+    }
+
+    private function getComponentWithClientThatThrows(ServiceException $exception): IdBroker
+    {
+        $client = $this->createMock(IdBrokerClient::class);
+        $client->method('updateUser')->willThrowException($exception);
+
+        $idBroker = $this->getMockComponent();
+        $property = new \ReflectionProperty(IdBroker::class, 'client');
+        $property->setAccessible(true);
+        $property->setValue($idBroker, $client);
+
+        return $idBroker;
     }
 
     /**
