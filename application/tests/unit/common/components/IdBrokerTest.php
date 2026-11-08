@@ -156,21 +156,23 @@ class IdBrokerTest extends TestCase
         }
     }
 
-    public static function userNotFoundStatusCodes(): array
+    public function testUpdateUser_MissingUser()
     {
-        return [
-            'current ID Broker' => [404],
-            'earlier ID Broker' => [204],
-        ];
+        $idBroker = $this->getComponentWithClientThatThrows(
+            new ServiceException('Unexpected response', 0, 404)
+        );
+
+        $this->expectException(NotFoundException::class);
+        $idBroker->updateUser(['employee_id' => '12345']);
     }
 
     /**
-     * @dataProvider userNotFoundStatusCodes
+     * Earlier ID Broker versions returned 204 for a nonexistent user.
      */
-    public function testUpdateUser_MissingUser(int $statusCode)
+    public function testUpdateUser_MissingUser_EarlierIdBroker()
     {
         $idBroker = $this->getComponentWithClientThatThrows(
-            new ServiceException('Unexpected response', 0, $statusCode)
+            new ServiceException('Unexpected response', 0, 204)
         );
 
         $this->expectException(NotFoundException::class);
