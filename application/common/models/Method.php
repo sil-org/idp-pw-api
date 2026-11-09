@@ -36,9 +36,13 @@ class Method
     public static function getMethods($employeeId)
     {
         try {
-            return self::getIdBrokerClient()->listMethod($employeeId);
+            return static::getIdBrokerClient()->listMethod($employeeId);
         } catch (ServiceException $e) {
-            if ($e->httpStatusCode === 400) {
+            /*
+             * ID Broker returns 404 for a nonexistent user. Accept 400 for
+             * compatibility with earlier ID Broker versions.
+             */
+            if ($e->httpStatusCode === 404 || $e->httpStatusCode === 400) {
                 throw new ServerErrorHttpException(\Yii::t('app', 'Method.PersonnelError'), 1542752270);
             } else {
                 throw $e;
@@ -81,7 +85,7 @@ class Method
     public static function getOneVerifiedMethod($uid, $employeeId)
     {
         try {
-            return self::getIdBrokerClient()->getMethod($uid, $employeeId);
+            return static::getIdBrokerClient()->getMethod($uid, $employeeId);
         } catch (ServiceException $e) {
             if ($e->httpStatusCode === 404) {
                 throw new NotFoundHttpException(
