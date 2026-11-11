@@ -6,7 +6,7 @@ ENV GITHUB_REF_NAME=$GITHUB_REF_NAME
 RUN apt-get update \
     && apt-get --no-install-recommends install -y \
         ssl-cert \
-        php-bcmath \
+        php8.3-bcmath \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && a2enmod ssl
