@@ -28,7 +28,7 @@ composershow:
 	docker compose run --rm cli bash -c 'composer show --format=json --no-dev --no-ansi --locked | jq "[.locked[] | { \"name\": .name, \"version\": .version }]" > dependencies.json'
 
 composerupdate:
-	docker compose run --rm cli bash -c "composer update"
+	docker compose run --rm cli bash -c "composer update --no-scripts --no-interaction"
 	make composershow
 
 broker:
