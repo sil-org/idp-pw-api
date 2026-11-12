@@ -16,7 +16,7 @@ mkdir -p /data/runtime/mail
 rm --force /data/console/runtime/ca.pem
 
 # Install and enable xdebug for code coverage
-apt-get update && apt-get install -y php8.3-xdebug
+apt-get update && apt-get install -y php${PHP_VERSION}-xdebug
 
 # Run codeception tests
 ./vendor/bin/codecept run --fail-fast 1 unit
