@@ -50,4 +50,8 @@ class SamlContainer extends AbstractContainer
     {
         // No action desired.
     }
+    public function getInflateSizeLimit(): int
+    {
+        return 100 * 1024;
+    }
 }
